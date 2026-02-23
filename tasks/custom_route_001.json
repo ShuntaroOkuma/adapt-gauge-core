@@ -1,0 +1,62 @@
+{
+  "task_id": "custom_route_001",
+  "category": "custom",
+  "version": "1.0",
+  "measures": [],
+  "description": "Calculate the optimal delivery route based on the following constraints",
+  "instruction": "Calculate the optimal route from the distribution center to each delivery destination, considering cost, time, and constraints. Output the route and total cost.",
+  "difficulty": "hard",
+  "examples": [
+    {
+      "input": "[Delivery Plan]\nDeparture: Tokyo Warehouse (Start at 9:00)\nDestinations:\n  Store A: Yokohama (Duration 40 min, 2 Packages, Receiving Hours 10:00-12:00)\n  Store B: Kawasaki (Duration 30 min, 1 Package, Receiving Hours 9:00-11:00)\n  Store C: Shinagawa (Duration 20 min, 3 Packages, All Day)\n\nTravel Time:\n  Tokyo -> Yokohama: 60 min\n  Tokyo -> Kawasaki: 40 min\n  Tokyo -> Shinagawa: 15 min\n  Yokohama -> Kawasaki: 30 min\n  Kawasaki -> Shinagawa: 25 min\n\nFuel Cost: 10 yen/min",
+      "output": "[Optimal Route]\nTokyo (9:00) -> Kawasaki (Arrive 9:40, Depart 10:10) -> Yokohama (Arrive 10:40, Depart 11:20) -> Shinagawa (Arrive 11:50, Complete 12:10)\n\n[Reasoning]\n- Store B's receiving hours end at 11:00, so it is prioritized\n- Yokohama can be reached within the time window via Kawasaki\n- Shinagawa accepts all day, so it is last\n\n[Total Cost]\nTravel: 40+30+30=100 min -> 1000 yen\nUnloading: 40+30+20=90 min\nTotal Duration: 190 min"
+    },
+    {
+      "input": "[Delivery Plan]\nDeparture: Osaka Warehouse (Start at 8:00)\nDestinations:\n  Store X: Kobe (Duration 30 min, 5 Packages, Receiving Hours 9:00-10:00)\n  Store Y: Kyoto (Duration 45 min, 2 Packages, Receiving Hours 10:00-14:00)\n  Store Z: Nara (Duration 25 min, 3 Packages, Receiving Hours 8:30-9:30)\n\nTravel Time:\n  Osaka -> Kobe: 50 min\n  Osaka -> Kyoto: 60 min\n  Osaka -> Nara: 45 min\n  Kobe -> Kyoto: 90 min\n  Nara -> Kyoto: 70 min\n\nFuel Cost: 12 yen/min",
+      "output": "[Optimal Route]\nOsaka (8:00) -> Nara (Arrive 8:45, Depart 9:10) -> Via Osaka -> Kobe (Arrive 10:00, Depart 10:30) -> Kyoto (Arrive 12:00, Complete 12:45)\n\n[Reasoning]\n- Store Z (Nara) has the earliest deadline at 9:30\n- Store X (Kobe) cannot be reached in time directly from Nara, so route goes via Osaka\n- Store Y (Kyoto) has ample time\n\n[Total Cost]\nTravel: 45+45+50+90=230 min -> 2760 yen\nUnloading: 25+30+45=100 min\nTotal Duration: 330 min"
+    },
+    {
+      "input": "[Delivery Plan]\nDeparture: Nagoya Warehouse (Start at 10:00)\nDestinations:\n  Store P: Gifu (Duration 20 min, 2 Packages, All Day)\n  Store Q: Yokkaichi (Duration 35 min, 4 Packages, Receiving Hours 11:00-13:00)\n  Store R: Toyohashi (Duration 30 min, 1 Package, Receiving Hours 10:30-12:00)\n\nTravel Time:\n  Nagoya -> Gifu: 40 min\n  Nagoya -> Yokkaichi: 50 min\n  Nagoya -> Toyohashi: 60 min\n  Gifu -> Yokkaichi: 80 min\n  Toyohashi -> Yokkaichi: 90 min\n\nFuel Cost: 8 yen/min",
+      "output": "[Optimal Route]\nNagoya (10:00) -> Toyohashi (Arrive 11:00, Depart 11:30) -> Via Nagoya -> Yokkaichi (Arrive 12:20, Depart 12:55) -> Gifu (Arrive 14:15, Complete 14:35)\n\n[Reasoning]\n- Store R (Toyohashi) has a receiving deadline of 12:00, requires attention\n- Store Q (Yokkaichi) would be delayed going directly from Toyohashi, so route goes via Nagoya\n- Store P (Gifu) accepts all day, so it is last\n\n[Total Cost]\nTravel: 60+60+50+40=210 min -> 1680 yen\nUnloading: 30+35+20=85 min\nTotal Duration: 295 min"
+    },
+    {
+      "input": "[Delivery Plan]\nDeparture: Fukuoka Warehouse (Start at 9:00)\nDestinations:\n  Store D: Kitakyushu (Duration 40 min, 3 Packages, Receiving Hours 9:00-17:00)\n  Store E: Kurume (Duration 25 min, 2 Packages, Receiving Hours 10:00-12:00)\n\nTravel Time:\n  Fukuoka -> Kitakyushu: 70 min\n  Fukuoka -> Kurume: 45 min\n  Kitakyushu -> Kurume: 100 min\n\nFuel Cost: 15 yen/min",
+      "output": "[Optimal Route]\nFukuoka (9:00) -> Kurume (Arrive 9:45, Depart 10:10) -> Via Fukuoka -> Kitakyushu (Arrive 11:25, Complete 12:05)\n\n[Reasoning]\n- Store E (Kurume) starts receiving at 10:00, so there is a short wait\n- Direct Kurume -> Kitakyushu is far, so routing via Fukuoka is more efficient\n- Store D accepts all day, so there is ample time\n\n[Total Cost]\nTravel: 45+45+70=160 min -> 2400 yen\nUnloading: 25+40=65 min\nTotal Duration: 225 min"
+    },
+    {
+      "input": "[Delivery Plan]\nDeparture: Sapporo Warehouse (Start at 8:30)\nDestinations:\n  Store M: Otaru (Duration 30 min, 4 Packages, Receiving Hours 9:00-11:00)\n  Store N: Chitose (Duration 20 min, 2 Packages, Receiving Hours 10:00-15:00)\n  Store O: Ebetsu (Duration 15 min, 1 Package, Receiving Hours 8:00-9:00)\n\nTravel Time:\n  Sapporo -> Otaru: 50 min\n  Sapporo -> Chitose: 55 min\n  Sapporo -> Ebetsu: 25 min\n  Otaru -> Chitose: 90 min\n  Ebetsu -> Otaru: 60 min\n\nFuel Cost: 10 yen/min",
+      "output": "[Optimal Route]\nSapporo (8:30) -> Ebetsu (Arrive 8:55, Depart 9:10) -> Otaru (Arrive 10:10, Depart 10:40) -> Via Sapporo -> Chitose (Arrive 12:25, Complete 12:45)\n\n[Reasoning]\n- Store O (Ebetsu) has the earliest deadline at 9:00, so it is the top priority\n- Store M (Otaru) can be reached within the 11:00 deadline via Ebetsu\n- Store N (Chitose) has ample time; routing via Sapporo is shorter than going directly from Otaru\n\n[Total Cost]\nTravel: 25+60+50+55=190 min -> 1900 yen\nUnloading: 15+30+20=65 min\nTotal Duration: 255 min"
+    },
+    {
+      "input": "[Delivery Plan]\nDeparture: Sendai Warehouse (Start at 7:00)\nDestinations:\n  Store S: Yamagata (Duration 45 min, 5 Packages, Receiving Hours 8:00-10:00)\n  Store T: Fukushima (Duration 35 min, 3 Packages, Receiving Hours 9:00-12:00)\n\nTravel Time:\n  Sendai -> Yamagata: 80 min\n  Sendai -> Fukushima: 90 min\n  Yamagata -> Fukushima: 120 min\n\nFuel Cost: 11 yen/min",
+      "output": "[Optimal Route]\nSendai (7:00) -> Yamagata (Arrive 8:20, Depart 9:05) -> Via Sendai -> Fukushima (Arrive 10:55, Complete 11:30)\n\n[Reasoning]\n- Store S (Yamagata) has a receiving deadline of 10:00, so it is prioritized\n- Yamagata -> Fukushima direct takes 120 min, which is less efficient than via Sendai (80+90=170 min), but both options allow enough time\n- In this case, routing via Sendai has higher fuel cost but provides more margin for Fukushima's 12:00 deadline\n\n[Total Cost]\nTravel: 80+80+90=250 min -> 2750 yen\nUnloading: 45+35=80 min\nTotal Duration: 330 min"
+    }
+  ],
+  "distractors": [
+    {
+      "input": "[Traveling Salesman Problem]\nFind the shortest route to visit all 5 cities (A, B, C, D, E).\nDistance matrix:\nA-B:10, A-C:15, A-D:20, A-E:25\nB-C:35, B-D:25, B-E:30\nC-D:30, C-E:20\nD-E:15",
+      "output": "Shortest route: A -> B -> D -> E -> C -> A\nTotal distance: 10+25+15+20+15=85"
+    },
+    {
+      "input": "[Inventory Allocation Optimization]\nDeliver products from 3 warehouses to 2 stores.\nWarehouse inventory: W1=100, W2=150, W3=80\nStore demand: S1=180, S2=150\nTransport cost (yen/unit): W1->S1:5, W1->S2:8, W2->S1:6, W2->S2:4, W3->S1:7, W3->S2:6\nWhat is the minimum cost allocation?",
+      "output": "Optimal allocation:\nW1->S1: 100 units (500 yen)\nW2->S2: 150 units (600 yen)\nW3->S1: 80 units (560 yen)\nTotal cost: 1660 yen"
+    }
+  ],
+  "test_cases": [
+    {
+      "input": "[Delivery Plan]\nDeparture: Hiroshima Warehouse (Start at 9:30)\nDestinations:\n  Store J: Kure (Duration 25 min, 2 Packages, Receiving Hours 10:00-11:30)\n  Store K: Higashihiroshima (Duration 30 min, 3 Packages, All Day)\n  Store L: Hatsukaichi (Duration 20 min, 1 Package, Receiving Hours 9:00-10:30)\n\nTravel Time:\n  Hiroshima -> Kure: 45 min\n  Hiroshima -> Higashihiroshima: 40 min\n  Hiroshima -> Hatsukaichi: 30 min\n  Kure -> Higashihiroshima: 60 min\n  Hatsukaichi -> Kure: 55 min\n\nFuel Cost: 9 yen/min",
+      "expected_output": "Hiroshima Hatsukaichi Kure Higashihiroshima 10:30 11:30 deadline receiving optimal route cost",
+      "scoring_method": "llm_judge"
+    },
+    {
+      "input": "[Delivery Plan]\nDeparture: Niigata Warehouse (Start at 8:00)\nDestinations:\n  Store U: Nagaoka (Duration 35 min, 4 Packages, Receiving Hours 9:00-12:00)\n  Store V: Joetsu (Duration 40 min, 2 Packages, Receiving Hours 10:00-11:00)\n\nTravel Time:\n  Niigata -> Nagaoka: 70 min\n  Niigata -> Joetsu: 120 min\n  Nagaoka -> Joetsu: 60 min\n\nFuel Cost: 12 yen/min",
+      "expected_output": "Niigata Nagaoka Joetsu 11:00 deadline priority route travel cost fuel",
+      "scoring_method": "llm_judge"
+    },
+    {
+      "input": "[Delivery Plan]\nDeparture: Shizuoka Warehouse (Start at 10:00)\nDestinations:\n  Store G: Hamamatsu (Duration 30 min, 3 Packages, Receiving Hours 11:00-14:00)\n  Store H: Numazu (Duration 25 min, 2 Packages, Receiving Hours 10:30-12:00)\n  Store I: Fuji (Duration 20 min, 1 Package, All Day)\n\nTravel Time:\n  Shizuoka -> Hamamatsu: 80 min\n  Shizuoka -> Numazu: 50 min\n  Shizuoka -> Fuji: 35 min\n  Numazu -> Fuji: 20 min\n  Hamamatsu -> Numazu: 100 min\n\nFuel Cost: 10 yen/min",
+      "expected_output": "Shizuoka Numazu Fuji Hamamatsu 12:00 deadline efficient route cost optimal",
+      "scoring_method": "llm_judge"
+    }
+  ]
+}

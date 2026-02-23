@@ -1,0 +1,70 @@
+{
+  "task_id": "summarization_001",
+  "category": "summarization",
+  "version": "1.0",
+  "measures": ["Fidelity"],
+  "description": "Summarize the following news article into 3 bullet points",
+  "instruction": "Read the news article and extract key information into a concise summary. Include numbers and proper nouns accurately.",
+  "difficulty": "medium",
+  "examples": [
+    {
+      "input": "The Tokyo Metropolitan Government announced on the 15th that the number of new COVID-19 cases in the capital decreased by 20% compared to the previous week. A metropolitan official analyzed that 'the effects of vaccination are showing.' However, they also stated the need to continue monitoring variant strains. Hospital bed occupancy rates have been hovering in the 40% range, and the number of severe cases is also on a declining trend. The metropolitan government continues to urge thorough adherence to basic infection prevention measures.",
+      "output": "COVID cases down 20%, vaccine effect, variant monitoring, bed occupancy 40%, severe cases declining"
+    },
+    {
+      "input": "Major automaker Company A announced today that it will raise its electric vehicle (EV) sales target for fiscal year 2025 to 500,000 units, double the previous goal. The company's president expressed enthusiasm at a press conference, stating 'We will accelerate the transition to a decarbonized society.' The company plans to make 500 billion yen in new capital investment to expand production facilities both domestically and internationally. It also revealed that it will move up the start of mass production of all-solid-state batteries to 2026.",
+      "output": "EV sales 500,000 units, decarbonization, 500 billion yen capital investment, all-solid-state batteries 2026"
+    },
+    {
+      "input": "The Ministry of Education, Culture, Sports, Science and Technology announced that the adoption rate of digital textbooks in elementary and junior high schools nationwide has exceeded 80%. Adoption has rapidly expanded in the three years since introduction began in fiscal year 2021. While teachers have praised that 'classes utilizing video and audio have become possible,' there are also concerns that 'dealing with device malfunctions remains a challenge.' The ministry aims to complete adoption at all schools by fiscal year 2026.",
+      "output": "Digital textbooks 80%, video and audio utilization, device malfunctions, fiscal year 2026 full adoption"
+    },
+    {
+      "input": "The Bank of Japan decided at its monetary policy meeting to raise the short-term interest rate target to 0.25%. This marks the first rate hike in approximately 17 years. Governor Ueda explained that 'a virtuous cycle of prices and wages has been confirmed.' Markets saw a stronger yen and weaker stock prices. Regarding further rate increases, he stated that 'decisions will be made based on the data.'",
+      "output": "BOJ rate hike 0.25%, first in 17 years, price-wage cycle, stronger yen weaker stocks"
+    },
+    {
+      "input": "The Ministry of Internal Affairs and Communications announced that internet usage rates exceeded 90% across all age groups in 2024. Usage rates surged particularly among the elderly aged 70 and over, with the spread of online medical consultations and online shopping advancing. Meanwhile, cybercrime victimization including phishing scams is also on the rise, making the strengthening of security education a pressing issue.",
+      "output": "Internet usage 90%, elderly surge, online medical consultations, phishing scams, security education"
+    },
+    {
+      "input": "The Ministry of Economy, Trade and Industry announced that it will invest a total of 2 trillion yen in subsidies as a domestic semiconductor industry support measure. The plan involves attracting new manufacturing facilities to Kumamoto Prefecture and Hokkaido, aiming to triple domestic production capacity by 2030. The main objectives are to reduce the risks of overseas dependence and strengthen economic security.",
+      "output": "Semiconductor support 2 trillion yen, Kumamoto, Hokkaido, 2030, production capacity tripled, economic security"
+    },
+    {
+      "input": "The Ministry of Agriculture, Forestry and Fisheries announced that the 2024 rice crop index reached a national average of 102, indicating a good harvest. Results were particularly favorable in Hokkaido and the Tohoku region. However, there are concerns about falling rice prices, and the government is considering increasing reserve rice purchases as a support measure for farmers. Consumers can expect price stability.",
+      "output": "Rice crop index 102, good harvest, Hokkaido, Tohoku, falling rice prices, reserve rice, price stability"
+    },
+    {
+      "input": "The Japan Tourism Agency announced that the number of inbound foreign tourists in 2024 surpassed the record high of 40 million. The weak yen and increased new flight routes were the main contributing factors. In addition to Tokyo and Kyoto, dispersion to regional cities is also progressing. Meanwhile, the number of municipalities considering measures against overtourism, such as admission restrictions during peak times and the introduction of tourism taxes, is increasing.",
+      "output": "Inbound tourists 40 million, record high, weak yen, regional dispersion, overtourism, tourism tax"
+    }
+  ],
+  "test_cases": [
+    {
+      "input": "The Ministry of the Environment announced that domestic renewable energy power generation reached a record high in 2024. A significant increase in solar power generation capacity was the main factor. Large-scale solar power plants began operations one after another, particularly in Hokkaido and Kyushu. Meanwhile, the issue that power grid infrastructure development has not kept pace was also pointed out. The government has set a target of raising the renewable energy ratio to 40% or more by 2030.",
+      "expected_output": "Renewable energy record high, solar power, Hokkaido, Kyushu, power grid, 2030, 40%",
+      "scoring_method": "f1"
+    },
+    {
+      "input": "The Ministry of Health, Labour and Welfare announced that the number of births in 2024 is expected to fall below 700,000, a record low. The decline in the number of marriages and later marriages were cited as the main factors. As measures against the declining birthrate, the government is expanding child allowances and improving parental leave systems. Experts have also voiced that 'in addition to financial support, work-style reform is necessary.'",
+      "expected_output": "Births below 700,000, record low, declining marriages, later marriages, child allowances, parental leave, work-style reform",
+      "scoring_method": "f1"
+    },
+    {
+      "input": "The Ministry of Land, Infrastructure, Transport and Tourism announced that it will begin trial introduction of dedicated lanes for autonomous vehicles on expressways starting in 2027. The plan will start on a section of the Tomei Expressway and gradually expand. It will be limited to Level 4 autonomous vehicles, which will be permitted to travel at 100 km/h. To ensure safety, high-precision road-to-vehicle communication systems will be installed in the dedicated lanes. Automakers are also accelerating the development of compatible vehicles.",
+      "expected_output": "Autonomous driving, dedicated lanes, 2027, Tomei Expressway, Level 4, 100 km/h, road-to-vehicle communication",
+      "scoring_method": "f1"
+    }
+  ],
+  "distractors": [
+    {
+      "input": "Today's weather is sunny. Rain is forecast for tomorrow. The weekend will be cloudy.",
+      "output": "Weather, sunny, rain, weekend, cloudy"
+    },
+    {
+      "input": "My hobby is reading. Lately I've been reading a lot of historical novels. My favorite author is Ryotaro Shiba.",
+      "output": "Hobby, reading, historical novels, Ryotaro Shiba"
+    }
+  ]
+}

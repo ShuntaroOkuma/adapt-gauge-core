@@ -1,0 +1,199 @@
+{
+  "pack_id": "task_pack_core_demo",
+  "pack_name": "Core Demo Pack",
+  "description": "A 4-task demo pack showcasing each scoring method: f1 (summarization), exact_match (classification), contains (code fix), and llm_judge (delivery route optimization).",
+  "version": "1.0",
+  "categories": ["summarization", "classification", "code_fix", "custom"],
+  "tasks": [
+    {
+      "task_id": "summarization_001",
+      "category": "summarization",
+      "version": "1.0",
+      "measures": ["Fidelity"],
+      "description": "Summarize the following news article into 3 bullet points",
+      "instruction": "Read the news article and extract key information into a concise summary. Include numbers and proper nouns accurately.",
+      "difficulty": "medium",
+      "examples": [
+        {
+          "input": "The Tokyo Metropolitan Government announced on the 15th that the number of new COVID-19 cases in the capital decreased by 20% compared to the previous week. A metropolitan official analyzed that 'the effects of vaccination are showing.' However, they also stated the need to continue monitoring variant strains. Hospital bed occupancy rates have been hovering in the 40% range, and the number of severe cases is also on a declining trend. The metropolitan government continues to urge thorough adherence to basic infection prevention measures.",
+          "output": "COVID cases down 20%, vaccine effect, variant monitoring, bed occupancy 40%, severe cases declining"
+        },
+        {
+          "input": "Major automaker Company A announced today that it will raise its electric vehicle (EV) sales target for fiscal year 2025 to 500,000 units, double the previous goal. The company's president expressed enthusiasm at a press conference, stating 'We will accelerate the transition to a decarbonized society.' The company plans to make 500 billion yen in new capital investment to expand production facilities both domestically and internationally. It also revealed that it will move up the start of mass production of all-solid-state batteries to 2026.",
+          "output": "EV sales 500,000 units, decarbonization, 500 billion yen capital investment, all-solid-state batteries 2026"
+        },
+        {
+          "input": "The Ministry of Education, Culture, Sports, Science and Technology announced that the adoption rate of digital textbooks in elementary and junior high schools nationwide has exceeded 80%. Adoption has rapidly expanded in the three years since introduction began in fiscal year 2021. While teachers have praised that 'classes utilizing video and audio have become possible,' there are also concerns that 'dealing with device malfunctions remains a challenge.' The ministry aims to complete adoption at all schools by fiscal year 2026.",
+          "output": "Digital textbooks 80%, video and audio utilization, device malfunctions, fiscal year 2026 full adoption"
+        },
+        {
+          "input": "The Bank of Japan decided at its monetary policy meeting to raise the short-term interest rate target to 0.25%. This marks the first rate hike in approximately 17 years. Governor Ueda explained that 'a virtuous cycle of prices and wages has been confirmed.' Markets saw a stronger yen and weaker stock prices. Regarding further rate increases, he stated that 'decisions will be made based on the data.'",
+          "output": "BOJ rate hike 0.25%, first in 17 years, price-wage cycle, stronger yen weaker stocks"
+        },
+        {
+          "input": "The Ministry of Internal Affairs and Communications announced that internet usage rates exceeded 90% across all age groups in 2024. Usage rates surged particularly among the elderly aged 70 and over, with the spread of online medical consultations and online shopping advancing. Meanwhile, cybercrime victimization including phishing scams is also on the rise, making the strengthening of security education a pressing issue.",
+          "output": "Internet usage 90%, elderly surge, online medical consultations, phishing scams, security education"
+        },
+        {
+          "input": "The Ministry of Economy, Trade and Industry announced that it will invest a total of 2 trillion yen in subsidies as a domestic semiconductor industry support measure. The plan involves attracting new manufacturing facilities to Kumamoto Prefecture and Hokkaido, aiming to triple domestic production capacity by 2030. The main objectives are to reduce the risks of overseas dependence and strengthen economic security.",
+          "output": "Semiconductor support 2 trillion yen, Kumamoto, Hokkaido, 2030, production capacity tripled, economic security"
+        },
+        {
+          "input": "The Ministry of Agriculture, Forestry and Fisheries announced that the 2024 rice crop index reached a national average of 102, indicating a good harvest. Results were particularly favorable in Hokkaido and the Tohoku region. However, there are concerns about falling rice prices, and the government is considering increasing reserve rice purchases as a support measure for farmers. Consumers can expect price stability.",
+          "output": "Rice crop index 102, good harvest, Hokkaido, Tohoku, falling rice prices, reserve rice, price stability"
+        },
+        {
+          "input": "The Japan Tourism Agency announced that the number of inbound foreign tourists in 2024 surpassed the record high of 40 million. The weak yen and increased new flight routes were the main contributing factors. In addition to Tokyo and Kyoto, dispersion to regional cities is also progressing. Meanwhile, the number of municipalities considering measures against overtourism, such as admission restrictions during peak times and the introduction of tourism taxes, is increasing.",
+          "output": "Inbound tourists 40 million, record high, weak yen, regional dispersion, overtourism, tourism tax"
+        }
+      ],
+      "test_cases": [
+        {
+          "input": "The Ministry of the Environment announced that domestic renewable energy power generation reached a record high in 2024. A significant increase in solar power generation capacity was the main factor. Large-scale solar power plants began operations one after another, particularly in Hokkaido and Kyushu. Meanwhile, the issue that power grid infrastructure development has not kept pace was also pointed out. The government has set a target of raising the renewable energy ratio to 40% or more by 2030.",
+          "expected_output": "Renewable energy record high, solar power, Hokkaido, Kyushu, power grid, 2030, 40%",
+          "scoring_method": "f1"
+        },
+        {
+          "input": "The Ministry of Health, Labour and Welfare announced that the number of births in 2024 is expected to fall below 700,000, a record low. The decline in the number of marriages and later marriages were cited as the main factors. As measures against the declining birthrate, the government is expanding child allowances and improving parental leave systems. Experts have also voiced that 'in addition to financial support, work-style reform is necessary.'",
+          "expected_output": "Births below 700,000, record low, declining marriages, later marriages, child allowances, parental leave, work-style reform",
+          "scoring_method": "f1"
+        },
+        {
+          "input": "The Ministry of Land, Infrastructure, Transport and Tourism announced that it will begin trial introduction of dedicated lanes for autonomous vehicles on expressways starting in 2027. The plan will start on a section of the Tomei Expressway and gradually expand. It will be limited to Level 4 autonomous vehicles, which will be permitted to travel at 100 km/h. To ensure safety, high-precision road-to-vehicle communication systems will be installed in the dedicated lanes. Automakers are also accelerating the development of compatible vehicles.",
+          "expected_output": "Autonomous driving, dedicated lanes, 2027, Tomei Expressway, Level 4, 100 km/h, road-to-vehicle communication",
+          "scoring_method": "f1"
+        }
+      ],
+      "distractors": [
+        {
+          "input": "Today's weather is sunny. Rain is forecast for tomorrow. The weekend will be cloudy.",
+          "output": "Weather, sunny, rain, weekend, cloudy"
+        },
+        {
+          "input": "My hobby is reading. Lately I've been reading a lot of historical novels. My favorite author is Ryotaro Shiba.",
+          "output": "Hobby, reading, historical novels, Ryotaro Shiba"
+        }
+      ]
+    },
+    {
+      "task_id": "classification_001",
+      "category": "classification",
+      "version": "1.0",
+      "measures": [],
+      "description": "Classify the following inquiry into the appropriate category. Categories are: Technical Support, Billing, Contract/Cancellation, Shipping/Logistics, Returns/Exchange, Account Management, Product Information, Other. Reply with the category name only",
+      "instruction": "Read the inquiry and select the most appropriate category from the 8 options. Reply with the category name only, no additional explanation.",
+      "difficulty": "medium",
+      "examples": [
+        {"input": "I can't log in. No matter how many times I enter my password, I get an 'authentication error' message.", "output": "Technical Support"},
+        {"input": "Last month's invoice includes a charge I don't recognize. I'd like to check the details.", "output": "Billing"},
+        {"input": "I'd like to cancel my service at the end of next month. Could you tell me how to proceed?", "output": "Contract/Cancellation"},
+        {"input": "The item I ordered still hasn't arrived. Could you tell me the delivery status?", "output": "Shipping/Logistics"},
+        {"input": "The product I received was damaged. I'd like to request an exchange.", "output": "Returns/Exchange"},
+        {"input": "I'd like to change the email address registered to my account.", "output": "Account Management"},
+        {"input": "I'd like to know more about the specifications of the new product X.", "output": "Product Information"},
+        {"input": "Do you have any case study materials about your services?", "output": "Other"}
+      ],
+      "test_cases": [
+        {"input": "The app crashes frequently. Updating to the latest version hasn't fixed the issue.", "expected_output": "Technical Support", "scoring_method": "exact_match"},
+        {"input": "I want to reset my password, but the reset email isn't arriving at my registered email address.", "expected_output": "Account Management", "scoring_method": "exact_match"},
+        {"input": "If I cancel my subscription, will I get a refund for the current month that I've already paid for?", "expected_output": "Billing", "scoring_method": "exact_match"},
+        {"input": "The product I purchased doesn't fit. Can I exchange it for a different size? Also, will there be a shipping fee?", "expected_output": "Returns/Exchange", "scoring_method": "exact_match"},
+        {"input": "I'd like to cancel my order, but it already shows as shipped.", "expected_output": "Shipping/Logistics", "scoring_method": "exact_match"}
+      ],
+      "distractors": [
+        {"input": "What's the weather going to be like tomorrow?", "output": "Other"},
+        {"input": "I'm really glad I bought this product! Thank you so much.", "output": "Other"}
+      ]
+    },
+    {
+      "task_id": "code_fix_001",
+      "category": "code_fix",
+      "version": "1.0",
+      "measures": [],
+      "description": "The following Python code has a bug. Output the fixed code only, without code blocks or markdown formatting",
+      "instruction": "Read the buggy Python code and output only the corrected code. Do not use markdown formatting or code blocks.",
+      "difficulty": "medium",
+      "examples": [
+        {"input": "# Buggy code: function to calculate list sum\ndef sum_list(numbers):\n    total = 0\n    for i in range(len(numbers)):\n        total += numbers[i + 1]\n    return total", "output": "def sum_list(numbers):\n    total = 0\n    for i in range(len(numbers)):\n        total += numbers[i]\n    return total"},
+        {"input": "# Buggy code: function to reverse a string\ndef reverse_string(s):\n    result = \"\"\n    for i in range(len(s), 0, -1):\n        result += s[i]\n    return result", "output": "def reverse_string(s):\n    result = \"\"\n    for i in range(len(s) - 1, -1, -1):\n        result += s[i]\n    return result"},
+        {"input": "# Buggy code: function to get a value from a dictionary\ndef get_value(data, key):\n    if key in data:\n        return data[key]\n    else:\n        return data[key]", "output": "def get_value(data, key):\n    if key in data:\n        return data[key]\n    else:\n        return None"},
+        {"input": "# Buggy code: function to calculate the average\ndef calculate_average(numbers):\n    total = sum(numbers)\n    return total / len(numbers)", "output": "def calculate_average(numbers):\n    if len(numbers) == 0:\n        return 0\n    total = sum(numbers)\n    return total / len(numbers)"},
+        {"input": "# Buggy code: function to calculate factorial\ndef factorial(n):\n    if n == 0:\n        return 0\n    return n * factorial(n - 1)", "output": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)"},
+        {"input": "# Buggy code: function to sort a list\ndef bubble_sort(arr):\n    for i in range(len(arr)):\n        for j in range(len(arr) - 1):\n            if arr[j] < arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n    return arr", "output": "def bubble_sort(arr):\n    for i in range(len(arr)):\n        for j in range(len(arr) - 1):\n            if arr[j] > arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n    return arr"},
+        {"input": "# Buggy code: function to calculate Fibonacci sequence\ndef fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 3)", "output": "def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)"},
+        {"input": "# Buggy code: function to check if a number is prime\ndef is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, n):\n        if n % i == 0:\n            return True\n    return False", "output": "def is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, n):\n        if n % i == 0:\n            return False\n    return True"}
+      ],
+      "test_cases": [
+        {"input": "# Buggy code: function to find the maximum value in a list\ndef find_max(numbers):\n    if len(numbers) == 0:\n        return None\n    max_val = 0\n    for num in numbers:\n        if num > max_val:\n            max_val = num\n    return max_val", "expected_output": "max_val = numbers[0]", "scoring_method": "contains"},
+        {"input": "# Buggy code: function to extract only even numbers from a list\ndef filter_even(numbers):\n    result = []\n    for num in numbers:\n        if num % 2 == 1:\n            result.append(num)\n    return result", "expected_output": "num % 2 == 0", "scoring_method": "contains"},
+        {"input": "# Buggy code: function to count the number of words in a string\ndef count_words(text):\n    words = text.split()\n    return len(words) - 1", "expected_output": "return len(words)", "scoring_method": "contains"}
+      ],
+      "distractors": [
+        {"input": "# Working code: print Hello World\nprint(\"Hello, World!\")", "output": "print(\"Hello, World!\")"},
+        {"input": "# Design issue: uses global variables\ncounter = 0\ndef increment():\n    global counter\n    counter += 1", "output": "def increment(counter):\n    return counter + 1"}
+      ]
+    },
+    {
+      "task_id": "custom_route_001",
+      "category": "custom",
+      "version": "1.0",
+      "measures": [],
+      "description": "Calculate the optimal delivery route based on the following constraints",
+      "instruction": "Calculate the optimal route from the distribution center to each delivery destination, considering cost, time, and constraints. Output the route and total cost.",
+      "difficulty": "hard",
+      "examples": [
+        {
+          "input": "[Delivery Plan]\nDeparture: Tokyo Warehouse (Start at 9:00)\nDestinations:\n  Store A: Yokohama (Duration 40 min, 2 Packages, Receiving Hours 10:00-12:00)\n  Store B: Kawasaki (Duration 30 min, 1 Package, Receiving Hours 9:00-11:00)\n  Store C: Shinagawa (Duration 20 min, 3 Packages, All Day)\n\nTravel Time:\n  Tokyo -> Yokohama: 60 min\n  Tokyo -> Kawasaki: 40 min\n  Tokyo -> Shinagawa: 15 min\n  Yokohama -> Kawasaki: 30 min\n  Kawasaki -> Shinagawa: 25 min\n\nFuel Cost: 10 yen/min",
+          "output": "[Optimal Route]\nTokyo (9:00) -> Kawasaki (Arrive 9:40, Depart 10:10) -> Yokohama (Arrive 10:40, Depart 11:20) -> Shinagawa (Arrive 11:50, Complete 12:10)\n\n[Reasoning]\n- Store B's receiving hours end at 11:00, so it is prioritized\n- Yokohama can be reached within the time window via Kawasaki\n- Shinagawa accepts all day, so it is last\n\n[Total Cost]\nTravel: 40+30+30=100 min -> 1000 yen\nUnloading: 40+30+20=90 min\nTotal Duration: 190 min"
+        },
+        {
+          "input": "[Delivery Plan]\nDeparture: Osaka Warehouse (Start at 8:00)\nDestinations:\n  Store X: Kobe (Duration 30 min, 5 Packages, Receiving Hours 9:00-10:00)\n  Store Y: Kyoto (Duration 45 min, 2 Packages, Receiving Hours 10:00-14:00)\n  Store Z: Nara (Duration 25 min, 3 Packages, Receiving Hours 8:30-9:30)\n\nTravel Time:\n  Osaka -> Kobe: 50 min\n  Osaka -> Kyoto: 60 min\n  Osaka -> Nara: 45 min\n  Kobe -> Kyoto: 90 min\n  Nara -> Kyoto: 70 min\n\nFuel Cost: 12 yen/min",
+          "output": "[Optimal Route]\nOsaka (8:00) -> Nara (Arrive 8:45, Depart 9:10) -> Via Osaka -> Kobe (Arrive 10:00, Depart 10:30) -> Kyoto (Arrive 12:00, Complete 12:45)\n\n[Reasoning]\n- Store Z (Nara) has the earliest deadline at 9:30\n- Store X (Kobe) cannot be reached in time directly from Nara, so route goes via Osaka\n- Store Y (Kyoto) has ample time\n\n[Total Cost]\nTravel: 45+45+50+90=230 min -> 2760 yen\nUnloading: 25+30+45=100 min\nTotal Duration: 330 min"
+        },
+        {
+          "input": "[Delivery Plan]\nDeparture: Nagoya Warehouse (Start at 10:00)\nDestinations:\n  Store P: Gifu (Duration 20 min, 2 Packages, All Day)\n  Store Q: Yokkaichi (Duration 35 min, 4 Packages, Receiving Hours 11:00-13:00)\n  Store R: Toyohashi (Duration 30 min, 1 Package, Receiving Hours 10:30-12:00)\n\nTravel Time:\n  Nagoya -> Gifu: 40 min\n  Nagoya -> Yokkaichi: 50 min\n  Nagoya -> Toyohashi: 60 min\n  Gifu -> Yokkaichi: 80 min\n  Toyohashi -> Yokkaichi: 90 min\n\nFuel Cost: 8 yen/min",
+          "output": "[Optimal Route]\nNagoya (10:00) -> Toyohashi (Arrive 11:00, Depart 11:30) -> Via Nagoya -> Yokkaichi (Arrive 12:20, Depart 12:55) -> Gifu (Arrive 14:15, Complete 14:35)\n\n[Reasoning]\n- Store R (Toyohashi) has a receiving deadline of 12:00, requires attention\n- Store Q (Yokkaichi) would be delayed going directly from Toyohashi, so route goes via Nagoya\n- Store P (Gifu) accepts all day, so it is last\n\n[Total Cost]\nTravel: 60+60+50+40=210 min -> 1680 yen\nUnloading: 30+35+20=85 min\nTotal Duration: 295 min"
+        },
+        {
+          "input": "[Delivery Plan]\nDeparture: Fukuoka Warehouse (Start at 9:00)\nDestinations:\n  Store D: Kitakyushu (Duration 40 min, 3 Packages, Receiving Hours 9:00-17:00)\n  Store E: Kurume (Duration 25 min, 2 Packages, Receiving Hours 10:00-12:00)\n\nTravel Time:\n  Fukuoka -> Kitakyushu: 70 min\n  Fukuoka -> Kurume: 45 min\n  Kitakyushu -> Kurume: 100 min\n\nFuel Cost: 15 yen/min",
+          "output": "[Optimal Route]\nFukuoka (9:00) -> Kurume (Arrive 9:45, Depart 10:10) -> Via Fukuoka -> Kitakyushu (Arrive 11:25, Complete 12:05)\n\n[Reasoning]\n- Store E (Kurume) starts receiving at 10:00, so there is a short wait\n- Direct Kurume -> Kitakyushu is far, so routing via Fukuoka is more efficient\n- Store D accepts all day, so there is ample time\n\n[Total Cost]\nTravel: 45+45+70=160 min -> 2400 yen\nUnloading: 25+40=65 min\nTotal Duration: 225 min"
+        },
+        {
+          "input": "[Delivery Plan]\nDeparture: Sapporo Warehouse (Start at 8:30)\nDestinations:\n  Store M: Otaru (Duration 30 min, 4 Packages, Receiving Hours 9:00-11:00)\n  Store N: Chitose (Duration 20 min, 2 Packages, Receiving Hours 10:00-15:00)\n  Store O: Ebetsu (Duration 15 min, 1 Package, Receiving Hours 8:00-9:00)\n\nTravel Time:\n  Sapporo -> Otaru: 50 min\n  Sapporo -> Chitose: 55 min\n  Sapporo -> Ebetsu: 25 min\n  Otaru -> Chitose: 90 min\n  Ebetsu -> Otaru: 60 min\n\nFuel Cost: 10 yen/min",
+          "output": "[Optimal Route]\nSapporo (8:30) -> Ebetsu (Arrive 8:55, Depart 9:10) -> Otaru (Arrive 10:10, Depart 10:40) -> Via Sapporo -> Chitose (Arrive 12:25, Complete 12:45)\n\n[Reasoning]\n- Store O (Ebetsu) has the earliest deadline at 9:00, so it is the top priority\n- Store M (Otaru) can be reached within the 11:00 deadline via Ebetsu\n- Store N (Chitose) has ample time; routing via Sapporo is shorter than going directly from Otaru\n\n[Total Cost]\nTravel: 25+60+50+55=190 min -> 1900 yen\nUnloading: 15+30+20=65 min\nTotal Duration: 255 min"
+        },
+        {
+          "input": "[Delivery Plan]\nDeparture: Sendai Warehouse (Start at 7:00)\nDestinations:\n  Store S: Yamagata (Duration 45 min, 5 Packages, Receiving Hours 8:00-10:00)\n  Store T: Fukushima (Duration 35 min, 3 Packages, Receiving Hours 9:00-12:00)\n\nTravel Time:\n  Sendai -> Yamagata: 80 min\n  Sendai -> Fukushima: 90 min\n  Yamagata -> Fukushima: 120 min\n\nFuel Cost: 11 yen/min",
+          "output": "[Optimal Route]\nSendai (7:00) -> Yamagata (Arrive 8:20, Depart 9:05) -> Via Sendai -> Fukushima (Arrive 10:55, Complete 11:30)\n\n[Reasoning]\n- Store S (Yamagata) has a receiving deadline of 10:00, so it is prioritized\n- Yamagata -> Fukushima direct takes 120 min, which is less efficient than via Sendai (80+90=170 min), but both options allow enough time\n- In this case, routing via Sendai has higher fuel cost but provides more margin for Fukushima's 12:00 deadline\n\n[Total Cost]\nTravel: 80+80+90=250 min -> 2750 yen\nUnloading: 45+35=80 min\nTotal Duration: 330 min"
+        }
+      ],
+      "distractors": [
+        {
+          "input": "[Traveling Salesman Problem]\nFind the shortest route to visit all 5 cities (A, B, C, D, E).\nDistance matrix:\nA-B:10, A-C:15, A-D:20, A-E:25\nB-C:35, B-D:25, B-E:30\nC-D:30, C-E:20\nD-E:15",
+          "output": "Shortest route: A -> B -> D -> E -> C -> A\nTotal distance: 10+25+15+20+15=85"
+        },
+        {
+          "input": "[Inventory Allocation Optimization]\nDeliver products from 3 warehouses to 2 stores.\nWarehouse inventory: W1=100, W2=150, W3=80\nStore demand: S1=180, S2=150\nTransport cost (yen/unit): W1->S1:5, W1->S2:8, W2->S1:6, W2->S2:4, W3->S1:7, W3->S2:6\nWhat is the minimum cost allocation?",
+          "output": "Optimal allocation:\nW1->S1: 100 units (500 yen)\nW2->S2: 150 units (600 yen)\nW3->S1: 80 units (560 yen)\nTotal cost: 1660 yen"
+        }
+      ],
+      "test_cases": [
+        {
+          "input": "[Delivery Plan]\nDeparture: Hiroshima Warehouse (Start at 9:30)\nDestinations:\n  Store J: Kure (Duration 25 min, 2 Packages, Receiving Hours 10:00-11:30)\n  Store K: Higashihiroshima (Duration 30 min, 3 Packages, All Day)\n  Store L: Hatsukaichi (Duration 20 min, 1 Package, Receiving Hours 9:00-10:30)\n\nTravel Time:\n  Hiroshima -> Kure: 45 min\n  Hiroshima -> Higashihiroshima: 40 min\n  Hiroshima -> Hatsukaichi: 30 min\n  Kure -> Higashihiroshima: 60 min\n  Hatsukaichi -> Kure: 55 min\n\nFuel Cost: 9 yen/min",
+          "expected_output": "Hiroshima Hatsukaichi Kure Higashihiroshima 10:30 11:30 deadline receiving optimal route cost",
+          "scoring_method": "llm_judge"
+        },
+        {
+          "input": "[Delivery Plan]\nDeparture: Niigata Warehouse (Start at 8:00)\nDestinations:\n  Store U: Nagaoka (Duration 35 min, 4 Packages, Receiving Hours 9:00-12:00)\n  Store V: Joetsu (Duration 40 min, 2 Packages, Receiving Hours 10:00-11:00)\n\nTravel Time:\n  Niigata -> Nagaoka: 70 min\n  Niigata -> Joetsu: 120 min\n  Nagaoka -> Joetsu: 60 min\n\nFuel Cost: 12 yen/min",
+          "expected_output": "Niigata Nagaoka Joetsu 11:00 deadline priority route travel cost fuel",
+          "scoring_method": "llm_judge"
+        },
+        {
+          "input": "[Delivery Plan]\nDeparture: Shizuoka Warehouse (Start at 10:00)\nDestinations:\n  Store G: Hamamatsu (Duration 30 min, 3 Packages, Receiving Hours 11:00-14:00)\n  Store H: Numazu (Duration 25 min, 2 Packages, Receiving Hours 10:30-12:00)\n  Store I: Fuji (Duration 20 min, 1 Package, All Day)\n\nTravel Time:\n  Shizuoka -> Hamamatsu: 80 min\n  Shizuoka -> Numazu: 50 min\n  Shizuoka -> Fuji: 35 min\n  Numazu -> Fuji: 20 min\n  Hamamatsu -> Numazu: 100 min\n\nFuel Cost: 10 yen/min",
+          "expected_output": "Shizuoka Numazu Fuji Hamamatsu 12:00 deadline efficient route cost optimal",
+          "scoring_method": "llm_judge"
+        }
+      ]
+    }
+  ]
+}

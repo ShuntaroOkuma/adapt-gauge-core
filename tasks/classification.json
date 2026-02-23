@@ -1,0 +1,80 @@
+{
+  "task_id": "classification_001",
+  "category": "classification",
+  "version": "1.0",
+  "measures": [],
+  "description": "Classify the following inquiry into the appropriate category. Categories are: Technical Support, Billing, Contract/Cancellation, Shipping/Logistics, Returns/Exchange, Account Management, Product Information, Other. Reply with the category name only",
+  "instruction": "Read the inquiry and select the most appropriate category from the 8 options. Reply with the category name only, no additional explanation.",
+  "difficulty": "medium",
+  "examples": [
+    {
+      "input": "I can't log in. No matter how many times I enter my password, I get an 'authentication error' message.",
+      "output": "Technical Support"
+    },
+    {
+      "input": "Last month's invoice includes a charge I don't recognize. I'd like to check the details.",
+      "output": "Billing"
+    },
+    {
+      "input": "I'd like to cancel my service at the end of next month. Could you tell me how to proceed?",
+      "output": "Contract/Cancellation"
+    },
+    {
+      "input": "The item I ordered still hasn't arrived. Could you tell me the delivery status?",
+      "output": "Shipping/Logistics"
+    },
+    {
+      "input": "The product I received was damaged. I'd like to request an exchange.",
+      "output": "Returns/Exchange"
+    },
+    {
+      "input": "I'd like to change the email address registered to my account.",
+      "output": "Account Management"
+    },
+    {
+      "input": "I'd like to know more about the specifications of the new product X.",
+      "output": "Product Information"
+    },
+    {
+      "input": "Do you have any case study materials about your services?",
+      "output": "Other"
+    }
+  ],
+  "test_cases": [
+    {
+      "input": "The app crashes frequently. Updating to the latest version hasn't fixed the issue.",
+      "expected_output": "Technical Support",
+      "scoring_method": "exact_match"
+    },
+    {
+      "input": "I want to reset my password, but the reset email isn't arriving at my registered email address.",
+      "expected_output": "Account Management",
+      "scoring_method": "exact_match"
+    },
+    {
+      "input": "If I cancel my subscription, will I get a refund for the current month that I've already paid for?",
+      "expected_output": "Billing",
+      "scoring_method": "exact_match"
+    },
+    {
+      "input": "The product I purchased doesn't fit. Can I exchange it for a different size? Also, will there be a shipping fee?",
+      "expected_output": "Returns/Exchange",
+      "scoring_method": "exact_match"
+    },
+    {
+      "input": "I'd like to cancel my order, but it already shows as shipped.",
+      "expected_output": "Shipping/Logistics",
+      "scoring_method": "exact_match"
+    }
+  ],
+  "distractors": [
+    {
+      "input": "What's the weather going to be like tomorrow?",
+      "output": "Other"
+    },
+    {
+      "input": "I'm really glad I bought this product! Thank you so much.",
+      "output": "Other"
+    }
+  ]
+}
