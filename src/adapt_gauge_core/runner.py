@@ -15,6 +15,7 @@ import os
 import sys
 from dataclasses import asdict
 from datetime import datetime
+from functools import partial
 from pathlib import Path
 
 import pandas as pd
@@ -51,9 +52,10 @@ def parse_args() -> argparse.Namespace:
         help="Comma-separated list of model names (default: uses DEFAULT_MODELS)",
     )
     parser.add_argument(
-        "--shots",
+        "--num-trials",
+        type=int,
         default=None,
-        help="Comma-separated list of shot counts (default: 0,1,2,4,8)",
+        help="Number of trials (default: HARNESS_NUM_TRIALS from .env)",
     )
     parser.add_argument(
         "--output-dir",
@@ -69,6 +71,7 @@ def main() -> None:
 
     # Load config
     config = load_config()
+    make_client = partial(create_client, config=config)
 
     # Parse models
     if args.models:
@@ -76,11 +79,9 @@ def main() -> None:
     else:
         models = DEFAULT_MODELS
 
-    # Parse shots
-    if args.shots:
-        shots = [int(s.strip()) for s in args.shots.split(",")]
-    else:
-        shots = SHOT_SCHEDULE
+    # Determine number of trials
+    num_trials = args.num_trials if args.num_trials else config.trials.num_trials
+    shots = SHOT_SCHEDULE
 
     # Load task pack
     print(f"\n=== Loading task pack: {args.task_pack} ===\n")
@@ -90,10 +91,11 @@ def main() -> None:
     print(f"  Tasks: {len(tasks)}")
     print(f"  Models: {models}")
     print(f"  Shots: {shots}")
+    print(f"  Trials: {num_trials}")
     print()
 
     # Step 1: Health check
-    available_models, _ = run_health_check(models, create_client)
+    available_models, _ = run_health_check(models, make_client)
 
     if not available_models:
         print("ERROR: No models available. Exiting.")
@@ -106,10 +108,10 @@ def main() -> None:
         grader_model = os.environ.get("LLM_JUDGE_GRADER_MODEL", config.llm_judge.grader_model)
         print(f"=== Grader Health Check (llm_judge tasks: {llm_judge_task_ids}) ===\n")
         print(f"  Grader model: {grader_model}... ", end="", flush=True)
-        grader_ok, grader_err = run_grader_health_check(grader_model, create_client)
+        grader_ok, grader_err = run_grader_health_check(grader_model, make_client)
         if grader_ok:
             print("OK")
-            grader_client = create_client(grader_model)
+            grader_client = make_client(grader_model)
         else:
             print("FAILED")
             print(f"  {grader_err}")
@@ -118,30 +120,33 @@ def main() -> None:
 
     # Step 2: Run evaluations
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
-    total = sum(len(t.test_cases) for t in tasks) * len(available_models) * len(shots)
+    num_evals_per_trial = sum(len(t.test_cases) for t in tasks) * len(available_models) * len(shots)
+    total = num_evals_per_trial * num_trials
     print(f"=== Running Evaluations ({total} total) ===\n")
 
     all_results = []
     current = 0
 
-    for model_name in available_models:
-        client = create_client(model_name)
-        for task in tasks:
-            for shot in shots:
-                for test_case in task.test_cases:
-                    current += 1
-                    print(f"[{current}/{total}] {task.task_id} | {model_name} | {shot}-shot")
+    for trial_id in range(1, num_trials + 1):
+        trial_label = f"T{trial_id}/{num_trials}" if num_trials > 1 else ""
+        for model_name in available_models:
+            client = make_client(model_name)
+            for task in tasks:
+                for shot in shots:
+                    for test_case in task.test_cases:
+                        current += 1
+                        print(f"[{current}/{total}] {trial_label} {task.task_id} | {model_name} | {shot}-shot")
 
-                    result = run_single_evaluation(
-                        task=task,
-                        test_case=test_case,
-                        model_client=client,
-                        shot_count=shot,
-                        run_id=run_id,
-                        grader_client=grader_client,
-                    )
-                    all_results.append(result)
-                    print(f"  Score: {result.score:.2f} | Latency: {result.latency_ms}ms")
+                        result = run_single_evaluation(
+                            task=task,
+                            test_case=test_case,
+                            model_client=client,
+                            shot_count=shot,
+                            run_id=run_id,
+                            grader_client=grader_client,
+                        )
+                        all_results.append(result)
+                        print(f"  Score: {result.score:.2f} | Latency: {result.latency_ms}ms")
 
     # Step 3: Aggregate results
     print(f"\n=== Aggregating Results ===\n")
