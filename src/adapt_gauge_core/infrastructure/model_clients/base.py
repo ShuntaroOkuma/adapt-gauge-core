@@ -12,9 +12,10 @@ from adapt_gauge_core.domain.value_objects import ModelResponse
 
 
 class RetryMixin:
-    """Exponential backoff retry. Subclasses set self.max_retries."""
+    """Exponential backoff retry. Subclasses set self.max_retries and self.retry_delay_seconds."""
 
     max_retries: int = 3
+    retry_delay_seconds: float = 1.0
 
     def _with_retry(self, fn, retryable_exceptions=(Exception,)):
         """
@@ -41,7 +42,9 @@ class RetryMixin:
             except retryable_exceptions as e:
                 last_exception = e
                 if attempt < self.max_retries - 1:
-                    time.sleep(2 ** attempt)
+                    delay = self.retry_delay_seconds * (2 ** attempt)
+                    print(f"  Retry {attempt + 1}/{self.max_retries - 1} after {delay:.0f}s ({type(e).__name__})")
+                    time.sleep(delay)
 
         assert last_exception is not None
         raise last_exception

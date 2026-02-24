@@ -7,6 +7,7 @@ import time
 
 from google import genai
 from google.api_core import exceptions as google_exceptions
+from google.genai import errors as genai_errors
 from google.genai.types import GenerateContentConfig, HttpOptions
 
 from adapt_gauge_core.domain.value_objects import ModelResponse
@@ -21,16 +22,18 @@ class VertexAIClient(RetryMixin, ModelClient):
         model_name: str,
         project_id: str | None = None,
         location: str | None = None,
-        timeout_seconds: int = 30,
-        max_retries: int = 3
+        timeout_seconds: int = 120,
+        max_retries: int = 3,
+        retry_delay_seconds: float = 5.0,
     ):
         """
         Args:
             model_name: Model name (e.g. gemini-2.5-pro, gemini-2.5-flash)
             project_id: GCP project ID (falls back to environment variable if not specified)
             location: Region (falls back to environment variable if not specified)
-            timeout_seconds: Timeout in seconds (default: 30)
+            timeout_seconds: Timeout in seconds (default: 120)
             max_retries: Maximum number of retries (default: 3)
+            retry_delay_seconds: Base delay between retries in seconds (default: 5.0)
         """
         self.model_name = model_name
         self.project_id = project_id or os.environ.get("GCP_PROJECT_ID")
@@ -38,6 +41,7 @@ class VertexAIClient(RetryMixin, ModelClient):
         self.location = location or "global"
         self.timeout_seconds = timeout_seconds
         self.max_retries = max_retries
+        self.retry_delay_seconds = retry_delay_seconds
 
         if not self.project_id:
             raise ValueError("GCP_PROJECT_ID is not set")
@@ -99,5 +103,7 @@ class VertexAIClient(RetryMixin, ModelClient):
                 google_exceptions.DeadlineExceeded,
                 google_exceptions.ServiceUnavailable,
                 google_exceptions.ResourceExhausted,
+                genai_errors.ServerError,
+                genai_errors.ClientError,
             ),
         )

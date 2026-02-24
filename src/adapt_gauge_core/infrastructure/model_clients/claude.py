@@ -18,17 +18,20 @@ class ClaudeClient(RetryMixin, ModelClient):
         self,
         model_name: str,
         api_key: str | None = None,
-        max_retries: int = 3
+        max_retries: int = 3,
+        retry_delay_seconds: float = 5.0,
     ):
         """
         Args:
             model_name: Model name (e.g. claude-sonnet-4-5-20250514)
             api_key: Anthropic API key (falls back to environment variable if not specified)
             max_retries: Maximum number of retries (default: 3)
+            retry_delay_seconds: Base delay between retries in seconds (default: 5.0)
         """
         self.model_name = model_name
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
         self.max_retries = max_retries
+        self.retry_delay_seconds = retry_delay_seconds
 
         if not self.api_key:
             raise ValueError("ANTHROPIC_API_KEY is not set")

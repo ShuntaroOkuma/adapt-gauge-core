@@ -21,7 +21,8 @@ class LMStudioClient(RetryMixin, ModelClient):
         base_url: str | None = None,
         api_key: str | None = None,
         max_retries: int = 3,
-        max_tokens: int = 1024
+        retry_delay_seconds: float = 5.0,
+        max_tokens: int = 1024,
     ):
         """
         Args:
@@ -29,12 +30,14 @@ class LMStudioClient(RetryMixin, ModelClient):
             base_url: LMStudio API endpoint (falls back to LMSTUDIO_BASE_URL env var if not specified)
             api_key: API key (falls back to LMSTUDIO_API_KEY env var if not specified; usually not required for LMStudio)
             max_retries: Maximum number of retries (default: 3)
+            retry_delay_seconds: Base delay between retries in seconds (default: 5.0)
             max_tokens: Maximum number of tokens (default: 1024)
         """
         self.model_name = model_name
         # Strip the lmstudio/ prefix to get the model name for the API
         self.api_model_name = model_name.removeprefix("lmstudio/")
         self.max_retries = max_retries
+        self.retry_delay_seconds = retry_delay_seconds
         self.max_tokens = max_tokens
 
         # Configuration priority: argument > environment variable > default value
