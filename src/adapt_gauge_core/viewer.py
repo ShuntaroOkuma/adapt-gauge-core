@@ -1,0 +1,231 @@
+"""
+adapt-gauge-core Result Viewer
+
+Minimal Streamlit dashboard for viewing evaluation results.
+Displays learning curves and collapse (negative learning) detection.
+
+Usage:
+    pip install -e ".[viewer]"
+    streamlit run src/adapt_gauge_core/viewer.py
+    streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results
+
+Requires the package to be installed (e.g. via ``pip install -e .``).
+"""
+
+from __future__ import annotations
+
+import argparse
+from pathlib import Path
+
+import pandas as pd
+import plotly.graph_objects as go
+import streamlit as st
+
+from adapt_gauge_core.domain.constants import SHOT_SCHEDULE
+from adapt_gauge_core.use_cases.aei import detect_negative_learning
+
+# -- Colors --
+MODEL_COLORS = [
+    "#1a73e8", "#e8710a", "#34a853", "#ea4335", "#9334e6",
+    "#f538a0", "#00897b", "#6d4c41", "#546e7a", "#d500f9",
+]
+
+SHOT_LABELS = {s: f"{s}-shot" for s in SHOT_SCHEDULE}
+NEGATIVE_LEARNING_THRESHOLD = 0.02
+
+
+def _short_model_name(name: str) -> str:
+    """Shorten model name for display."""
+    parts = name.split("/")
+    return parts[-1] if len(parts) > 1 else name
+
+
+def _find_result_pairs(results_dir: Path) -> list[dict]:
+    """Find matching raw_results / summary CSV pairs in results_dir."""
+    pairs = []
+    for raw_path in sorted(results_dir.glob("raw_results_*.csv"), reverse=True):
+        run_id = raw_path.stem.replace("raw_results_", "")
+        summary_path = results_dir / f"summary_{run_id}.csv"
+        pairs.append({
+            "run_id": run_id,
+            "raw_path": raw_path,
+            "summary_path": summary_path if summary_path.exists() else None,
+        })
+    return pairs
+
+
+def _load_data(pair: dict) -> tuple[pd.DataFrame, pd.DataFrame | None]:
+    """Load summary and raw DataFrames from a result pair."""
+    raw_df = pd.read_csv(pair["raw_path"])
+    summary_df = pd.read_csv(pair["summary_path"]) if pair["summary_path"] else None
+    return raw_df, summary_df
+
+
+def _render_learning_curve(summary_df: pd.DataFrame) -> None:
+    """Render learning curve charts per task."""
+    st.header("Learning Curves")
+
+    tasks = summary_df["task_id"].unique()
+    selected_task = st.radio(
+        "Task",
+        options=tasks,
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+
+    filtered = summary_df[summary_df["task_id"] == selected_task]
+    models = filtered["model_name"].unique()
+
+    fig = go.Figure()
+
+    for i, model in enumerate(models):
+        row = filtered[filtered["model_name"] == model].iloc[0]
+        color = MODEL_COLORS[i % len(MODEL_COLORS)]
+        short_name = _short_model_name(model)
+
+        scores = []
+        shots = []
+        for shot in SHOT_SCHEDULE:
+            col = f"score_{shot}shot"
+            if col in row.index:
+                shots.append(shot)
+                scores.append(row[col])
+
+        fig.add_trace(go.Scatter(
+            x=shots,
+            y=scores,
+            mode="lines+markers",
+            name=short_name,
+            line=dict(color=color, width=2),
+            marker=dict(color=color, size=8),
+        ))
+
+        # Highlight negative learning intervals
+        for j in range(1, len(scores)):
+            if scores[j] < scores[j - 1] - NEGATIVE_LEARNING_THRESHOLD:
+                fig.add_trace(go.Scatter(
+                    x=[shots[j - 1], shots[j]],
+                    y=[scores[j - 1], scores[j]],
+                    mode="lines",
+                    line=dict(color="#ea4335", width=3, dash="dot"),
+                    showlegend=False,
+                    hoverinfo="skip",
+                ))
+
+    # 80% target line
+    fig.add_hline(
+        y=0.8,
+        line_dash="dash",
+        line_color="#5f6368",
+        line_width=1,
+        annotation_text="80% target",
+        annotation_position="top left",
+        annotation_font=dict(size=11, color="#5f6368"),
+    )
+
+    fig.update_layout(
+        title=f"Learning Curve: {selected_task}",
+        xaxis_title="Shot count",
+        yaxis_title="Score",
+        yaxis_range=[0, 1.05],
+        xaxis_tickvals=SHOT_SCHEDULE,
+        xaxis_ticktext=[SHOT_LABELS[s] for s in SHOT_SCHEDULE],
+        legend_title="Model",
+        template="plotly_white",
+        height=450,
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+
+def _render_collapse_detection(summary_df: pd.DataFrame) -> None:
+    """Render collapse / negative learning warnings."""
+    st.header("Collapse Detection")
+
+    alerts = detect_negative_learning(summary_df)
+
+    if not alerts:
+        st.success("No negative learning detected.")
+        return
+
+    for alert in alerts:
+        short = _short_model_name(alert["model"])
+        drop = alert["drop_pct"]
+        st.warning(
+            f"**{short}** on `{alert['task_id']}`: "
+            f"0-shot {alert['score_0shot']:.1%} -> final {alert['score_final']:.1%} "
+            f"(drop {drop:.1f}%)"
+        )
+
+
+def _render_metrics_table(summary_df: pd.DataFrame) -> None:
+    """Render a summary metrics table."""
+    st.header("Metrics Summary")
+
+    display_cols = ["model_name", "task_id", "category"]
+    score_cols = [f"score_{s}shot" for s in SHOT_SCHEDULE if f"score_{s}shot" in summary_df.columns]
+    metric_cols = ["improvement_rate", "threshold_shots", "learning_curve_auc"]
+    optional_cols = [c for c in ["num_trials", "score_variance"] if c in summary_df.columns]
+    pass_cols = sorted([c for c in summary_df.columns if c.startswith("pass_")])
+
+    all_cols = display_cols + score_cols + metric_cols + optional_cols + pass_cols
+    existing = [c for c in all_cols if c in summary_df.columns]
+
+    styled = summary_df[existing].copy()
+    styled["model_name"] = styled["model_name"].apply(_short_model_name)
+    styled = styled.rename(columns={"model_name": "Model", "task_id": "Task", "category": "Category"})
+
+    st.dataframe(styled, use_container_width=True, hide_index=True)
+
+
+def main() -> None:
+    # Parse --results-dir from Streamlit args (after --)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--results-dir", default="results")
+    args, _ = parser.parse_known_args()
+
+    results_dir = Path(args.results_dir)
+
+    st.set_page_config(page_title="adapt-gauge-core", layout="wide")
+    st.title("adapt-gauge-core Results")
+
+    # Find result files
+    if not results_dir.exists():
+        st.error(f"Results directory not found: `{results_dir}`")
+        st.info("Run an evaluation first:\n```\npython -m adapt_gauge_core.runner --task-pack tasks/task_pack_core_demo.json\n```")
+        return
+
+    pairs = _find_result_pairs(results_dir)
+    if not pairs:
+        st.warning(f"No result files found in `{results_dir}/`")
+        st.info("Run an evaluation first:\n```\npython -m adapt_gauge_core.runner --task-pack tasks/task_pack_core_demo.json\n```")
+        return
+
+    # Run selector
+    run_ids = [p["run_id"] for p in pairs]
+    selected_run_id = st.sidebar.selectbox("Run", run_ids, index=0)
+    selected_pair = next(p for p in pairs if p["run_id"] == selected_run_id)
+
+    raw_df, summary_df = _load_data(selected_pair)
+
+    if summary_df is None:
+        st.warning("Summary CSV not found. Showing raw results only.")
+        st.dataframe(raw_df, use_container_width=True)
+        return
+
+    # Sidebar info
+    st.sidebar.markdown("---")
+    st.sidebar.markdown(f"**Tasks**: {summary_df['task_id'].nunique()}")
+    st.sidebar.markdown(f"**Models**: {summary_df['model_name'].nunique()}")
+    if "num_trials" in summary_df.columns:
+        st.sidebar.markdown(f"**Trials**: {int(summary_df['num_trials'].iloc[0])}")
+    st.sidebar.markdown(f"**Raw results**: {len(raw_df)} rows")
+
+    # Render sections
+    _render_learning_curve(summary_df)
+    _render_collapse_detection(summary_df)
+    _render_metrics_table(summary_df)
+
+
+if __name__ == "__main__":
+    main()
