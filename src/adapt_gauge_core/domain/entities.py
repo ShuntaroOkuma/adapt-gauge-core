@@ -22,6 +22,7 @@ class EvaluationResult:
     scoring_method: str
     latency_ms: int
     timestamp: str
+    trial_id: int = 1
     input_tokens: int = 0
     output_tokens: int = 0
 
