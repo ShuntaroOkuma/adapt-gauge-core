@@ -5,24 +5,21 @@ Minimal Streamlit dashboard for viewing evaluation results.
 Displays learning curves and collapse (negative learning) detection.
 
 Usage:
+    pip install -e ".[viewer]"
     streamlit run src/adapt_gauge_core/viewer.py
     streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results
+
+Requires the package to be installed (e.g. via ``pip install -e .``).
 """
 
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
-
-# Add src to path so adapt_gauge_core is importable
-_src_dir = Path(__file__).parent.parent
-if str(_src_dir) not in sys.path:
-    sys.path.insert(0, str(_src_dir))
 
 from adapt_gauge_core.domain.constants import SHOT_SCHEDULE
 from adapt_gauge_core.use_cases.aei import detect_negative_learning
@@ -34,6 +31,7 @@ MODEL_COLORS = [
 ]
 
 SHOT_LABELS = {s: f"{s}-shot" for s in SHOT_SCHEDULE}
+NEGATIVE_LEARNING_THRESHOLD = 0.02
 
 
 def _short_model_name(name: str) -> str:
@@ -63,7 +61,7 @@ def _load_data(pair: dict) -> tuple[pd.DataFrame, pd.DataFrame | None]:
     return raw_df, summary_df
 
 
-def _render_learning_curve(summary_df: pd.DataFrame, raw_df: pd.DataFrame | None) -> None:
+def _render_learning_curve(summary_df: pd.DataFrame) -> None:
     """Render learning curve charts per task."""
     st.header("Learning Curves")
 
@@ -104,7 +102,7 @@ def _render_learning_curve(summary_df: pd.DataFrame, raw_df: pd.DataFrame | None
 
         # Highlight negative learning intervals
         for j in range(1, len(scores)):
-            if scores[j] < scores[j - 1] - 0.02:
+            if scores[j] < scores[j - 1] - NEGATIVE_LEARNING_THRESHOLD:
                 fig.add_trace(go.Scatter(
                     x=[shots[j - 1], shots[j]],
                     y=[scores[j - 1], scores[j]],
@@ -224,7 +222,7 @@ def main() -> None:
     st.sidebar.markdown(f"**Raw results**: {len(raw_df)} rows")
 
     # Render sections
-    _render_learning_curve(summary_df, raw_df)
+    _render_learning_curve(summary_df)
     _render_collapse_detection(summary_df)
     _render_metrics_table(summary_df)
 
