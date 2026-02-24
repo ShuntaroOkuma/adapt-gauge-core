@@ -1,5 +1,5 @@
 """
-efficiency_calc.pyのテスト
+Tests for efficiency_calc.py
 """
 
 import pytest
@@ -15,10 +15,10 @@ from adapt_gauge_core.efficiency_calc import (
 
 
 class TestCostMetrics:
-    """CostMetrics dataclassのテスト"""
+    """Tests for CostMetrics dataclass"""
 
     def test_create_with_defaults(self):
-        """デフォルト値でインスタンス作成"""
+        """Create instance with default values"""
         metrics = CostMetrics(
             input_tokens=1000,
             output_tokens=500,
@@ -32,7 +32,7 @@ class TestCostMetrics:
         assert metrics.time_price_per_sec == 0.0
 
     def test_create_with_all_values(self):
-        """全値指定でインスタンス作成"""
+        """Create instance with all values specified"""
         metrics = CostMetrics(
             input_tokens=1000,
             output_tokens=500,
@@ -49,26 +49,26 @@ class TestCostMetrics:
         assert metrics.time_price_per_sec == 0.001
 
     def test_negative_input_tokens_raises_error(self):
-        """負の入力トークン数でエラー"""
+        """Should raise error for negative input tokens"""
         with pytest.raises(ValueError, match="input_tokens must be non-negative"):
             CostMetrics(input_tokens=-1, output_tokens=500, latency_ms=1500)
 
     def test_negative_output_tokens_raises_error(self):
-        """負の出力トークン数でエラー"""
+        """Should raise error for negative output tokens"""
         with pytest.raises(ValueError, match="output_tokens must be non-negative"):
             CostMetrics(input_tokens=1000, output_tokens=-1, latency_ms=1500)
 
     def test_negative_latency_raises_error(self):
-        """負のレイテンシでエラー"""
+        """Should raise error for negative latency"""
         with pytest.raises(ValueError, match="latency_ms must be non-negative"):
             CostMetrics(input_tokens=1000, output_tokens=500, latency_ms=-1)
 
 
 class TestCalculateTotalCost:
-    """calculate_total_cost関数のテスト"""
+    """Tests for calculate_total_cost function"""
 
     def test_zero_cost_with_defaults(self):
-        """デフォルト価格（0）でコストは0"""
+        """Cost should be 0 with default prices (0)"""
         metrics = CostMetrics(
             input_tokens=1000,
             output_tokens=500,
@@ -77,7 +77,7 @@ class TestCalculateTotalCost:
         assert calculate_total_cost(metrics) == 0.0
 
     def test_token_cost_calculation(self):
-        """トークンコストの計算"""
+        """Token cost calculation"""
         # 1M input tokens * $3 = $3
         # 1M output tokens * $15 = $15
         # Total = $18
@@ -91,7 +91,7 @@ class TestCalculateTotalCost:
         assert calculate_total_cost(metrics) == 18.0
 
     def test_time_cost_calculation(self):
-        """時間コストの計算"""
+        """Time cost calculation"""
         # 1000ms = 1s, 1s * $0.001 = $0.001
         metrics = CostMetrics(
             input_tokens=0,
@@ -102,7 +102,7 @@ class TestCalculateTotalCost:
         assert calculate_total_cost(metrics) == 0.001
 
     def test_combined_cost_calculation(self):
-        """トークンコスト+時間コストの計算"""
+        """Token cost + time cost calculation"""
         # 1000 input tokens * $3 / 1M = $0.003
         # 500 output tokens * $15 / 1M = $0.0075
         # 2000ms = 2s * $0.01 = $0.02
@@ -120,93 +120,93 @@ class TestCalculateTotalCost:
 
 
 class TestCostEfficiency:
-    """calculate_economy_score関数のテスト"""
+    """Tests for calculate_economy_score function"""
 
     def test_normal_calculation(self):
-        """通常の計算"""
-        # 精度0.8 / コスト$0.01 = 80
+        """Normal calculation"""
+        # Accuracy 0.8 / cost $0.01 = 80
         assert calculate_economy_score(0.8, 0.01) == 80.0
 
     def test_zero_cost_returns_zero(self):
-        """コストが0の場合は0を返す"""
+        """Should return 0 when cost is 0"""
         assert calculate_economy_score(0.8, 0.0) == 0.0
 
     def test_negative_cost_returns_zero(self):
-        """コストが負の場合は0を返す"""
+        """Should return 0 when cost is negative"""
         assert calculate_economy_score(0.8, -0.01) == 0.0
 
     def test_perfect_accuracy(self):
-        """精度100%の場合"""
+        """100% accuracy case"""
         assert calculate_economy_score(1.0, 0.1) == 10.0
 
     def test_zero_accuracy(self):
-        """精度0%の場合"""
+        """0% accuracy case"""
         assert calculate_economy_score(0.0, 0.1) == 0.0
 
 
 class TestImprovementRate:
-    """improvement_rate関数のテスト"""
+    """Tests for improvement_rate function"""
 
     def test_normal_calculation(self):
-        """通常の計算"""
+        """Normal calculation"""
         scores = {0: 0.3, 1: 0.5, 2: 0.7, 4: 0.85, 8: 0.95}
         # (0.95 - 0.3) / 8 = 0.08125
         assert improvement_rate(scores) == pytest.approx(0.08125)
 
     def test_no_improvement(self):
-        """改善なしの場合"""
+        """No improvement case"""
         scores = {0: 0.5, 1: 0.5, 2: 0.5, 4: 0.5, 8: 0.5}
         assert improvement_rate(scores) == 0.0
 
     def test_negative_improvement(self):
-        """悪化した場合（負の改善率）"""
+        """Degradation case (negative improvement rate)"""
         scores = {0: 0.8, 1: 0.7, 2: 0.6, 4: 0.5, 8: 0.4}
         assert improvement_rate(scores) == pytest.approx(-0.05)
 
 
 class TestThresholdShots:
-    """threshold_shots関数のテスト"""
+    """Tests for threshold_shots function"""
 
     def test_threshold_reached_at_zero(self):
-        """0-shotで閾値達成"""
+        """Threshold reached at 0-shot"""
         scores = {0: 0.9, 1: 0.92, 2: 0.95, 4: 0.97, 8: 0.99}
         assert threshold_shots(scores, 0.8) == 0
 
     def test_threshold_reached_at_two(self):
-        """2-shotで閾値達成"""
+        """Threshold reached at 2-shot"""
         scores = {0: 0.3, 1: 0.5, 2: 0.85, 4: 0.9, 8: 0.95}
         assert threshold_shots(scores, 0.8) == 2
 
     def test_threshold_not_reached(self):
-        """閾値未到達"""
+        """Threshold not reached"""
         scores = {0: 0.3, 1: 0.4, 2: 0.5, 4: 0.6, 8: 0.7}
         assert threshold_shots(scores, 0.8) == -1
 
     def test_custom_threshold(self):
-        """カスタム閾値"""
+        """Custom threshold value"""
         scores = {0: 0.3, 1: 0.5, 2: 0.7, 4: 0.85, 8: 0.95}
         assert threshold_shots(scores, 0.9) == 8
 
 
 class TestLearningCurveAuc:
-    """learning_curve_auc関数のテスト"""
+    """Tests for learning_curve_auc function"""
 
     def test_perfect_score(self):
-        """全shot数で100%の場合"""
+        """100% score at all shot counts"""
         scores = {0: 1.0, 1: 1.0, 2: 1.0, 4: 1.0, 8: 1.0}
-        # 全区間が1.0なのでAUC=1.0
+        # All intervals at 1.0 so AUC=1.0
         assert learning_curve_auc(scores) == 1.0
 
     def test_zero_score(self):
-        """全shot数で0%の場合"""
+        """0% score at all shot counts"""
         scores = {0: 0.0, 1: 0.0, 2: 0.0, 4: 0.0, 8: 0.0}
         assert learning_curve_auc(scores) == 0.0
 
     def test_linear_improvement(self):
-        """線形改善の場合"""
-        # 例: 0, 0.125, 0.25, 0.5, 1.0 (x軸0,1,2,4,8に対して線形)
+        """Linear improvement case"""
+        # e.g. 0, 0.125, 0.25, 0.5, 1.0 (linear over x-axis 0,1,2,4,8)
         scores = {0: 0.0, 1: 0.125, 2: 0.25, 4: 0.5, 8: 1.0}
-        # 台形法で計算
+        # Trapezoidal rule:
         # [0,1]: (0 + 0.125)/2 * 1 = 0.0625
         # [1,2]: (0.125 + 0.25)/2 * 1 = 0.1875
         # [2,4]: (0.25 + 0.5)/2 * 2 = 0.75
@@ -215,17 +215,17 @@ class TestLearningCurveAuc:
         assert learning_curve_auc(scores) == pytest.approx(0.5)
 
     def test_missing_shot_raises_error(self):
-        """必要なshot数がない場合エラー"""
-        scores = {0: 0.3, 1: 0.5, 2: 0.7, 4: 0.85}  # 8-shot欠落
+        """Should raise error when required shot count is missing"""
+        scores = {0: 0.3, 1: 0.5, 2: 0.7, 4: 0.85}  # 8-shot missing
         with pytest.raises(ValueError, match="Score for shot count 8 is missing"):
             learning_curve_auc(scores)
 
 
 class TestCalculateAllMetrics:
-    """calculate_all_metrics関数のテスト"""
+    """Tests for calculate_all_metrics function"""
 
     def test_all_metrics_returned(self):
-        """全メトリクスが返される"""
+        """All metrics should be returned"""
         scores = {0: 0.3, 1: 0.5, 2: 0.7, 4: 0.85, 8: 0.95}
         result = calculate_all_metrics(scores)
 
@@ -234,11 +234,11 @@ class TestCalculateAllMetrics:
         assert "learning_curve_auc" in result
 
     def test_metrics_values(self):
-        """各メトリクスの値が正しい"""
+        """Each metric value should be correct"""
         scores = {0: 0.3, 1: 0.5, 2: 0.7, 4: 0.85, 8: 0.95}
         result = calculate_all_metrics(scores, threshold=0.8)
 
         assert result["improvement_rate"] == pytest.approx(0.08125)
         assert result["threshold_shots"] == 4  # 0.85 >= 0.8
-        # AUC計算は別テストで検証済み
+        # AUC calculation verified in separate test
         assert result["learning_curve_auc"] > 0

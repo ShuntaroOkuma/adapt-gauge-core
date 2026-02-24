@@ -1,5 +1,5 @@
 """
-src.use_cases.aei のテスト
+Tests for use_cases.aei
 """
 
 import pandas as pd
@@ -9,10 +9,10 @@ from adapt_gauge_core.use_cases.aei import compute_aei, detect_negative_learning
 
 
 class TestComputeAEI:
-    """compute_aei関数のテスト"""
+    """Tests for compute_aei function"""
 
     def test_6axis_dataframe(self):
-        """6軸全てのデータがある場合、AEIが算出される"""
+        """AEI should be calculated when all 6 axes are present"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -45,7 +45,7 @@ class TestComputeAEI:
         assert result.iloc[0]["AEI"] == pytest.approx(expected_aei_a)
 
     def test_3axis_partial(self):
-        """3軸のみのデータでもAEIが算出される"""
+        """AEI should be calculated with only 3 axes present"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -62,7 +62,7 @@ class TestComputeAEI:
         assert result.iloc[0]["AEI"] == pytest.approx(expected_aei)
 
     def test_no_axis_data_returns_none(self):
-        """軸データがない場合はNoneを返す"""
+        """Should return None when no axis data is present"""
         df = pd.DataFrame([
             {"model_name": "model-a", "score_0shot": 0.5},
         ])
@@ -71,7 +71,7 @@ class TestComputeAEI:
         assert result is None
 
     def test_all_nan_axis_returns_none(self):
-        """全軸がNaNの場合もNoneを返す"""
+        """Should return None when all axes are NaN"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -85,7 +85,7 @@ class TestComputeAEI:
         assert result is None
 
     def test_sorted_descending(self):
-        """結果はAEI降順でソートされる"""
+        """Results should be sorted by AEI in descending order"""
         df = pd.DataFrame([
             {"model_name": "low", "axis_Acquisition": 0.1, "axis_Fidelity": 0.2},
             {"model_name": "high", "axis_Acquisition": 0.9, "axis_Fidelity": 0.8},
@@ -98,10 +98,10 @@ class TestComputeAEI:
 
 
 class TestDetectNegativeLearning:
-    """detect_negative_learning関数のテスト"""
+    """Tests for detect_negative_learning function"""
 
     def test_detects_degradation(self):
-        """20%以上の性能劣化を検出"""
+        """Should detect >= 20% performance degradation"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -119,7 +119,7 @@ class TestDetectNegativeLearning:
         assert alerts[0]["drop_pct"] == pytest.approx(37.5)
 
     def test_no_detection_when_improvement(self):
-        """改善の場合は検出しない"""
+        """Should not detect when performance improves"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -134,7 +134,7 @@ class TestDetectNegativeLearning:
         assert len(alerts) == 0
 
     def test_no_detection_small_drop(self):
-        """20%未満の劣化は検出しない"""
+        """Should not detect drops below 20%"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -149,7 +149,7 @@ class TestDetectNegativeLearning:
         assert len(alerts) == 0
 
     def test_skip_low_baseline(self):
-        """0-shotスコアが0.05以下の場合はスキップ"""
+        """Should skip when 0-shot score is <= 0.05"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -164,7 +164,7 @@ class TestDetectNegativeLearning:
         assert len(alerts) == 0
 
     def test_custom_label_fn(self):
-        """label_fnコールバックが正しく呼ばれる"""
+        """label_fn callback should be called correctly"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -181,7 +181,7 @@ class TestDetectNegativeLearning:
         assert alerts[0]["task_label"] == "[cat1] task1"
 
     def test_default_label_fn_returns_task_id(self):
-        """デフォルトlabel_fnはtask_idをそのまま返す"""
+        """Default label_fn should return task_id as-is"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -197,7 +197,7 @@ class TestDetectNegativeLearning:
         assert alerts[0]["task_label"] == "task1"
 
     def test_fallback_to_4shot(self):
-        """score_8shotがない場合はscore_4shotにフォールバック"""
+        """Should fallback to score_4shot when score_8shot is not available"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",
@@ -212,7 +212,7 @@ class TestDetectNegativeLearning:
         assert len(alerts) == 1
 
     def test_sorted_by_drop_pct(self):
-        """結果は劣化率降順でソートされる"""
+        """Results should be sorted by drop_pct in descending order"""
         df = pd.DataFrame([
             {
                 "model_name": "model-a",

@@ -1,5 +1,5 @@
 """
-task_loader.py の単体テスト
+Unit tests for task_loader.py
 """
 
 import json
@@ -20,65 +20,65 @@ from adapt_gauge_core.task_loader import (
 
 
 class TestDistractor:
-    """Distractor dataclass のテスト"""
+    """Tests for Distractor dataclass"""
 
     def test_create_distractor(self):
-        """Distractorの作成"""
+        """Create a Distractor instance"""
         distractor = Distractor(
-            input="これは雑談ログです。",
-            output="雑談の要約"
+            input="This is a chat log.",
+            output="Chat summary"
         )
-        assert distractor.input == "これは雑談ログです。"
-        assert distractor.output == "雑談の要約"
+        assert distractor.input == "This is a chat log."
+        assert distractor.output == "Chat summary"
 
 
 class TestTaskNewFields:
-    """Task dataclass の新フィールドのテスト"""
+    """Tests for Task dataclass new fields"""
 
     def test_task_with_new_fields(self):
-        """新フィールド付きでTaskを作成"""
+        """Create Task with new fields"""
         task = Task(
             task_id="test_001",
             category="office",
-            description="テストタスク",
+            description="Test task",
             difficulty="medium",
-            examples=[Example(input="入力1", output="出力1")],
-            test_cases=[TestCase(input="テスト入力", expected_output="テスト出力", scoring_method="exact_match")],
+            examples=[Example(input="input1", output="output1")],
+            test_cases=[TestCase(input="test input", expected_output="test output", scoring_method="exact_match")],
             version="1.1",
             measures=["Acquisition", "Fidelity"],
-            instruction="タスクの指示",
-            distractors=[Distractor(input="ノイズ入力", output="ノイズ出力")],
+            instruction="Task instruction",
+            distractors=[Distractor(input="noise input", output="noise output")],
         )
 
         assert task.version == "1.1"
         assert task.measures == ["Acquisition", "Fidelity"]
-        assert task.instruction == "タスクの指示"
+        assert task.instruction == "Task instruction"
         assert len(task.distractors) == 1
-        assert task.distractors[0].input == "ノイズ入力"
+        assert task.distractors[0].input == "noise input"
 
     def test_task_default_values(self):
-        """デフォルト値のテスト（後方互換性）"""
+        """Test default values (backward compatibility)"""
         task = Task(
             task_id="test_002",
             category="office",
-            description="テストタスク",
+            description="Test task",
             difficulty="easy",
             examples=[],
             test_cases=[],
         )
 
         assert task.version == "1.0"
-        assert task.measures == ["Acquisition"]  # デフォルト
+        assert task.measures == ["Acquisition"]  # default
         assert task.instruction == ""
         assert task.distractors == []
 
     def test_task_invalid_measure(self):
-        """無効な評価軸でエラーが出ることを確認"""
+        """Should raise error for invalid evaluation axis"""
         with pytest.raises(ValueError) as excinfo:
             Task(
                 task_id="test_003",
                 category="office",
-                description="テストタスク",
+                description="Test task",
                 difficulty="easy",
                 examples=[],
                 test_cases=[],
@@ -87,7 +87,7 @@ class TestTaskNewFields:
         assert "Invalid evaluation axis" in str(excinfo.value)
 
     def test_valid_measures_constant(self):
-        """VALID_MEASURES定数の確認"""
+        """Verify VALID_MEASURES constant"""
         expected = [
             "Acquisition",
             "Resilience-Noise",
@@ -100,21 +100,21 @@ class TestTaskNewFields:
 
 
 class TestParseTaskData:
-    """_parse_task_data 関数のテスト"""
+    """Tests for _parse_task_data function"""
 
     def test_parse_with_new_fields(self):
-        """新フィールドを含むデータのパース"""
+        """Parse data with new fields"""
         data = {
             "task_id": "parse_test_001",
             "category": "dev",
-            "description": "パーステスト",
+            "description": "Parse test",
             "difficulty": "hard",
-            "examples": [{"input": "例入力", "output": "例出力"}],
-            "test_cases": [{"input": "TC入力", "expected_output": "TC出力", "scoring_method": "f1"}],
+            "examples": [{"input": "example input", "output": "example output"}],
+            "test_cases": [{"input": "TC input", "expected_output": "TC output", "scoring_method": "f1"}],
             "version": "2.0",
             "measures": ["Acquisition", "Efficiency"],
-            "instruction": "パース用指示",
-            "distractors": [{"input": "ノイズ", "output": "ノイズ出力"}],
+            "instruction": "Parsing instruction",
+            "distractors": [{"input": "noise", "output": "noise output"}],
         }
 
         task = _parse_task_data(data)
@@ -122,15 +122,15 @@ class TestParseTaskData:
         assert task.task_id == "parse_test_001"
         assert task.version == "2.0"
         assert task.measures == ["Acquisition", "Efficiency"]
-        assert task.instruction == "パース用指示"
+        assert task.instruction == "Parsing instruction"
         assert len(task.distractors) == 1
 
     def test_parse_without_new_fields(self):
-        """新フィールドなし（後方互換性）"""
+        """Parse data without new fields (backward compatibility)"""
         data = {
             "task_id": "parse_test_002",
             "category": "office",
-            "description": "後方互換テスト",
+            "description": "Backward compat test",
             "difficulty": "easy",
             "examples": [],
             "test_cases": [],
@@ -139,17 +139,17 @@ class TestParseTaskData:
         task = _parse_task_data(data)
 
         assert task.task_id == "parse_test_002"
-        assert task.version == "1.0"  # デフォルト
-        assert task.measures == ["Acquisition"]  # デフォルト
+        assert task.version == "1.0"  # default
+        assert task.measures == ["Acquisition"]  # default
         assert task.instruction == ""
         assert task.distractors == []
 
     def test_parse_empty_distractors(self):
-        """空のdistractors配列"""
+        """Parse with empty distractors array"""
         data = {
             "task_id": "parse_test_003",
             "category": "office",
-            "description": "空ノイズテスト",
+            "description": "Empty noise test",
             "difficulty": "easy",
             "examples": [],
             "test_cases": [],
@@ -160,14 +160,14 @@ class TestParseTaskData:
         assert task.distractors == []
 
     def test_parse_with_agency_config(self):
-        """agency_config が JSON から正しく読み込まれること"""
+        """agency_config should be correctly loaded from JSON"""
         data = {
             "task_id": "agency_test_001",
             "category": "dev",
-            "description": "Agency設定テスト",
+            "description": "Agency config test",
             "difficulty": "hard",
-            "examples": [{"input": "例入力", "output": "例出力"}],
-            "test_cases": [{"input": "TC入力", "expected_output": "TC出力", "scoring_method": "exact_match"}],
+            "examples": [{"input": "example input", "output": "example output"}],
+            "test_cases": [{"input": "TC input", "expected_output": "TC output", "scoring_method": "exact_match"}],
             "agency_config": {
                 "max_steps": 5,
                 "tools": ["web_search", "code_exec"],
@@ -183,11 +183,11 @@ class TestParseTaskData:
         assert task.agency_config["stop_condition"] == "task_complete"
 
     def test_parse_without_agency_config(self):
-        """agency_config がない場合に None になること"""
+        """agency_config should be None when not present"""
         data = {
             "task_id": "agency_test_002",
             "category": "office",
-            "description": "Agency設定なしテスト",
+            "description": "No agency config test",
             "difficulty": "easy",
             "examples": [],
             "test_cases": [],
@@ -199,23 +199,23 @@ class TestParseTaskData:
 
 
 class TestLoadTask:
-    """load_task 関数のテスト（新フィールド対応）"""
+    """Tests for load_task function (with new fields)"""
 
     def test_load_task_with_new_fields(self, tmp_path):
-        """新フィールド付きJSONの読み込み"""
+        """Load JSON with new fields"""
         task_data = {
             "task_id": "load_test_001",
             "category": "legal",
-            "description": "読み込みテスト",
+            "description": "Load test",
             "difficulty": "medium",
-            "examples": [{"input": "契約書A", "output": "要約A"}],
-            "test_cases": [{"input": "契約書B", "expected_output": "要約B", "scoring_method": "contains"}],
+            "examples": [{"input": "Contract A", "output": "Summary A"}],
+            "test_cases": [{"input": "Contract B", "expected_output": "Summary B", "scoring_method": "contains"}],
             "version": "1.5",
             "measures": ["Fidelity", "Acquisition"],
-            "instruction": "契約書を正確に要約してください",
+            "instruction": "Summarize the contract accurately",
             "distractors": [
-                {"input": "雑談ログ", "output": "雑談要約"},
-                {"input": "メモ書き", "output": "メモ要約"},
+                {"input": "Chat log", "output": "Chat summary"},
+                {"input": "Memo notes", "output": "Memo summary"},
             ],
         }
 
@@ -227,17 +227,17 @@ class TestLoadTask:
         assert task.task_id == "load_test_001"
         assert task.version == "1.5"
         assert task.measures == ["Fidelity", "Acquisition"]
-        assert task.instruction == "契約書を正確に要約してください"
+        assert task.instruction == "Summarize the contract accurately"
         assert len(task.distractors) == 2
 
     def test_load_legacy_task(self, tmp_path):
-        """旧形式（新フィールドなし）JSONの読み込み"""
+        """Load legacy format JSON (without new fields)"""
         task_data = {
             "task_id": "legacy_001",
             "category": "summarization",
-            "description": "旧形式タスク",
+            "description": "Legacy task",
             "difficulty": "easy",
-            "examples": [{"input": "入力", "output": "出力"}],
+            "examples": [{"input": "input", "output": "output"}],
             "test_cases": [{"input": "TC", "expected_output": "EO", "scoring_method": "exact_match"}],
         }
 

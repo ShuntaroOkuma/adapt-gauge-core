@@ -1,8 +1,8 @@
 """
-モデルクライアントのテスト
+Tests for model clients
 
-RetryMixin._with_retry() のリトライ動作と
-create_client() のファクトリ分岐をテストする。
+Tests RetryMixin._with_retry() retry behavior and
+create_client() factory branching.
 """
 
 import pytest
@@ -16,7 +16,7 @@ from adapt_gauge_core.infrastructure.model_clients.lmstudio import LMStudioClien
 
 
 class TestRetryMixin:
-    """RetryMixin._with_retry() のテスト"""
+    """Tests for RetryMixin._with_retry()"""
 
     def _make_mixin(self, max_retries=3):
         mixin = RetryMixin()
@@ -25,7 +25,7 @@ class TestRetryMixin:
 
     @patch("adapt_gauge_core.infrastructure.model_clients.base.time.sleep")
     def test_success_on_first_attempt(self, mock_sleep):
-        """初回で成功する場合、リトライなしで値を返す"""
+        """Should return value without retries on first success"""
         mixin = self._make_mixin()
         fn = MagicMock(return_value="ok")
 
@@ -37,7 +37,7 @@ class TestRetryMixin:
 
     @patch("adapt_gauge_core.infrastructure.model_clients.base.time.sleep")
     def test_success_after_two_failures(self, mock_sleep):
-        """2回失敗後、3回目で成功する場合"""
+        """Should succeed on third attempt after two failures"""
         mixin = self._make_mixin(max_retries=3)
         fn = MagicMock(side_effect=[ValueError("1"), ValueError("2"), "ok"])
 
@@ -45,14 +45,14 @@ class TestRetryMixin:
 
         assert result == "ok"
         assert fn.call_count == 3
-        # 指数バックオフ: sleep(1), sleep(2)
+        # Exponential backoff: sleep(1), sleep(2)
         assert mock_sleep.call_count == 2
         mock_sleep.assert_any_call(1)  # 2 ** 0
         mock_sleep.assert_any_call(2)  # 2 ** 1
 
     @patch("adapt_gauge_core.infrastructure.model_clients.base.time.sleep")
     def test_raises_after_all_retries_exhausted(self, mock_sleep):
-        """全リトライ失敗時、最後の例外をraiseする"""
+        """Should raise the last exception when all retries are exhausted"""
         mixin = self._make_mixin(max_retries=3)
         fn = MagicMock(
             side_effect=[ValueError("1"), ValueError("2"), ValueError("final")]
@@ -64,7 +64,7 @@ class TestRetryMixin:
         assert fn.call_count == 3
 
     def test_max_retries_zero_raises_value_error(self):
-        """max_retries=0 の場合、ValueError を即座にraiseする"""
+        """Should immediately raise ValueError when max_retries=0"""
         mixin = self._make_mixin(max_retries=0)
         fn = MagicMock(return_value="ok")
 
@@ -75,7 +75,7 @@ class TestRetryMixin:
 
     @patch("adapt_gauge_core.infrastructure.model_clients.base.time.sleep")
     def test_retryable_exceptions_filter(self, mock_sleep):
-        """retryable_exceptions に含まれない例外は即座にraiseされる"""
+        """Should immediately raise exceptions not in retryable_exceptions"""
         mixin = self._make_mixin(max_retries=3)
         fn = MagicMock(side_effect=TypeError("not retryable"))
 
@@ -87,21 +87,21 @@ class TestRetryMixin:
 
 
 class TestCreateClient:
-    """create_client() ファクトリのテスト"""
+    """Tests for create_client() factory"""
 
     @patch.dict("os.environ", {"GCP_PROJECT_ID": "test-project"})
     def test_gemini_model_returns_vertex_ai_client(self):
-        """geminiモデル名の場合、VertexAIClientを返す"""
+        """Should return VertexAIClient for gemini model names"""
         client = create_client("gemini-2.5-flash")
         assert isinstance(client, VertexAIClient)
 
     @patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"})
     def test_claude_model_returns_claude_client(self):
-        """claudeモデル名の場合、ClaudeClientを返す"""
+        """Should return ClaudeClient for claude model names"""
         client = create_client("claude-sonnet-4-5-20250514")
         assert isinstance(client, ClaudeClient)
 
     def test_lmstudio_model_returns_lmstudio_client(self):
-        """lmstudio/プレフィックスの場合、LMStudioClientを返す"""
+        """Should return LMStudioClient for lmstudio/ prefixed model names"""
         client = create_client("lmstudio/qwen2.5-7b")
         assert isinstance(client, LMStudioClient)

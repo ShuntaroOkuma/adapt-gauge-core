@@ -1,5 +1,5 @@
 """
-harness_config.pyのテスト
+Tests for harness_config.py
 """
 
 import pytest
@@ -15,7 +15,7 @@ from adapt_gauge_core.harness_config import (
 
 
 class TestTrialConfig:
-    """TrialConfig dataclassのテスト"""
+    """Tests for TrialConfig dataclass"""
 
     def test_defaults(self):
         config = TrialConfig()
@@ -31,7 +31,7 @@ class TestTrialConfig:
 
 
 class TestReliabilityConfig:
-    """ReliabilityConfig dataclassのテスト"""
+    """Tests for ReliabilityConfig dataclass"""
 
     def test_defaults(self):
         config = ReliabilityConfig()
@@ -45,7 +45,7 @@ class TestReliabilityConfig:
 
 
 class TestIsolationConfig:
-    """IsolationConfig dataclassのテスト"""
+    """Tests for IsolationConfig dataclass"""
 
     def test_defaults(self):
         config = IsolationConfig()
@@ -56,7 +56,7 @@ class TestIsolationConfig:
 
 
 class TestLLMJudgeConfig:
-    """LLMJudgeConfig dataclassのテスト"""
+    """Tests for LLMJudgeConfig dataclass"""
 
     def test_defaults(self):
         config = LLMJudgeConfig()
@@ -82,7 +82,7 @@ class TestLLMJudgeConfig:
 
 
 class TestHarnessConfig:
-    """HarnessConfig dataclassのテスト"""
+    """Tests for HarnessConfig dataclass"""
 
     def test_defaults(self):
         config = HarnessConfig()
@@ -114,7 +114,7 @@ class TestHarnessConfig:
         assert config.trials.num_trials == 5
         assert config.reliability.k_values == [1, 5]
         assert config.isolation.timeout_seconds == 60
-        # デフォルト値は維持される
+        # Default values should be preserved
         assert config.trials.aggregation == "mean"
 
     def test_from_dict_without_key(self):
@@ -126,12 +126,12 @@ class TestHarnessConfig:
 
     def test_from_dict_empty(self):
         config = HarnessConfig.from_dict({})
-        assert config.trials.num_trials == 3  # デフォルト
+        assert config.trials.num_trials == 3  # default
         assert config.llm_judge.enabled is False
         assert config.llm_judge.grader_model == "gemini-2.5-flash"
 
     def test_from_dict_with_llm_judge(self):
-        """llm_judgeセクション付きの設定"""
+        """Config with llm_judge section"""
         data = {
             "harness_config": {
                 "trials": {"num_trials": 3},
@@ -146,7 +146,7 @@ class TestHarnessConfig:
         assert config.llm_judge.grader_model == "claude-haiku-4-5-20251001"
         assert config.llm_judge.enabled is True
         assert config.llm_judge.timeout_seconds == 60
-        # デフォルト値は維持
+        # Default values should be preserved
         assert config.llm_judge.max_retries == 2
         assert config.llm_judge.fallback_method == "f1"
 
@@ -161,11 +161,10 @@ class TestHarnessConfig:
 
 
 class TestLoadConfig:
-    """load_config関数のテスト（環境変数ベース）"""
+    """Tests for load_config function (environment variable based)"""
 
     def test_defaults_without_env(self, monkeypatch):
-        """環境変数未設定時はデフォルト値を返す"""
-        # ハーネス関連の環境変数をクリア
+        """Should return default values when no env vars are set"""
         for key in [
             "HARNESS_NUM_TRIALS", "HARNESS_AGGREGATION", "HARNESS_SUCCESS_THRESHOLD",
             "HARNESS_PASS_AT_K", "HARNESS_K_VALUES",
@@ -198,7 +197,7 @@ class TestLoadConfig:
         assert config.lmstudio.api_key == "lm-studio"
 
     def test_custom_env_values(self, monkeypatch):
-        """環境変数から値を読み込む"""
+        """Should load values from environment variables"""
         monkeypatch.setenv("HARNESS_NUM_TRIALS", "5")
         monkeypatch.setenv("HARNESS_AGGREGATION", "median")
         monkeypatch.setenv("HARNESS_SUCCESS_THRESHOLD", "0.9")
@@ -235,8 +234,7 @@ class TestLoadConfig:
         assert config.lmstudio.api_key == "custom-key"
 
     def test_partial_env_values(self, monkeypatch):
-        """一部の環境変数のみ設定した場合、残りはデフォルト"""
-        # 全クリアしてから一部だけ設定
+        """Should use defaults for unset env vars when only some are set"""
         for key in [
             "HARNESS_NUM_TRIALS", "HARNESS_AGGREGATION", "HARNESS_SUCCESS_THRESHOLD",
             "HARNESS_PASS_AT_K", "HARNESS_K_VALUES",
@@ -255,12 +253,12 @@ class TestLoadConfig:
         config = load_config()
         assert config.trials.num_trials == 10
         assert config.llm_judge.enabled is True
-        # 他はデフォルト
+        # Others should remain at defaults
         assert config.trials.aggregation == "mean"
         assert config.llm_judge.grader_model == "gemini-2.5-flash"
 
     def test_bool_env_variants(self, monkeypatch):
-        """bool環境変数の様々な表記"""
+        """Should handle various boolean env var representations"""
         monkeypatch.setenv("LLM_JUDGE_ENABLED", "1")
         config = load_config()
         assert config.llm_judge.enabled is True
@@ -282,19 +280,19 @@ class TestLoadConfig:
         assert config.llm_judge.enabled is False
 
     def test_invalid_int_env_raises_error(self, monkeypatch):
-        """不正なint型の環境変数でValueErrorが発生"""
+        """Should raise ValueError for invalid int env var"""
         monkeypatch.setenv("HARNESS_NUM_TRIALS", "abc")
         with pytest.raises(ValueError, match="HARNESS_NUM_TRIALS"):
             load_config()
 
     def test_invalid_float_env_raises_error(self, monkeypatch):
-        """不正なfloat型の環境変数でValueErrorが発生"""
+        """Should raise ValueError for invalid float env var"""
         monkeypatch.setenv("HARNESS_SUCCESS_THRESHOLD", "not-a-number")
         with pytest.raises(ValueError, match="HARNESS_SUCCESS_THRESHOLD"):
             load_config()
 
     def test_invalid_int_list_env_raises_error(self, monkeypatch):
-        """不正なintリスト型の環境変数でValueErrorが発生"""
+        """Should raise ValueError for invalid int list env var"""
         monkeypatch.setenv("HARNESS_K_VALUES", "1,abc,3")
         with pytest.raises(ValueError, match="HARNESS_K_VALUES"):
             load_config()

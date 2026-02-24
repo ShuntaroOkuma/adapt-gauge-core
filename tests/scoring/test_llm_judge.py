@@ -1,7 +1,7 @@
 """
-LLMJudgeScorer の _parse_score テスト
+Tests for LLMJudgeScorer._parse_score
 
-JSON, regex, bare float, エラーパスのパーステストを新パスからインポートして実施。
+Tests JSON, regex, bare float, and error paths using imports from the new path.
 """
 
 import pytest
@@ -23,7 +23,7 @@ class _MockResponse:
 
 
 class MockGraderClient:
-    """テスト用のgraderクライアント"""
+    """Mock grader client for testing"""
 
     def __init__(self, response_text: str):
         self._response_text = response_text
@@ -35,12 +35,12 @@ class MockGraderClient:
 
 
 # ===========================================================================
-# _parse_score テスト: JSON パス
+# _parse_score tests: JSON path
 # ===========================================================================
 
 
 class TestParseScoreJSON:
-    """_parse_score の JSON パーステスト"""
+    """Tests for _parse_score JSON parsing"""
 
     def _parse(self, text: str) -> ScoringResult:
         client = MockGraderClient(text)
@@ -73,12 +73,12 @@ class TestParseScoreJSON:
 
 
 # ===========================================================================
-# _parse_score テスト: 正規表現フォールバック
+# _parse_score tests: regex fallback
 # ===========================================================================
 
 
 class TestParseScoreRegex:
-    """_parse_score の正規表現フォールバックテスト"""
+    """Tests for _parse_score regex fallback"""
 
     def _parse(self, text: str) -> ScoringResult:
         client = MockGraderClient(text)
@@ -101,12 +101,12 @@ class TestParseScoreRegex:
 
 
 # ===========================================================================
-# _parse_score テスト: ベアfloat
+# _parse_score tests: bare float
 # ===========================================================================
 
 
 class TestParseScoreBareFloat:
-    """_parse_score のベアfloatテスト"""
+    """Tests for _parse_score bare float parsing"""
 
     def _parse(self, text: str) -> ScoringResult:
         client = MockGraderClient(text)
@@ -132,12 +132,12 @@ class TestParseScoreBareFloat:
 
 
 # ===========================================================================
-# _parse_score テスト: エラーパス
+# _parse_score tests: error path
 # ===========================================================================
 
 
 class TestParseScoreError:
-    """_parse_score のエラーパステスト"""
+    """Tests for _parse_score error paths"""
 
     def _parse(self, text: str) -> ScoringResult:
         client = MockGraderClient(text)
@@ -158,12 +158,12 @@ class TestParseScoreError:
 
 
 # ===========================================================================
-# クランプテスト
+# Clamp tests
 # ===========================================================================
 
 
 class TestParseScoreClamp:
-    """スコアクランプのテスト"""
+    """Tests for score clamping"""
 
     def _parse(self, text: str) -> ScoringResult:
         client = MockGraderClient(text)

@@ -1,7 +1,7 @@
 """
-テキストベース採点関数のテスト
+Tests for text-based scoring functions
 
-score_exact_match, score_contains, score_f1, normalize_text, _tokenize のテスト。
+Tests for score_exact_match, score_contains, score_f1, normalize_text, and _tokenize.
 """
 
 import pytest
@@ -18,7 +18,7 @@ from adapt_gauge_core.scoring.text_scorers import (
 
 
 class TestRemoveMarkdown:
-    """remove_markdown のテスト"""
+    """Tests for remove_markdown"""
 
     def test_code_block_removal(self):
         text = "```python\nprint('hello')\n```"
@@ -50,7 +50,7 @@ class TestRemoveMarkdown:
 
 
 class TestNormalizeText:
-    """normalize_text のテスト"""
+    """Tests for normalize_text"""
 
     def test_lowercase(self):
         assert normalize_text("Hello World") == "hello world"
@@ -62,7 +62,7 @@ class TestNormalizeText:
         assert normalize_text("  hello  ") == "hello"
 
     def test_unicode_normalization(self):
-        # NFKC正規化: 全角英数 -> 半角英数
+        # NFKC normalization: fullwidth alphanumeric -> halfwidth
         assert normalize_text("\uff21\uff22\uff23") == "abc"
 
     def test_markdown_removal_in_normalize(self):
@@ -77,7 +77,7 @@ class TestNormalizeText:
 
 
 class TestScoreExactMatch:
-    """score_exact_match のテスト"""
+    """Tests for score_exact_match"""
 
     def test_exact_match(self):
         assert score_exact_match("Hello", "hello") == 1.0
@@ -96,7 +96,7 @@ class TestScoreExactMatch:
 
 
 class TestScoreContains:
-    """score_contains のテスト"""
+    """Tests for score_contains"""
 
     def test_contains(self):
         assert score_contains("hello", "say hello world") == 1.0
@@ -112,19 +112,21 @@ class TestScoreContains:
 
 
 class TestTokenize:
-    """_tokenize のテスト"""
+    """Tests for _tokenize"""
 
     def test_whitespace_tokens(self):
         tokens = _tokenize("hello world foo bar")
         assert tokens == ["hello", "world", "foo", "bar"]
 
     def test_japanese_text_char_type_tokenize(self):
+        # Japanese text: "abc商事売上500億円" (abc Corp. revenue 500 billion yen)
         tokens = _tokenize("abc商事売上500億円")
         assert "abc" in tokens
         assert "500" in tokens
         assert any("商事" in t for t in tokens)
 
     def test_mixed_japanese_with_spaces(self):
+        # Japanese text: "支払い 100万円 月末" (Payment 1M yen end of month)
         tokens = _tokenize("支払い 100万円 月末")
         assert len(tokens) >= 3
 
@@ -134,7 +136,7 @@ class TestTokenize:
 
 
 class TestCharType:
-    """_char_type のテスト"""
+    """Tests for _char_type"""
 
     def test_hiragana(self):
         assert _char_type("あ") == "hiragana"
@@ -154,7 +156,7 @@ class TestCharType:
 
 
 class TestScoreF1:
-    """score_f1 のテスト"""
+    """Tests for score_f1"""
 
     def test_exact_match_f1(self):
         assert score_f1("hello world", "hello world") == pytest.approx(1.0)
@@ -167,6 +169,7 @@ class TestScoreF1:
         assert 0.0 < result < 1.0
 
     def test_japanese_keyword_matching(self):
+        # Japanese: "ABC Corp. revenue 500B yen +12%"
         expected = "ABC商事 売上 500億円 +12%"
         actual = "ABC商事：売上500億円（+12%）の業績報告です"
         result = score_f1(expected, actual)
@@ -182,6 +185,7 @@ class TestScoreF1:
         assert score_f1("", "") == 0.0
 
     def test_japanese_contract_keywords(self):
+        # Japanese: "Payment 1M yen, consumption tax, end of month, next month end, bank transfer, handling fee"
         expected = "支払い 100万円 消費税 月末 締め 翌月末 振込 銀行 手数料 負担"
         actual = "支払いは100万円（消費税別）です。月末締めで翌月末に銀行振込でお支払いください。振込手数料はご負担ください。"
         result = score_f1(expected, actual)

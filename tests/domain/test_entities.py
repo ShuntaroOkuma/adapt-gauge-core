@@ -1,4 +1,4 @@
-"""ドメインエンティティ・値オブジェクトのテスト"""
+"""Tests for domain entities and value objects"""
 
 import pytest
 
