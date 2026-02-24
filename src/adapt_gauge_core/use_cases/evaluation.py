@@ -76,7 +76,7 @@ def run_single_evaluation(
         input=test_case.input,
         expected_output=expected_output_str,
         actual_output=response.output,
-        score=eval_score,
+        score=eval_score.score if hasattr(eval_score, "score") else float(eval_score),
         scoring_method=test_case.scoring_method,
         latency_ms=response.latency_ms,
         timestamp=datetime.now().isoformat()

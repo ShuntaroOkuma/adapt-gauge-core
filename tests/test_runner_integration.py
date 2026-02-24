@@ -77,7 +77,7 @@ class TestSingleEvaluation:
             run_id="test_run",
         )
 
-        assert result.score.score == 1.0
+        assert result.score == 1.0
         assert result.model_name == "mock-model"
         assert result.task_id == "test_task"
         assert result.shot_count == 0
