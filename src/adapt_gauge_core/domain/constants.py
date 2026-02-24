@@ -9,13 +9,13 @@ SHOT_SCHEDULE = [0, 1, 2, 4, 8]
 
 # Default model list
 DEFAULT_MODELS = [
-    "gemini-3-pro-preview",
+    # "gemini-3-pro-preview",
     "gemini-3-flash-preview",
-    "gemini-2.5-pro",
+    # "gemini-2.5-pro",
     "gemini-2.5-flash",
-    "claude-sonnet-4-5-20250929",
+    # "claude-sonnet-4-5-20250929",
     "claude-haiku-4-5-20251001",
-    "claude-opus-4-5-20251101",
+    # "claude-opus-4-5-20251101",
 ]
 
 # Model pricing (USD / 1M tokens)
