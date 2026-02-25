@@ -72,6 +72,37 @@ def _make_label_fn(
 
 _MIN_BASELINE = 0.05
 
+# Peak regression thresholds (shared by detect_peak_regression & classify)
+_LEARNING_THRESHOLD = 1.1    # Peak must be 10% above 0-shot
+_REGRESSION_THRESHOLD = 0.8  # Final must drop below 80% of peak
+
+
+def _is_peak_regression(
+    shot_scores: list[tuple[int, float]],
+    score_0: float,
+) -> tuple[bool, int, float]:
+    """Check whether a shot-score series shows peak regression.
+
+    Returns:
+        (is_peak_regression, peak_shot, score_peak)
+    """
+    if len(shot_scores) < 2 or score_0 <= _MIN_BASELINE:
+        return False, 0, 0.0
+
+    peak_shot, score_peak = max(shot_scores[1:], key=lambda x: x[1])
+    final_shot, score_final = shot_scores[-1]
+
+    if peak_shot == final_shot:
+        return False, peak_shot, score_peak
+
+    if (
+        score_peak > score_0 * _LEARNING_THRESHOLD
+        and score_final < score_peak * _REGRESSION_THRESHOLD
+    ):
+        return True, peak_shot, score_peak
+
+    return False, peak_shot, score_peak
+
 
 def detect_negative_learning(
     df: pd.DataFrame,
@@ -148,46 +179,33 @@ def detect_peak_regression(
         task_id, task_label, score_peak, peak_shot, score_final, drop_pct, and type.
     """
     fn = _make_label_fn(label_fn)
-    learning_threshold = 1.1   # Peak must be 10% above 0-shot
-    regression_threshold = 0.8  # Final must drop below 80% of peak
 
     alerts: list[dict] = []
     for _, row in df.iterrows():
         shot_scores = _get_shot_scores(row)
-        if len(shot_scores) < 2:
+        score_0 = shot_scores[0][1] if shot_scores else 0.0
+
+        is_regression, peak_shot, score_peak = _is_peak_regression(
+            shot_scores, score_0,
+        )
+        if not is_regression:
             continue
 
-        score_0 = shot_scores[0][1]
-        if score_0 <= _MIN_BASELINE:
-            continue
-
-        # Find peak among all shots (including final)
-        peak_shot, score_peak = max(shot_scores[1:], key=lambda x: x[1])
-        final_shot, score_final = shot_scores[-1]
-
-        # Skip if peak IS the final shot (no regression)
-        if peak_shot == final_shot:
-            continue
-
-        # Check learning evidence and regression
-        if (
-            score_peak > score_0 * learning_threshold
-            and score_final < score_peak * regression_threshold
-        ):
-            drop_pct = (score_peak - score_final) / score_peak * 100
-            task_label = fn(
-                row.get("task_id", ""), row.get("category", "")
-            )
-            alerts.append({
-                "type": "peak_regression",
-                "model": row["model_name"],
-                "task_id": row.get("task_id", ""),
-                "task_label": task_label,
-                "score_peak": score_peak,
-                "peak_shot": peak_shot,
-                "score_final": score_final,
-                "drop_pct": drop_pct,
-            })
+        score_final = shot_scores[-1][1]
+        drop_pct = (score_peak - score_final) / score_peak * 100
+        task_label = fn(
+            row.get("task_id", ""), row.get("category", "")
+        )
+        alerts.append({
+            "type": "peak_regression",
+            "model": row["model_name"],
+            "task_id": row.get("task_id", ""),
+            "task_label": task_label,
+            "score_peak": score_peak,
+            "peak_shot": peak_shot,
+            "score_final": score_final,
+            "drop_pct": drop_pct,
+        })
     alerts.sort(key=lambda x: x["drop_pct"], reverse=True)
     return alerts
 
@@ -289,52 +307,31 @@ def classify_collapse_pattern(df: pd.DataFrame) -> list[dict]:
         task_id = row.get("task_id", "")
         scores_dict = {s: v for s, v in shot_scores}
         score_0 = shot_scores[0][1]
+        score_final = shot_scores[-1][1]
 
-        entry = {
+        # Classify pattern
+        is_regression, _, _ = _is_peak_regression(shot_scores, score_0)
+
+        if score_0 <= _MIN_BASELINE:
+            pattern = "stable"
+        elif is_regression:
+            pattern = "peak_regression"
+        elif (score_0 - score_final) / score_0 < _DECLINE_THRESHOLD:
+            pattern = "stable"
+        else:
+            first_drop = score_0 - shot_scores[1][1]
+            total_drop = score_0 - score_final
+            if total_drop > 0 and first_drop / total_drop >= _IMMEDIATE_DROP_RATIO:
+                pattern = "immediate_collapse"
+            else:
+                pattern = "gradual_decline"
+
+        results.append({
             "model": model,
             "task_id": task_id,
             "scores": scores_dict,
-        }
-
-        # Low baseline — cannot meaningfully classify
-        if score_0 <= _MIN_BASELINE:
-            entry["pattern"] = "stable"
-            results.append(entry)
-            continue
-
-        score_final = shot_scores[-1][1]
-        overall_drop = (score_0 - score_final) / score_0
-
-        # Find peak (excluding 0-shot)
-        peak_shot, score_peak = max(shot_scores[1:], key=lambda x: x[1])
-        final_shot = shot_scores[-1][0]
-
-        # Check for peak regression: learned then forgot
-        if (
-            peak_shot != final_shot
-            and score_peak > score_0 * 1.1
-            and score_final < score_peak * 0.8
-        ):
-            entry["pattern"] = "peak_regression"
-            results.append(entry)
-            continue
-
-        # No significant overall decline — stable
-        if overall_drop < _DECLINE_THRESHOLD:
-            entry["pattern"] = "stable"
-            results.append(entry)
-            continue
-
-        # Determine if drop is immediate or gradual
-        first_drop = score_0 - shot_scores[1][1]
-        total_drop = score_0 - score_final
-
-        if total_drop > 0 and first_drop / total_drop >= _IMMEDIATE_DROP_RATIO:
-            entry["pattern"] = "immediate_collapse"
-        else:
-            entry["pattern"] = "gradual_decline"
-
-        results.append(entry)
+            "pattern": pattern,
+        })
 
     return results
 
