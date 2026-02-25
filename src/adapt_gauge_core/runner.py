@@ -44,6 +44,8 @@ from adapt_gauge_core.use_cases.aei import (
     detect_negative_learning,
     detect_peak_regression,
     detect_mid_curve_dip,
+    classify_collapse_pattern,
+    calculate_resilience_score,
 )
 
 SAVE_INTERVAL = 10
@@ -334,6 +336,28 @@ def main() -> None:
             print()
     else:
         print("=== Collapse Detection: No issues found ===\n")
+
+    # Step 5b: Collapse pattern classification & resilience score
+    classifications = classify_collapse_pattern(summary_df)
+    resilience_scores = calculate_resilience_score(summary_df)
+
+    if classifications:
+        pattern_map = {
+            (c["model"], c["task_id"]): c["pattern"]
+            for c in classifications
+        }
+        summary_df["collapse_pattern"] = summary_df.apply(
+            lambda r: pattern_map.get((r["model_name"], r.get("task_id", "")), ""),
+            axis=1,
+        )
+
+    if resilience_scores:
+        summary_df["resilience_score"] = summary_df["model_name"].map(resilience_scores)
+
+        print("=== Collapse Resilience Score ===\n")
+        for model, score in sorted(resilience_scores.items(), key=lambda x: -x[1]):
+            print(f"  {model:<40} {score:.3f}")
+        print()
 
     # Step 6: Basic metrics summary
     print("=== Metrics Summary ===\n")

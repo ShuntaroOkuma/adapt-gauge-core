@@ -197,3 +197,64 @@ class TestCalculateResilienceScore:
         df = pd.DataFrame(columns=["model_name", "task_id", "score_0shot", "score_8shot"])
         result = calculate_resilience_score(df)
         assert result == {}
+
+
+class TestRunnerIntegration:
+    """Tests that classification & resilience integrate into summary_df correctly."""
+
+    def test_summary_df_gets_collapse_pattern_column(self):
+        """classify_collapse_pattern results should map into a DataFrame column."""
+        df = _make_df([
+            _make_row("model-a", "task-1", {0: 0.2, 1: 0.4, 2: 0.6, 4: 0.7, 8: 0.8}),
+            _make_row("model-b", "task-1", {0: 0.8, 1: 0.3, 2: 0.2, 4: 0.2, 8: 0.1}),
+        ])
+        classifications = classify_collapse_pattern(df)
+        pattern_map = {
+            (c["model"], c["task_id"]): c["pattern"]
+            for c in classifications
+        }
+        df["collapse_pattern"] = df.apply(
+            lambda r: pattern_map.get((r["model_name"], r.get("task_id", "")), ""),
+            axis=1,
+        )
+
+        assert "collapse_pattern" in df.columns
+        assert df.loc[df["model_name"] == "model-a", "collapse_pattern"].iloc[0] == "stable"
+        assert df.loc[df["model_name"] == "model-b", "collapse_pattern"].iloc[0] == "immediate_collapse"
+
+    def test_summary_df_gets_resilience_score_column(self):
+        """calculate_resilience_score results should map into a DataFrame column."""
+        df = _make_df([
+            _make_row("model-a", "task-1", {0: 0.3, 1: 0.5, 2: 0.6, 4: 0.7, 8: 0.8}),
+            _make_row("model-b", "task-1", {0: 0.8, 1: 0.3, 2: 0.2, 4: 0.2, 8: 0.1}),
+        ])
+        resilience_scores = calculate_resilience_score(df)
+        df["resilience_score"] = df["model_name"].map(resilience_scores)
+
+        assert "resilience_score" in df.columns
+        assert df.loc[df["model_name"] == "model-a", "resilience_score"].iloc[0] == pytest.approx(1.0)
+        assert df.loc[df["model_name"] == "model-b", "resilience_score"].iloc[0] < 0.3
+
+    def test_columns_survive_csv_roundtrip(self, tmp_path):
+        """New columns should persist through CSV save/load cycle."""
+        df = _make_df([
+            _make_row("model-a", "task-1", {0: 0.3, 1: 0.5, 2: 0.8, 4: 0.7, 8: 0.3}),
+        ])
+        classifications = classify_collapse_pattern(df)
+        resilience_scores = calculate_resilience_score(df)
+
+        pattern_map = {(c["model"], c["task_id"]): c["pattern"] for c in classifications}
+        df["collapse_pattern"] = df.apply(
+            lambda r: pattern_map.get((r["model_name"], r.get("task_id", "")), ""),
+            axis=1,
+        )
+        df["resilience_score"] = df["model_name"].map(resilience_scores)
+
+        csv_path = tmp_path / "summary.csv"
+        df.to_csv(csv_path, index=False)
+        loaded = pd.read_csv(csv_path)
+
+        assert loaded["collapse_pattern"].iloc[0] == "peak_regression"
+        assert loaded["resilience_score"].iloc[0] == pytest.approx(
+            resilience_scores["model-a"], abs=1e-6
+        )
