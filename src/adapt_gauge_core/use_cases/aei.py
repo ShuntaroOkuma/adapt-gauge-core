@@ -348,7 +348,10 @@ _PATTERN_PENALTY = {
 }
 
 
-def calculate_resilience_score(df: pd.DataFrame) -> dict[str, float]:
+def calculate_resilience_score(
+    df: pd.DataFrame,
+    classifications: list[dict] | None = None,
+) -> dict[str, float]:
     """Calculate collapse resilience score per model.
 
     Scores range from 0.0 (always collapses) to 1.0 (fully stable).
@@ -359,11 +362,14 @@ def calculate_resilience_score(df: pd.DataFrame) -> dict[str, float]:
 
     Args:
         df: Summary DataFrame with score_Nshot columns.
+        classifications: Pre-computed classifications to avoid redundant
+            computation. If None, classify_collapse_pattern(df) is called.
 
     Returns:
         Dict mapping model_name to resilience score (0-1).
     """
-    classifications = classify_collapse_pattern(df)
+    if classifications is None:
+        classifications = classify_collapse_pattern(df)
     if not classifications:
         return {}
 

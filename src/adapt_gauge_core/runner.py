@@ -339,17 +339,15 @@ def main() -> None:
 
     # Step 5b: Collapse pattern classification & resilience score
     classifications = classify_collapse_pattern(summary_df)
-    resilience_scores = calculate_resilience_score(summary_df)
+    resilience_scores = calculate_resilience_score(summary_df, classifications=classifications)
 
     if classifications:
         pattern_map = {
             (c["model"], c["task_id"]): c["pattern"]
             for c in classifications
         }
-        summary_df["collapse_pattern"] = summary_df.apply(
-            lambda r: pattern_map.get((r["model_name"], r.get("task_id", "")), ""),
-            axis=1,
-        )
+        keys = pd.MultiIndex.from_frame(summary_df[["model_name", "task_id"]])
+        summary_df["collapse_pattern"] = keys.map(pattern_map).fillna("")
 
     if resilience_scores:
         summary_df["resilience_score"] = summary_df["model_name"].map(resilience_scores)

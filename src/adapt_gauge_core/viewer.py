@@ -214,7 +214,7 @@ def _render_collapse_detection(summary_df: pd.DataFrame) -> None:
         )
 
     # Resilience score
-    resilience = calculate_resilience_score(summary_df)
+    resilience = calculate_resilience_score(summary_df, classifications=classifications)
     if resilience:
         st.subheader("Collapse Resilience Score")
         st.caption("0.0 = always collapses, 1.0 = fully stable.")
