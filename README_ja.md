@@ -17,6 +17,18 @@ adapt-gauge-coreは、**適応効率（Adaptation Efficiency）** を測定す�
 
 adapt-gauge-coreは両方の問いに自動で答えます。
 
+実際の評価では、shot数によって**リーダーボードの順位が逆転する**現象（0-shotでは劣るモデルが4-shotで逆転）や、例を増やすと**スコアがほぼゼロに崩壊する**モデルが確認されています。これらはエッジケースではなく、標準的なベンチマークが見逃す体系的なパターンです。
+
+### 実際の動作例
+
+**4タスク × 5モデルのfew-shot学習曲線:**
+
+![学習曲線の概要](docs/images/learning-curves-overview.png)
+
+**崩壊検出** — gemini-3-flash-previewが4-shotでピーク後、0-shotレベルまで急落:
+
+![崩壊検出](docs/images/learning-curve-collapse.png)
+
 ## クイックスタート
 
 ### 前提条件
@@ -85,6 +97,7 @@ streamlit run src/adapt_gauge_core/viewer.py
 | **学習曲線AUC** | 学習曲線の面積（大きいほど学習が速い） |
 | **ネガティブラーニング検出** | 8-shotスコアが0-shotから20%以上低下した場合に警告 |
 | **pass@k** | 複数トライアルでの信頼性メトリクス |
+| **トークン使用量** | 評価ごとの入力/出力トークン数とレイテンシ |
 
 ## デモ用タスクパック
 
@@ -114,7 +127,7 @@ adapt-gauge-core/
 │   └── use_cases/             # AEI計算、ヘルスチェック
 ├── tasks/                     # タスク定義とデモパック
 ├── results/                   # 評価出力（CSV）
-└── tests/                     # テストスイート（206+テスト）
+└── tests/                     # テストスイート（226テスト）
 ```
 
 ## 採点方式
@@ -146,13 +159,23 @@ HARNESS_K_VALUES=1,3
 
 全設定は [.env.example](.env.example) を参照してください。
 
-## テストの実行
+## 開発
 
 ```bash
-make test
-# または
-python -m pytest tests/ -v
+make install         # 開発モードでインストール
+make test            # 現在のPythonでテスト実行
+make test-all        # Python 3.11, 3.12, 3.13 でテスト実行
+make run             # デモ用タスクパックで評価を実行
+make help            # 全コマンドを表示
 ```
+
+## コントリビュート
+
+開発環境のセットアップとガイドラインは [CONTRIBUTING.md](CONTRIBUTING.md) を参照してください。
+
+## 変更履歴
+
+リリース履歴は [CHANGELOG.md](CHANGELOG.md) を参照してください。
 
 ## ライセンス
 
