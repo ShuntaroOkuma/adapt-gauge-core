@@ -33,6 +33,14 @@ SHOT_CONFIG: dict[int, tuple[int, int]] = {
 }
 
 
+def _resolve_shot_count(shot_count: int) -> int:
+    """Resolve a shot count to the nearest valid value in SHOT_CONFIG."""
+    if shot_count in SHOT_CONFIG:
+        return shot_count
+    valid_shots = sorted(SHOT_CONFIG.keys())
+    return min(valid_shots, key=lambda x: abs(x - shot_count))
+
+
 def select_examples_and_distractors(
     examples: list[Example],
     distractors: list[Distractor],
@@ -53,11 +61,7 @@ def select_examples_and_distractors(
     Returns:
         List of selected examples
     """
-    if shot_count not in SHOT_CONFIG:
-        # For undefined shot counts, use the closest value
-        valid_shots = sorted(SHOT_CONFIG.keys())
-        shot_count = min(valid_shots, key=lambda x: abs(x - shot_count))
-
+    shot_count = _resolve_shot_count(shot_count)
     n_examples, n_distractors = SHOT_CONFIG[shot_count]
 
     # Select up to the available number
@@ -108,9 +112,7 @@ def build_examples_section(
         return ""
 
     if example_selection == ExampleSelectionMethod.TFIDF and test_input:
-        if shot_count not in SHOT_CONFIG:
-            valid_shots = sorted(SHOT_CONFIG.keys())
-            shot_count = min(valid_shots, key=lambda x: abs(x - shot_count))
+        shot_count = _resolve_shot_count(shot_count)
         n_examples, n_distractors = SHOT_CONFIG[shot_count]
         selected = select_examples_tfidf(
             test_input=test_input,

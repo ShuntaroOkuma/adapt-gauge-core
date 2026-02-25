@@ -12,6 +12,9 @@ import random
 from dataclasses import dataclass
 from enum import Enum
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
 from .task_loader import Distractor, Example
 
 
@@ -54,9 +57,6 @@ def select_examples_tfidf(
     """
     if not examples:
         return []
-
-    from sklearn.feature_extraction.text import TfidfVectorizer
-    from sklearn.metrics.pairwise import cosine_similarity
 
     # Build corpus: test_input + all example inputs
     corpus = [test_input] + [ex.input for ex in examples]

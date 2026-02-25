@@ -139,6 +139,100 @@ def _save_raw_results(all_results: list[dict], raw_path: Path) -> None:
     raw_df.to_csv(raw_path, index=False)
 
 
+def _run_evaluations(
+    *,
+    selection_methods: list[ExampleSelectionMethod],
+    num_trials: int,
+    available_models: list[str],
+    tasks: list,
+    shots: list[int],
+    config,
+    make_client,
+    run_id: str,
+    grader_client,
+    all_results: list[dict],
+    skip_set: set[tuple],
+    raw_path: Path,
+) -> None:
+    """Run the evaluation loop across selection methods, trials, models, tasks, shots, and test cases."""
+    num_evals_per_trial = sum(len(t.test_cases) for t in tasks) * len(available_models) * len(shots)
+    total = num_evals_per_trial * num_trials * len(selection_methods)
+    print(f"=== Running Evaluations ({total} total) ===\n")
+
+    current = 0
+    last_saved_count = len(all_results)
+
+    for selection_method in selection_methods:
+        if len(selection_methods) > 1:
+            print(f"--- Example selection: {selection_method.value} ---\n")
+        for trial_id in range(1, num_trials + 1):
+            trial_label = f"T{trial_id}/{num_trials}" if num_trials > 1 else ""
+            for model_name in available_models:
+                if config.isolation.new_client_per_trial or trial_id == 1:
+                    client = make_client(model_name)
+                for task in tasks:
+                    for shot in shots:
+                        for test_case in task.test_cases:
+                            current += 1
+
+                            eval_key = (
+                                task.task_id,
+                                model_name,
+                                shot,
+                                trial_id,
+                                hashlib.sha256(test_case.input.encode("utf-8")).hexdigest(),
+                                selection_method.value,
+                            )
+                            if eval_key in skip_set:
+                                continue
+
+                            sel_label = f"[{selection_method.value}] " if len(selection_methods) > 1 else ""
+                            print(f"[{current}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot")
+
+                            try:
+                                result = run_single_evaluation(
+                                    task=task,
+                                    test_case=test_case,
+                                    model_client=client,
+                                    shot_count=shot,
+                                    run_id=run_id,
+                                    grader_client=grader_client,
+                                    trial_id=trial_id,
+                                    example_selection=selection_method,
+                                )
+                                result_dict = asdict(result)
+                                result_dict["example_selection"] = selection_method.value
+                                all_results.append(result_dict)
+                                print(f"  Score: {result.score:.2f} | Latency: {result.latency_ms}ms")
+                            except Exception as e:
+                                error_result = {
+                                    "run_id": run_id,
+                                    "task_id": task.task_id,
+                                    "category": task.category,
+                                    "model_name": model_name,
+                                    "shot_count": shot,
+                                    "input": test_case.input,
+                                    "expected_output": test_case.expected_output,
+                                    "actual_output": f"ERROR: {e}",
+                                    "score": 0.0,
+                                    "scoring_method": test_case.scoring_method,
+                                    "latency_ms": 0,
+                                    "timestamp": datetime.now().isoformat(),
+                                    "trial_id": trial_id,
+                                    "input_tokens": 0,
+                                    "output_tokens": 0,
+                                    "example_selection": selection_method.value,
+                                }
+                                all_results.append(error_result)
+                                print(f"  ERROR: {e}")
+                                traceback.print_exc()
+
+                            # Intermediate save
+                            if len(all_results) - last_saved_count >= SAVE_INTERVAL:
+                                _save_raw_results(all_results, raw_path)
+                                last_saved_count = len(all_results)
+
+
 def main() -> None:
     load_dotenv()
     args = parse_args()
@@ -218,83 +312,20 @@ def main() -> None:
         print()
 
     # Step 2: Run evaluations
-    num_evals_per_trial = sum(len(t.test_cases) for t in tasks) * len(available_models) * len(shots)
-    total = num_evals_per_trial * num_trials * len(selection_methods)
-    print(f"=== Running Evaluations ({total} total) ===\n")
-
-    current = 0
-    last_saved_count = len(all_results)
-
-    for selection_method in selection_methods:
-        if len(selection_methods) > 1:
-            print(f"--- Example selection: {selection_method.value} ---\n")
-        for trial_id in range(1, num_trials + 1):
-            trial_label = f"T{trial_id}/{num_trials}" if num_trials > 1 else ""
-            for model_name in available_models:
-                if config.isolation.new_client_per_trial or trial_id == 1:
-                    client = make_client(model_name)
-                for task in tasks:
-                    for shot in shots:
-                        for test_case in task.test_cases:
-                            current += 1
-
-                            # Skip if already completed (resume)
-                            eval_key = (
-                                task.task_id,
-                                model_name,
-                                shot,
-                                trial_id,
-                                hashlib.sha256(test_case.input.encode("utf-8")).hexdigest(),
-                                selection_method.value,
-                            )
-                            if eval_key in skip_set:
-                                continue
-
-                            sel_label = f"[{selection_method.value}] " if len(selection_methods) > 1 else ""
-                            print(f"[{current}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot")
-
-                            try:
-                                result = run_single_evaluation(
-                                    task=task,
-                                    test_case=test_case,
-                                    model_client=client,
-                                    shot_count=shot,
-                                    run_id=run_id,
-                                    grader_client=grader_client,
-                                    trial_id=trial_id,
-                                    example_selection=selection_method,
-                                )
-                                result_dict = asdict(result)
-                                result_dict["example_selection"] = selection_method.value
-                                all_results.append(result_dict)
-                                print(f"  Score: {result.score:.2f} | Latency: {result.latency_ms}ms")
-                            except Exception as e:
-                                error_result = {
-                                    "run_id": run_id,
-                                    "task_id": task.task_id,
-                                    "category": task.category,
-                                    "model_name": model_name,
-                                    "shot_count": shot,
-                                    "input": test_case.input,
-                                    "expected_output": test_case.expected_output,
-                                    "actual_output": f"ERROR: {e}",
-                                    "score": 0.0,
-                                    "scoring_method": test_case.scoring_method,
-                                    "latency_ms": 0,
-                                    "timestamp": datetime.now().isoformat(),
-                                    "trial_id": trial_id,
-                                    "input_tokens": 0,
-                                    "output_tokens": 0,
-                                    "example_selection": selection_method.value,
-                                }
-                                all_results.append(error_result)
-                                print(f"  ERROR: {e}")
-                                traceback.print_exc()
-
-                            # Intermediate save
-                            if len(all_results) - last_saved_count >= SAVE_INTERVAL:
-                                _save_raw_results(all_results, raw_path)
-                                last_saved_count = len(all_results)
+    _run_evaluations(
+        selection_methods=selection_methods,
+        num_trials=num_trials,
+        available_models=available_models,
+        tasks=tasks,
+        shots=shots,
+        config=config,
+        make_client=make_client,
+        run_id=run_id,
+        grader_client=grader_client,
+        all_results=all_results,
+        skip_set=skip_set,
+        raw_path=raw_path,
+    )
 
     # Step 3: Aggregate results
     print(f"\n=== Aggregating Results ===\n")
