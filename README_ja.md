@@ -17,6 +17,16 @@ adapt-gauge-coreは、**適応効率（Adaptation Efficiency）** を測定す�
 
 adapt-gauge-coreは両方の問いに自動で答えます。
 
+### 実際の動作例
+
+**4タスク × 5モデルのfew-shot学習曲線:**
+
+![学習曲線の概要](docs/images/learning-curves-overview.png)
+
+**崩壊検出** — gemini-3-flash-previewが4-shotでピーク後、0-shotレベルまで急落:
+
+![崩壊検出](docs/images/learning-curve-collapse.png)
+
 ## クイックスタート
 
 ### 前提条件

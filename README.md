@@ -17,6 +17,16 @@ Standard LLM benchmarks measure accuracy at a single point. But in production, t
 
 adapt-gauge-core answers both questions automatically.
 
+### See It in Action
+
+**Few-shot learning curves across 4 tasks and 5 models:**
+
+![Learning Curves Overview](docs/images/learning-curves-overview.png)
+
+**Collapse detection** — gemini-3-flash-preview peaks at 4-shot then drops back to 0-shot level:
+
+![Collapse Detection](docs/images/learning-curve-collapse.png)
+
 ## Quick Start
 
 ### Prerequisites
