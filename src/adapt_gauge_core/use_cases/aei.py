@@ -52,11 +52,13 @@ def _get_shot_scores(row: pd.Series) -> list[tuple[int, float]]:
     return pairs
 
 
-def _get_final_score_col(df: pd.DataFrame) -> str:
+def _get_final_score_col(df: pd.DataFrame) -> str | None:
     """Determine the final shot column available in the DataFrame."""
-    if "score_8shot" in df.columns:
-        return "score_8shot"
-    return "score_4shot"
+    for shot in reversed(SHOT_SCHEDULE):
+        col = f"score_{shot}shot"
+        if col in df.columns:
+            return col
+    return None
 
 
 def _make_label_fn(
@@ -95,6 +97,8 @@ def detect_negative_learning(
     """
     fn = _make_label_fn(label_fn)
     final_col = _get_final_score_col(df)
+    if final_col is None:
+        return []
     threshold = 0.9  # Detect when score drops below 90% of the 0-shot score
 
     alerts: list[dict] = []

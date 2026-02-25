@@ -504,7 +504,7 @@ class TestDetectMidCurveDip:
         ])
 
         alerts = detect_mid_curve_dip(df)
-        assert len(alerts) >= 1
+        assert len(alerts) == 1
         # The largest dip is 1-shot(0.607) -> 4-shot(0.282), but we check adjacent pairs
         # Actually 2-shot(0.552) -> 4-shot(0.282) = 48.9% drop is the adjacent pair
         largest = alerts[0]
