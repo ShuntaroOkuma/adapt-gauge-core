@@ -4,7 +4,12 @@ Use Cases Layer
 Aggregates business logic and provides use cases called from the runner.
 """
 
-from adapt_gauge_core.use_cases.aei import compute_aei, detect_negative_learning
+from adapt_gauge_core.use_cases.aei import (
+    compute_aei,
+    detect_negative_learning,
+    detect_peak_regression,
+    detect_mid_curve_dip,
+)
 from adapt_gauge_core.use_cases.evaluation import (
     run_single_evaluation,
     _run_model_evaluations,
@@ -24,6 +29,8 @@ __all__ = [
     # aei
     "compute_aei",
     "detect_negative_learning",
+    "detect_peak_regression",
+    "detect_mid_curve_dip",
     # evaluation
     "run_single_evaluation",
     "_run_model_evaluations",
