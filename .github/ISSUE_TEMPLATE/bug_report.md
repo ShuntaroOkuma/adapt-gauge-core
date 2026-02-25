@@ -29,7 +29,7 @@ A clear description of what actually happened. Include error messages or traceba
 
 - **Python version**: (e.g., 3.11.5)
 - **adapt-gauge-core version**: (e.g., 0.1.0)
-- **OS**: (e.g., macOS 15.3, Ubuntu 22.04)
+- **OS**: (e.g., macOS 14.5, Ubuntu 22.04)
 - **Installation method**: (e.g., pip, uv, from source)
 
 ## Additional Context
