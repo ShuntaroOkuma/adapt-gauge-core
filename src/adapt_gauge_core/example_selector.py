@@ -84,13 +84,9 @@ def select_examples_tfidf(
     # Add distractors
     if distractors and n_distractors > 0:
         n_dist = min(n_distractors, len(distractors))
-        dist_list = list(distractors[:n_dist])
-        if shuffle and seed is not None:
-            rng = random.Random(seed)
-            rng.shuffle(dist_list)
         selected.extend(
             SelectedExample(input=d.input, output=d.output, is_distractor=True)
-            for d in dist_list[:n_dist]
+            for d in distractors[:n_dist]
         )
 
     # Shuffle combined list

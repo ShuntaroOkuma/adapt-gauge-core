@@ -180,6 +180,7 @@ class TestResumeCapability:
             expected_key = (
                 "t1", "m1", 0, 1,
                 hashlib.sha256("hello".encode("utf-8")).hexdigest(),
+                "fixed",
             )
             assert expected_key in skip_set
 

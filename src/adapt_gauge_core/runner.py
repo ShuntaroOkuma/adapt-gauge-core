@@ -126,6 +126,7 @@ def _build_skip_set(raw_path: Path) -> tuple[list[dict], set[tuple]]:
             int(r["shot_count"]),
             int(r.get("trial_id", 1)),
             hashlib.sha256(str(r["input"]).encode("utf-8")).hexdigest(),
+            str(r.get("example_selection", "fixed")),
         ))
 
     return existing_results, skip_set
@@ -244,6 +245,7 @@ def main() -> None:
                                 shot,
                                 trial_id,
                                 hashlib.sha256(test_case.input.encode("utf-8")).hexdigest(),
+                                selection_method.value,
                             )
                             if eval_key in skip_set:
                                 continue
