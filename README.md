@@ -17,6 +17,8 @@ Standard LLM benchmarks measure accuracy at a single point. But in production, t
 
 adapt-gauge-core answers both questions automatically.
 
+In our evaluations, we observed that **leaderboard rankings reverse** depending on shot count — a model that trails at 0-shot can overtake the leader at 4-shot. We also found models whose scores **collapse to near-zero** when given more examples. These are not edge cases; they are systematic patterns that standard benchmarks miss.
+
 ### See It in Action
 
 **Few-shot learning curves across 4 tasks and 5 models:**
@@ -95,6 +97,7 @@ For each model-task combination across shot counts (0, 1, 2, 4, 8):
 | **Learning Curve AUC** | Area under the learning curve (higher = learns faster) |
 | **Negative Learning** | Detects when 8-shot score drops >20% below 0-shot |
 | **pass@k** | Reliability metric across multiple trials |
+| **Token Usage** | Input/output tokens and latency per evaluation |
 
 ## Demo Task Pack
 
@@ -124,7 +127,7 @@ adapt-gauge-core/
 │   └── use_cases/             # AEI computation, health checks
 ├── tasks/                     # Task definitions and demo pack
 ├── results/                   # Evaluation output (CSV)
-└── tests/                     # Test suite (206+ tests)
+└── tests/                     # Test suite (226 tests)
 ```
 
 ## Scoring Methods
@@ -156,13 +159,23 @@ HARNESS_K_VALUES=1,3
 
 See [.env.example](.env.example) for the full list.
 
-## Running Tests
+## Development
 
 ```bash
-make test
-# or
-python -m pytest tests/ -v
+make install         # Install package in dev mode
+make test            # Run tests with current Python
+make test-all        # Run tests with Python 3.11, 3.12, 3.13
+make run             # Run evaluation with demo task pack
+make help            # Show all available commands
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## License
 
