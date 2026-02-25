@@ -59,9 +59,16 @@ python -m adapt_gauge_core.runner \
 
 ### View Results
 
+A demo evaluation result is included so you can explore the viewer without running an evaluation:
+
 ```bash
-# Streamlit viewer (requires viewer extras)
+# Install viewer extras
 pip install -e ".[viewer]"
+
+# View demo results (included in results/demo/)
+streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results/demo
+
+# View your own results after running an evaluation
 streamlit run src/adapt_gauge_core/viewer.py
 ```
 
