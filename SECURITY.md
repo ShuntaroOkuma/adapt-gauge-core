@@ -12,7 +12,7 @@ If you discover a security vulnerability in adapt-gauge-core, please report it r
 
 ### How to Report
 
-Send an email to the repository owner with the following information:
+Send an email to **shuntaro.okuma@soitto.jp** with the following information:
 
 - **Description**: A clear description of the vulnerability
 - **Steps to Reproduce**: Detailed steps to reproduce the issue
