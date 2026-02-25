@@ -72,6 +72,37 @@ def _make_label_fn(
 
 _MIN_BASELINE = 0.05
 
+# Peak regression thresholds (shared by detect_peak_regression & classify)
+_LEARNING_THRESHOLD = 1.1    # Peak must be 10% above 0-shot
+_REGRESSION_THRESHOLD = 0.8  # Final must drop below 80% of peak
+
+
+def _is_peak_regression(
+    shot_scores: list[tuple[int, float]],
+    score_0: float,
+) -> tuple[bool, int, float]:
+    """Check whether a shot-score series shows peak regression.
+
+    Returns:
+        (is_peak_regression, peak_shot, score_peak)
+    """
+    if len(shot_scores) < 2 or score_0 <= _MIN_BASELINE:
+        return False, 0, 0.0
+
+    peak_shot, score_peak = max(shot_scores[1:], key=lambda x: x[1])
+    final_shot, score_final = shot_scores[-1]
+
+    if peak_shot == final_shot:
+        return False, peak_shot, score_peak
+
+    if (
+        score_peak > score_0 * _LEARNING_THRESHOLD
+        and score_final < score_peak * _REGRESSION_THRESHOLD
+    ):
+        return True, peak_shot, score_peak
+
+    return False, peak_shot, score_peak
+
 
 def detect_negative_learning(
     df: pd.DataFrame,
@@ -148,46 +179,33 @@ def detect_peak_regression(
         task_id, task_label, score_peak, peak_shot, score_final, drop_pct, and type.
     """
     fn = _make_label_fn(label_fn)
-    learning_threshold = 1.1   # Peak must be 10% above 0-shot
-    regression_threshold = 0.8  # Final must drop below 80% of peak
 
     alerts: list[dict] = []
     for _, row in df.iterrows():
         shot_scores = _get_shot_scores(row)
-        if len(shot_scores) < 2:
+        score_0 = shot_scores[0][1] if shot_scores else 0.0
+
+        is_regression, peak_shot, score_peak = _is_peak_regression(
+            shot_scores, score_0,
+        )
+        if not is_regression:
             continue
 
-        score_0 = shot_scores[0][1]
-        if score_0 <= _MIN_BASELINE:
-            continue
-
-        # Find peak among all shots (including final)
-        peak_shot, score_peak = max(shot_scores[1:], key=lambda x: x[1])
-        final_shot, score_final = shot_scores[-1]
-
-        # Skip if peak IS the final shot (no regression)
-        if peak_shot == final_shot:
-            continue
-
-        # Check learning evidence and regression
-        if (
-            score_peak > score_0 * learning_threshold
-            and score_final < score_peak * regression_threshold
-        ):
-            drop_pct = (score_peak - score_final) / score_peak * 100
-            task_label = fn(
-                row.get("task_id", ""), row.get("category", "")
-            )
-            alerts.append({
-                "type": "peak_regression",
-                "model": row["model_name"],
-                "task_id": row.get("task_id", ""),
-                "task_label": task_label,
-                "score_peak": score_peak,
-                "peak_shot": peak_shot,
-                "score_final": score_final,
-                "drop_pct": drop_pct,
-            })
+        score_final = shot_scores[-1][1]
+        drop_pct = (score_peak - score_final) / score_peak * 100
+        task_label = fn(
+            row.get("task_id", ""), row.get("category", "")
+        )
+        alerts.append({
+            "type": "peak_regression",
+            "model": row["model_name"],
+            "task_id": row.get("task_id", ""),
+            "task_label": task_label,
+            "score_peak": score_peak,
+            "peak_shot": peak_shot,
+            "score_final": score_final,
+            "drop_pct": drop_pct,
+        })
     alerts.sort(key=lambda x: x["drop_pct"], reverse=True)
     return alerts
 
@@ -254,3 +272,139 @@ def detect_mid_curve_dip(
 
     alerts.sort(key=lambda x: x["drop_pct"], reverse=True)
     return alerts
+
+
+# ---------------------------------------------------------------------------
+# Collapse pattern classification
+# ---------------------------------------------------------------------------
+
+_DECLINE_THRESHOLD = 0.10  # 10% overall drop to be considered a decline
+_IMMEDIATE_DROP_RATIO = 0.6  # First drop accounts for >=60% of total drop
+
+
+def classify_collapse_pattern(df: pd.DataFrame) -> list[dict]:
+    """Classify collapse pattern for each model-task combination.
+
+    Pattern types:
+        - "stable": No significant degradation (monotonic increase, flat, or <10% drop)
+        - "immediate_collapse": Sharp drop right after 0-shot that persists
+        - "gradual_decline": Steady decrease across shot counts
+        - "peak_regression": Score improves then regresses
+
+    Args:
+        df: Summary DataFrame with score_Nshot columns.
+
+    Returns:
+        List of dicts with model, task_id, pattern, and scores.
+    """
+    results: list[dict] = []
+    for _, row in df.iterrows():
+        shot_scores = _get_shot_scores(row)
+        if len(shot_scores) < 2:
+            continue
+
+        model = row["model_name"]
+        task_id = row.get("task_id", "")
+        scores_dict = {s: v for s, v in shot_scores}
+        score_0 = shot_scores[0][1]
+        score_final = shot_scores[-1][1]
+
+        # Classify pattern
+        is_regression, _, _ = _is_peak_regression(shot_scores, score_0)
+
+        if score_0 <= _MIN_BASELINE:
+            pattern = "stable"
+        elif is_regression:
+            pattern = "peak_regression"
+        elif (score_0 - score_final) / score_0 < _DECLINE_THRESHOLD:
+            pattern = "stable"
+        else:
+            first_drop = score_0 - shot_scores[1][1]
+            total_drop = score_0 - score_final
+            if total_drop > 0 and first_drop / total_drop >= _IMMEDIATE_DROP_RATIO:
+                pattern = "immediate_collapse"
+            else:
+                pattern = "gradual_decline"
+
+        results.append({
+            "model": model,
+            "task_id": task_id,
+            "scores": scores_dict,
+            "pattern": pattern,
+        })
+
+    return results
+
+
+# ---------------------------------------------------------------------------
+# Collapse resilience score
+# ---------------------------------------------------------------------------
+
+_PATTERN_PENALTY = {
+    "stable": 0.0,
+    "gradual_decline": 0.5,
+    "peak_regression": 0.6,
+    "immediate_collapse": 1.0,
+}
+
+
+def calculate_resilience_score(
+    df: pd.DataFrame,
+    classifications: list[dict] | None = None,
+) -> dict[str, float]:
+    """Calculate collapse resilience score per model.
+
+    Scores range from 0.0 (always collapses) to 1.0 (fully stable).
+
+    The score combines:
+        - Pattern type penalty (stable=0, immediate_collapse=1)
+        - Magnitude of the actual drop when collapse occurs
+
+    Args:
+        df: Summary DataFrame with score_Nshot columns.
+        classifications: Pre-computed classifications to avoid redundant
+            computation. If None, classify_collapse_pattern(df) is called.
+
+    Returns:
+        Dict mapping model_name to resilience score (0-1).
+    """
+    if classifications is None:
+        classifications = classify_collapse_pattern(df)
+    if not classifications:
+        return {}
+
+    model_scores: dict[str, list[float]] = {}
+    for entry in classifications:
+        model = entry["model"]
+        pattern = entry["pattern"]
+        scores = entry["scores"]
+
+        shot_list = sorted(scores.keys())
+        if len(shot_list) < 2:
+            continue
+
+        score_0 = scores[shot_list[0]]
+        score_final = scores[shot_list[-1]]
+
+        # Base penalty from pattern type
+        base_penalty = _PATTERN_PENALTY.get(pattern, 0.0)
+
+        # Scale by actual drop magnitude (0-1)
+        if pattern == "peak_regression":
+            # For peak regression, measure drop from peak (not from 0-shot)
+            score_peak = max(scores[s] for s in shot_list[1:])
+            drop_ratio = max(0.0, (score_peak - score_final) / score_peak)
+            penalty = base_penalty * min(1.0, drop_ratio)
+        elif score_0 > _MIN_BASELINE and pattern != "stable":
+            drop_ratio = max(0.0, (score_0 - score_final) / score_0)
+            penalty = base_penalty * min(1.0, drop_ratio)
+        else:
+            penalty = 0.0
+
+        resilience = 1.0 - penalty
+        model_scores.setdefault(model, []).append(resilience)
+
+    return {
+        model: sum(vals) / len(vals)
+        for model, vals in model_scores.items()
+    }
