@@ -148,7 +148,3 @@ python -m pytest tests/ -v
 ## License
 
 MIT
-
-## Related
-
-- **[adapt-gauge](https://github.com/ShuntaroOkuma/adapt-gauge-service)** — Full evaluation platform with 6-axis scoring, dashboard, and Cloud Run integration (private)
