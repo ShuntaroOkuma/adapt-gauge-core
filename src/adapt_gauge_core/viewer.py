@@ -22,7 +22,11 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from adapt_gauge_core.domain.constants import SHOT_SCHEDULE
-from adapt_gauge_core.use_cases.aei import detect_negative_learning
+from adapt_gauge_core.use_cases.aei import (
+    detect_negative_learning,
+    detect_peak_regression,
+    detect_mid_curve_dip,
+)
 
 # -- Colors --
 MODEL_COLORS = [
@@ -139,23 +143,55 @@ def _render_learning_curve(summary_df: pd.DataFrame) -> None:
 
 
 def _render_collapse_detection(summary_df: pd.DataFrame) -> None:
-    """Render collapse / negative learning warnings."""
+    """Render collapse / negative learning warnings for all 3 detection types."""
     st.header("Collapse Detection")
 
-    alerts = detect_negative_learning(summary_df)
+    neg_alerts = detect_negative_learning(summary_df)
+    peak_alerts = detect_peak_regression(summary_df)
+    dip_alerts = detect_mid_curve_dip(summary_df)
 
-    if not alerts:
+    has_any = neg_alerts or peak_alerts or dip_alerts
+
+    if not has_any:
         st.success("No negative learning detected.")
         return
 
-    for alert in alerts:
-        short = _short_model_name(alert["model"])
-        drop = alert["drop_pct"]
-        st.warning(
-            f"**{short}** on `{alert['task_id']}`: "
-            f"0-shot {alert['score_0shot']:.1%} -> final {alert['score_final']:.1%} "
-            f"(drop {drop:.1f}%)"
-        )
+    if neg_alerts:
+        st.subheader("Negative Learning")
+        st.caption("Final score is worse than 0-shot baseline.")
+        for alert in neg_alerts:
+            short = _short_model_name(alert["model"])
+            severity = alert["severity"]
+            fn = st.error if severity == "collapse" else st.warning
+            fn(
+                f"**{short}** on `{alert['task_id']}`: "
+                f"0-shot {alert['score_0shot']:.1%} -> final {alert['score_final']:.1%} "
+                f"({severity}, drop {alert['drop_pct']:.1f}%)"
+            )
+
+    if peak_alerts:
+        st.subheader("Peak Regression")
+        st.caption("Model learned at an intermediate shot count, then regressed.")
+        for alert in peak_alerts:
+            short = _short_model_name(alert["model"])
+            st.warning(
+                f"**{short}** on `{alert['task_id']}`: "
+                f"peak {alert['score_peak']:.1%} at {alert['peak_shot']}-shot "
+                f"-> final {alert['score_final']:.1%} "
+                f"(drop {alert['drop_pct']:.1f}%)"
+            )
+
+    if dip_alerts:
+        st.subheader("Mid-curve Dip")
+        st.caption("Sharp score drop between adjacent shot counts (instability).")
+        for alert in dip_alerts:
+            short = _short_model_name(alert["model"])
+            st.warning(
+                f"**{short}** on `{alert['task_id']}`: "
+                f"{alert['from_shot']}-shot {alert['score_from']:.1%} "
+                f"-> {alert['to_shot']}-shot {alert['score_to']:.1%} "
+                f"(drop {alert['drop_pct']:.1f}%)"
+            )
 
 
 def _render_metrics_table(summary_df: pd.DataFrame) -> None:

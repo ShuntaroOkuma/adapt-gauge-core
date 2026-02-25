@@ -40,7 +40,11 @@ from adapt_gauge_core.use_cases.evaluation import (
     run_single_evaluation,
     aggregate_results,
 )
-from adapt_gauge_core.use_cases.aei import detect_negative_learning
+from adapt_gauge_core.use_cases.aei import (
+    detect_negative_learning,
+    detect_peak_regression,
+    detect_mid_curve_dip,
+)
 
 SAVE_INTERVAL = 10
 
@@ -290,17 +294,44 @@ def main() -> None:
             )
         print()
 
-    # Step 5: Collapse detection
-    alerts = detect_negative_learning(summary_df)
-    if alerts:
+    # Step 5: Collapse detection (3 types)
+    neg_alerts = detect_negative_learning(summary_df)
+    peak_alerts = detect_peak_regression(summary_df)
+    dip_alerts = detect_mid_curve_dip(summary_df)
+
+    has_any = neg_alerts or peak_alerts or dip_alerts
+
+    if has_any:
         print("=== Collapse Detection (WARNING) ===\n")
-        for alert in alerts:
-            print(
-                f"  WARNING: {alert['model']} | {alert['task_id']} "
-                f"| 0-shot={alert['score_0shot']:.3f} -> final={alert['score_final']:.3f} "
-                f"(drop {alert['drop_pct']:.1f}%)"
-            )
-        print()
+        if neg_alerts:
+            print("  --- Negative Learning ---")
+            for alert in neg_alerts:
+                print(
+                    f"  WARNING [{alert['severity']}]: {alert['model']} | {alert['task_id']} "
+                    f"| 0-shot={alert['score_0shot']:.3f} -> final={alert['score_final']:.3f} "
+                    f"(drop {alert['drop_pct']:.1f}%)"
+                )
+            print()
+        if peak_alerts:
+            print("  --- Peak Regression ---")
+            for alert in peak_alerts:
+                print(
+                    f"  WARNING: {alert['model']} | {alert['task_id']} "
+                    f"| peak={alert['score_peak']:.3f} at {alert['peak_shot']}-shot "
+                    f"-> final={alert['score_final']:.3f} "
+                    f"(drop {alert['drop_pct']:.1f}%)"
+                )
+            print()
+        if dip_alerts:
+            print("  --- Mid-curve Dip ---")
+            for alert in dip_alerts:
+                print(
+                    f"  WARNING: {alert['model']} | {alert['task_id']} "
+                    f"| {alert['from_shot']}-shot={alert['score_from']:.3f} "
+                    f"-> {alert['to_shot']}-shot={alert['score_to']:.3f} "
+                    f"(drop {alert['drop_pct']:.1f}%)"
+                )
+            print()
     else:
         print("=== Collapse Detection: No issues found ===\n")
 
