@@ -148,7 +148,3 @@ python -m pytest tests/ -v
 ## ライセンス
 
 MIT
-
-## 関連プロジェクト
-
-- **[adapt-gauge](https://github.com/ShuntaroOkuma/adapt-gauge-service)** — 6軸評価、ダッシュボード、Cloud Run統合を備えた完全版評価プラットフォーム（プライベート）

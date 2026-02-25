@@ -9,6 +9,28 @@ description = "Core evaluation pipeline for measuring LLM adaptation efficiency"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
+authors = [
+    {name = "Shuntaro Okuma"},
+]
+keywords = [
+    "llm",
+    "evaluation",
+    "few-shot",
+    "adaptation-efficiency",
+    "negative-learning",
+    "benchmarking",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 dependencies = [
     "google-genai>=1.0.0",
     "google-api-core>=2.0.0",
@@ -17,6 +39,11 @@ dependencies = [
     "pandas>=2.0.0",
     "python-dotenv>=1.0.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/ShuntaroOkuma/adapt-gauge-core"
+Repository = "https://github.com/ShuntaroOkuma/adapt-gauge-core"
+Issues = "https://github.com/ShuntaroOkuma/adapt-gauge-core/issues"
 
 [project.optional-dependencies]
 viewer = [
