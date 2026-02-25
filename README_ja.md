@@ -59,9 +59,16 @@ python -m adapt_gauge_core.runner \
 
 ### 結果の閲覧
 
+デモ用の評価結果が同梱されているので、評価を実行しなくてもビューアを試せます：
+
 ```bash
 # Streamlitビューア（viewerオプションが必要）
 pip install -e ".[viewer]"
+
+# デモ結果を閲覧（results/demo/ に同梱）
+streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results/demo
+
+# 自分の評価結果を閲覧
 streamlit run src/adapt_gauge_core/viewer.py
 ```
 

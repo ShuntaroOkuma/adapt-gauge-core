@@ -24,9 +24,10 @@ env/
 *.swp
 *.swo
 
-# Results (generated)
+# Results (generated, except demo)
 results/*.csv
 results/*.json
+!results/demo/
 
 # OS
 .DS_Store
