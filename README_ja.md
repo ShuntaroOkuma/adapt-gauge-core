@@ -1,5 +1,9 @@
 # adapt-gauge-core
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Tests](https://github.com/ShuntaroOkuma/adapt-gauge-core/actions/workflows/test.yml/badge.svg)](https://github.com/ShuntaroOkuma/adapt-gauge-core/actions/workflows/test.yml)
+
 [English](README.md)
 
 **LLMがfew-shot例からどれだけ速く学習するか測定し、性能崩壊を検出します。**
