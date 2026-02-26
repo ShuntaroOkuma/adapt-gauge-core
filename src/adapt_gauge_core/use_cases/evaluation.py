@@ -18,6 +18,7 @@ from adapt_gauge_core.domain.value_objects import CostMetrics
 from adapt_gauge_core.infrastructure.model_clients.base import ModelClient
 from adapt_gauge_core.task_loader import Task, TestCase
 from adapt_gauge_core.prompt_builder import build_prompt
+from adapt_gauge_core.example_selector import ExampleSelectionMethod
 from adapt_gauge_core.scoring.scorer import score
 from adapt_gauge_core.efficiency_calc import (
     calculate_all_metrics,
@@ -36,6 +37,7 @@ def run_single_evaluation(
     run_id: str,
     grader_client: ModelClient | None = None,
     trial_id: int = 1,
+    example_selection: ExampleSelectionMethod = ExampleSelectionMethod.FIXED,
 ) -> EvaluationResult:
     """
     Execute a single evaluation.
@@ -48,12 +50,16 @@ def run_single_evaluation(
         run_id: Run ID
         grader_client: Client for LLM grader (used with llm_judge)
         trial_id: Trial ID (default: 1)
+        example_selection: Example selection method ("fixed" or "tfidf")
 
     Returns:
         EvaluationResult: Evaluation result
     """
     # Build prompt
-    prompt = build_prompt(task, test_case.input, shot_count)
+    prompt = build_prompt(
+        task, test_case.input, shot_count,
+        example_selection=example_selection,
+    )
 
     # Call model
     response = model_client.generate(prompt)

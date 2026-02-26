@@ -16,6 +16,11 @@ from dataclasses import dataclass
 from typing import Union
 
 from .task_loader import Distractor, Example, Task
+from .example_selector import (
+    ExampleSelectionMethod,
+    SelectedExample,
+    select_examples_tfidf,
+)
 
 
 # Exemplar/distractor composition per shot count
@@ -28,12 +33,12 @@ SHOT_CONFIG: dict[int, tuple[int, int]] = {
 }
 
 
-@dataclass
-class SelectedExample:
-    """A selected example (exemplar or distractor)"""
-    input: str
-    output: str
-    is_distractor: bool  # Whether this is a distractor (for debugging)
+def _resolve_shot_count(shot_count: int) -> int:
+    """Resolve a shot count to the nearest valid value in SHOT_CONFIG."""
+    if shot_count in SHOT_CONFIG:
+        return shot_count
+    valid_shots = sorted(SHOT_CONFIG.keys())
+    return min(valid_shots, key=lambda x: abs(x - shot_count))
 
 
 def select_examples_and_distractors(
@@ -56,11 +61,7 @@ def select_examples_and_distractors(
     Returns:
         List of selected examples
     """
-    if shot_count not in SHOT_CONFIG:
-        # For undefined shot counts, use the closest value
-        valid_shots = sorted(SHOT_CONFIG.keys())
-        shot_count = min(valid_shots, key=lambda x: abs(x - shot_count))
-
+    shot_count = _resolve_shot_count(shot_count)
     n_examples, n_distractors = SHOT_CONFIG[shot_count]
 
     # Select up to the available number
@@ -90,6 +91,8 @@ def build_examples_section(
     shot_count: int,
     shuffle: bool = True,
     seed: int | None = None,
+    example_selection: ExampleSelectionMethod = ExampleSelectionMethod.FIXED,
+    test_input: str = "",
 ) -> str:
     """
     Build the examples section (with exemplar + distractor support)
@@ -99,6 +102,8 @@ def build_examples_section(
         shot_count: Shot count (0, 1, 2, 4, 8)
         shuffle: Whether to shuffle exemplars and distractors
         seed: Random seed for shuffling
+        example_selection: Selection method ("fixed" or "tfidf")
+        test_input: Test case input (required for tfidf selection)
 
     Returns:
         Examples section string (empty string for 0-shot)
@@ -106,13 +111,26 @@ def build_examples_section(
     if shot_count == 0:
         return ""
 
-    selected = select_examples_and_distractors(
-        task.examples,
-        task.distractors,
-        shot_count,
-        shuffle=shuffle,
-        seed=seed,
-    )
+    if example_selection == ExampleSelectionMethod.TFIDF and test_input:
+        shot_count = _resolve_shot_count(shot_count)
+        n_examples, n_distractors = SHOT_CONFIG[shot_count]
+        selected = select_examples_tfidf(
+            test_input=test_input,
+            examples=task.examples,
+            n_examples=n_examples,
+            distractors=task.distractors,
+            n_distractors=n_distractors,
+            shuffle=shuffle,
+            seed=seed,
+        )
+    else:
+        selected = select_examples_and_distractors(
+            task.examples,
+            task.distractors,
+            shot_count,
+            shuffle=shuffle,
+            seed=seed,
+        )
 
     if not selected:
         return ""
@@ -133,6 +151,7 @@ def build_prompt(
     shot_count: int,
     shuffle: bool = True,
     seed: int | None = None,
+    example_selection: ExampleSelectionMethod = ExampleSelectionMethod.FIXED,
 ) -> str:
     """
     Build a prompt based on the shot count
@@ -143,11 +162,15 @@ def build_prompt(
         shot_count: Shot count (0, 1, 2, 4, 8)
         shuffle: Whether to shuffle exemplars and distractors
         seed: Random seed for shuffling (for reproducibility)
+        example_selection: Selection method ("fixed" or "tfidf")
 
     Returns:
         Constructed prompt string
     """
-    examples_section = build_examples_section(task, shot_count, shuffle=shuffle, seed=seed)
+    examples_section = build_examples_section(
+        task, shot_count, shuffle=shuffle, seed=seed,
+        example_selection=example_selection, test_input=test_input,
+    )
 
     # Task description (prefer instruction if available)
     task_description = task.instruction if task.instruction else task.description
