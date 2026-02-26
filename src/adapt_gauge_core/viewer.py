@@ -337,6 +337,9 @@ def main() -> None:
     # Sidebar: example selection filter
     has_selection = "example_selection" in summary_df.columns
     if has_selection:
+        summary_df["example_selection"] = summary_df["example_selection"].fillna("fixed")
+        if "example_selection" in raw_df.columns:
+            raw_df["example_selection"] = raw_df["example_selection"].fillna("fixed")
         sel_methods = sorted(summary_df["example_selection"].unique())
         if len(sel_methods) > 1:
             selected_sel = st.sidebar.selectbox(
