@@ -242,6 +242,7 @@ def _render_collapse_detection(summary_df: pd.DataFrame) -> None:
         )
 
     # Resilience score — compute per selection method when multiple exist
+    res_df = None
     if multi_sel and classifications:
         sel_groups: dict[str, list[dict]] = {}
         for c in classifications:
@@ -258,23 +259,19 @@ def _render_collapse_detection(summary_df: pd.DataFrame) -> None:
                     "Resilience Score": f"{s:.3f}",
                 })
         if all_res_rows:
-            st.subheader("Collapse Resilience Score")
-            st.caption("0.0 = always collapses, 1.0 = fully stable.")
-            st.dataframe(
-                pd.DataFrame(all_res_rows),
-                use_container_width=True,
-                hide_index=True,
-            )
+            res_df = pd.DataFrame(all_res_rows)
     else:
         resilience = calculate_resilience_score(summary_df, classifications=classifications)
         if resilience:
-            st.subheader("Collapse Resilience Score")
-            st.caption("0.0 = always collapses, 1.0 = fully stable.")
             res_df = pd.DataFrame([
                 {"Model": _short_model_name(m), "Resilience Score": f"{s:.3f}"}
                 for m, s in sorted(resilience.items(), key=lambda x: -x[1])
             ])
-            st.dataframe(res_df, use_container_width=True, hide_index=True)
+
+    if res_df is not None and not res_df.empty:
+        st.subheader("Collapse Resilience Score")
+        st.caption("0.0 = always collapses, 1.0 = fully stable.")
+        st.dataframe(res_df, use_container_width=True, hide_index=True)
 
 
 def _render_metrics_table(summary_df: pd.DataFrame) -> None:
