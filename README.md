@@ -65,11 +65,33 @@ python -m adapt_gauge_core.runner \
   --task-pack tasks/task_pack_core_demo.json \
   --models gemini-2.5-flash,claude-haiku-4-5-20251001
 
+# Use TF-IDF example selection (default) or fixed ordering
+python -m adapt_gauge_core.runner \
+  --task-pack tasks/task_pack_core_demo.json \
+  --example-selection tfidf
+
+# Compare both selection methods side by side
+python -m adapt_gauge_core.runner \
+  --task-pack tasks/task_pack_core_demo.json \
+  --compare-selection
+
 # Resume a previous run
 python -m adapt_gauge_core.runner \
   --task-pack tasks/task_pack_core_demo.json \
   --run-id 20260101_120000
 ```
+
+#### CLI Options
+
+| Option | Description |
+|--------|-------------|
+| `--task-pack` | Path to the task pack JSON file (required) |
+| `--models` | Comma-separated model names (default: built-in list) |
+| `--num-trials` | Number of trials per evaluation |
+| `--run-id` | Resume a previous run by its ID |
+| `--output-dir` | Directory for output CSV files (default: `results`) |
+| `--example-selection` | `tfidf` (default) or `fixed` ordering |
+| `--compare-selection` | Run both selection methods for comparison |
 
 ### View Results
 
@@ -95,9 +117,23 @@ For each model-task combination across shot counts (0, 1, 2, 4, 8):
 | **Improvement Rate** | Score gain per additional shot |
 | **Threshold Shots** | Minimum shots to reach target score (default: 0.8) |
 | **Learning Curve AUC** | Area under the learning curve (higher = learns faster) |
-| **Negative Learning** | Detects when 8-shot score drops >20% below 0-shot |
+| **Collapse Detection** | Three independent checks (see below) |
+| **Collapse Pattern** | Classification: stable / immediate_collapse / gradual_decline / peak_regression |
+| **Resilience Score** | Per-model collapse resilience on a 0–1 scale |
 | **pass@k** | Reliability metric across multiple trials |
 | **Token Usage** | Input/output tokens and latency per evaluation |
+
+### Collapse Detection
+
+The evaluation pipeline runs three independent collapse checks:
+
+| Check | Triggers when |
+|-------|---------------|
+| **Negative Learning** | Final-shot score drops >10% below 0-shot |
+| **Peak Regression** | Peak score drops >20% by final shot |
+| **Mid-curve Dip** | >30% drop between consecutive shots |
+
+Results are classified into a **collapse pattern** (stable, immediate_collapse, gradual_decline, peak_regression) and aggregated into a per-model **resilience score** (0.0–1.0).
 
 ## Demo Task Pack
 
@@ -118,16 +154,17 @@ adapt-gauge-core/
 │   ├── runner.py              # CLI entry point
 │   ├── viewer.py              # Streamlit results viewer
 │   ├── prompt_builder.py      # Few-shot prompt construction
+│   ├── example_selector.py    # TF-IDF / fixed example selection
 │   ├── task_loader.py         # Task/pack JSON loading
 │   ├── efficiency_calc.py     # AUC, improvement rate, threshold
 │   ├── harness_config.py      # Configuration management
-│   ├── domain/                # Entities and value objects
+│   ├── domain/                # Entities, value objects, constants
 │   ├── scoring/               # Scoring: exact_match, contains, f1, llm_judge
 │   ├── infrastructure/        # Model clients: Vertex AI, Claude, LMStudio
-│   └── use_cases/             # AEI computation, health checks
+│   └── use_cases/             # Evaluation, AEI/collapse analysis, health checks
 ├── tasks/                     # Task definitions and demo pack
 ├── results/                   # Evaluation output (CSV)
-└── tests/                     # Test suite (226 tests)
+└── tests/                     # Test suite (264 tests)
 ```
 
 ## Scoring Methods
@@ -158,6 +195,8 @@ HARNESS_K_VALUES=1,3
 ```
 
 See [.env.example](.env.example) for the full list.
+
+For detailed instructions on installation, configuration, example selection methods, and interpreting results, see the [Usage Guide](docs/usage-guide.md).
 
 ## Development
 
