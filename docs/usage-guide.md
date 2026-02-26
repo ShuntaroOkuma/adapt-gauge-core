@@ -279,7 +279,7 @@ A task pack is a JSON file containing multiple evaluation tasks.
 The LLM judge supports three `expected_output` formats:
 
 1. **Keyword list** (string): Checks if key terms appear in output. Score: 0.0 or 1.0.
-2. **Natural text** (string): Rubric-based evaluation on a 5-level scale (0.0, 0.2, 0.4, 0.6, 0.8, 1.0).
+2. **Natural text** (string): Rubric-based evaluation on a 6-level scale (0.0, 0.2, 0.4, 0.6, 0.8, 1.0).
 3. **Dict rubric** (dict): Custom criteria with scores (0.0, 0.5, 1.0).
 
 ---
