@@ -25,6 +25,7 @@ class EvaluationResult:
     trial_id: int = 1
     input_tokens: int = 0
     output_tokens: int = 0
+    example_selection: str = "fixed"
 
 
 @dataclass

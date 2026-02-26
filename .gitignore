@@ -27,7 +27,7 @@ env/
 # Results (generated, except demo)
 results/**/*.csv
 results/**/*.json
-!results/demo/
+!results/demo/**
 
 # OS
 .DS_Store

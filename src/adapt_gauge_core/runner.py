@@ -52,6 +52,119 @@ from adapt_gauge_core.example_selector import ExampleSelectionMethod
 SAVE_INTERVAL = 10
 
 
+def _print_selection_report(
+    sel_df: pd.DataFrame,
+    sel_label: str,
+    tasks: list,
+) -> tuple[pd.DataFrame, dict]:
+    """Print learning curves, collapse detection, and metrics for one selection method.
+
+    Returns:
+        (sel_df, enriched) where enriched is a dict of column values to write
+        back to the main summary_df (e.g. collapse_pattern, resilience_score).
+    """
+    enriched: dict[str, pd.Series] = {}
+
+    # Learning curves
+    print(f"=== Learning Curves{sel_label} ===\n")
+    for task in tasks:
+        task_summary = sel_df[sel_df["task_id"] == task.task_id]
+        if task_summary.empty:
+            continue
+        print(f"  Task: {task.task_id}")
+        print(f"  {'Model':<40} {'0-shot':>7} {'1-shot':>7} {'2-shot':>7} {'4-shot':>7} {'8-shot':>7} {'AUC':>7}")
+        print(f"  {'-'*40} {'-'*7} {'-'*7} {'-'*7} {'-'*7} {'-'*7} {'-'*7}")
+        for _, row in task_summary.iterrows():
+            print(
+                f"  {row['model_name']:<40} "
+                f"{row['score_0shot']:>7.3f} "
+                f"{row['score_1shot']:>7.3f} "
+                f"{row['score_2shot']:>7.3f} "
+                f"{row['score_4shot']:>7.3f} "
+                f"{row['score_8shot']:>7.3f} "
+                f"{row['learning_curve_auc']:>7.3f}"
+            )
+        print()
+
+    # Collapse detection (3 types)
+    neg_alerts = detect_negative_learning(sel_df)
+    peak_alerts = detect_peak_regression(sel_df)
+    dip_alerts = detect_mid_curve_dip(sel_df)
+
+    if neg_alerts or peak_alerts or dip_alerts:
+        print(f"=== Collapse Detection{sel_label} (WARNING) ===\n")
+        if neg_alerts:
+            print("  --- Negative Learning ---")
+            for alert in neg_alerts:
+                print(
+                    f"  WARNING [{alert['severity']}]: {alert['model']} | {alert['task_id']} "
+                    f"| 0-shot={alert['score_0shot']:.3f} -> final={alert['score_final']:.3f} "
+                    f"(drop {alert['drop_pct']:.1f}%)"
+                )
+            print()
+        if peak_alerts:
+            print("  --- Peak Regression ---")
+            for alert in peak_alerts:
+                print(
+                    f"  WARNING: {alert['model']} | {alert['task_id']} "
+                    f"| peak={alert['score_peak']:.3f} at {alert['peak_shot']}-shot "
+                    f"-> final={alert['score_final']:.3f} "
+                    f"(drop {alert['drop_pct']:.1f}%)"
+                )
+            print()
+        if dip_alerts:
+            print("  --- Mid-curve Dip ---")
+            for alert in dip_alerts:
+                print(
+                    f"  WARNING: {alert['model']} | {alert['task_id']} "
+                    f"| {alert['from_shot']}-shot={alert['score_from']:.3f} "
+                    f"-> {alert['to_shot']}-shot={alert['score_to']:.3f} "
+                    f"(drop {alert['drop_pct']:.1f}%)"
+                )
+            print()
+    else:
+        print(f"=== Collapse Detection{sel_label}: No issues found ===\n")
+
+    # Collapse pattern classification & resilience score
+    classifications = classify_collapse_pattern(sel_df)
+    resilience_scores = calculate_resilience_score(sel_df, classifications=classifications)
+
+    if classifications:
+        pattern_map = {
+            (c["model"], c["task_id"]): c["pattern"]
+            for c in classifications
+        }
+        sel_keys = pd.MultiIndex.from_frame(sel_df[["model_name", "task_id"]])
+        sel_df = sel_df.copy()
+        sel_df["collapse_pattern"] = sel_keys.map(pattern_map).fillna("")
+        enriched["collapse_pattern"] = sel_df["collapse_pattern"].values
+
+    if resilience_scores:
+        sel_df = sel_df.copy()
+        sel_df["resilience_score"] = sel_df["model_name"].map(resilience_scores)
+        enriched["resilience_score"] = sel_df["resilience_score"].values
+
+        print(f"=== Collapse Resilience Score{sel_label} ===\n")
+        for model, score in sorted(resilience_scores.items(), key=lambda x: -x[1]):
+            print(f"  {model:<40} {score:.3f}")
+        print()
+
+    # Metrics summary
+    print(f"=== Metrics Summary{sel_label} ===\n")
+    print(f"  {'Model':<40} {'improvement_rate':>17} {'threshold_shots':>16} {'learning_curve_auc':>19}")
+    print(f"  {'-'*40} {'-'*17} {'-'*16} {'-'*19}")
+    for _, row in sel_df.iterrows():
+        print(
+            f"  {row['model_name']:<40} "
+            f"{row['improvement_rate']:>17.4f} "
+            f"{row['threshold_shots']:>16} "
+            f"{row['learning_curve_auc']:>19.4f}"
+        )
+    print()
+
+    return sel_df, enriched
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="adapt-gauge-core: Evaluate LLM adaptation efficiency",
@@ -84,9 +197,9 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--example-selection",
-        default="fixed",
+        default="tfidf",
         choices=["fixed", "tfidf"],
-        help="Example selection method: fixed (default) or tfidf (TF-IDF similarity)",
+        help="Example selection method: tfidf (default, TF-IDF similarity) or fixed (ordered)",
     )
     parser.add_argument(
         "--compare-selection",
@@ -201,7 +314,6 @@ def _run_evaluations(
                                     example_selection=selection_method,
                                 )
                                 result_dict = asdict(result)
-                                result_dict["example_selection"] = selection_method.value
                                 all_results.append(result_dict)
                                 print(f"  Score: {result.score:.2f} | Latency: {result.latency_ms}ms")
                             except Exception as e:
@@ -335,100 +447,28 @@ def main() -> None:
     ]
     summary_df = aggregate_results(result_objects, tasks, config=config)
 
-    # Step 4: Display learning curves
-    print("=== Learning Curves ===\n")
-    for task in tasks:
-        task_summary = summary_df[summary_df["task_id"] == task.task_id]
-        if task_summary.empty:
-            continue
-        print(f"  Task: {task.task_id}")
-        print(f"  {'Model':<40} {'0-shot':>7} {'1-shot':>7} {'2-shot':>7} {'4-shot':>7} {'8-shot':>7} {'AUC':>7}")
-        print(f"  {'-'*40} {'-'*7} {'-'*7} {'-'*7} {'-'*7} {'-'*7} {'-'*7}")
-        for _, row in task_summary.iterrows():
-            print(
-                f"  {row['model_name']:<40} "
-                f"{row['score_0shot']:>7.3f} "
-                f"{row['score_1shot']:>7.3f} "
-                f"{row['score_2shot']:>7.3f} "
-                f"{row['score_4shot']:>7.3f} "
-                f"{row['score_8shot']:>7.3f} "
-                f"{row['learning_curve_auc']:>7.3f}"
-            )
-        print()
+    # Determine selection methods present in results
+    sel_methods = sorted(summary_df["example_selection"].unique()) if "example_selection" in summary_df.columns else ["fixed"]
+    multi_selection = len(sel_methods) > 1
 
-    # Step 5: Collapse detection (3 types)
-    neg_alerts = detect_negative_learning(summary_df)
-    peak_alerts = detect_peak_regression(summary_df)
-    dip_alerts = detect_mid_curve_dip(summary_df)
+    for sel_method in sel_methods:
+        if multi_selection:
+            sel_df = summary_df[summary_df["example_selection"] == sel_method]
+            sel_label = f" [{sel_method}]"
+        else:
+            sel_df = summary_df
+            sel_label = ""
 
-    has_any = neg_alerts or peak_alerts or dip_alerts
+        sel_df, enriched = _print_selection_report(sel_df, sel_label, tasks)
 
-    if has_any:
-        print("=== Collapse Detection (WARNING) ===\n")
-        if neg_alerts:
-            print("  --- Negative Learning ---")
-            for alert in neg_alerts:
-                print(
-                    f"  WARNING [{alert['severity']}]: {alert['model']} | {alert['task_id']} "
-                    f"| 0-shot={alert['score_0shot']:.3f} -> final={alert['score_final']:.3f} "
-                    f"(drop {alert['drop_pct']:.1f}%)"
-                )
-            print()
-        if peak_alerts:
-            print("  --- Peak Regression ---")
-            for alert in peak_alerts:
-                print(
-                    f"  WARNING: {alert['model']} | {alert['task_id']} "
-                    f"| peak={alert['score_peak']:.3f} at {alert['peak_shot']}-shot "
-                    f"-> final={alert['score_final']:.3f} "
-                    f"(drop {alert['drop_pct']:.1f}%)"
-                )
-            print()
-        if dip_alerts:
-            print("  --- Mid-curve Dip ---")
-            for alert in dip_alerts:
-                print(
-                    f"  WARNING: {alert['model']} | {alert['task_id']} "
-                    f"| {alert['from_shot']}-shot={alert['score_from']:.3f} "
-                    f"-> {alert['to_shot']}-shot={alert['score_to']:.3f} "
-                    f"(drop {alert['drop_pct']:.1f}%)"
-                )
-            print()
-    else:
-        print("=== Collapse Detection: No issues found ===\n")
-
-    # Step 5b: Collapse pattern classification & resilience score
-    classifications = classify_collapse_pattern(summary_df)
-    resilience_scores = calculate_resilience_score(summary_df, classifications=classifications)
-
-    if classifications:
-        pattern_map = {
-            (c["model"], c["task_id"]): c["pattern"]
-            for c in classifications
-        }
-        keys = pd.MultiIndex.from_frame(summary_df[["model_name", "task_id"]])
-        summary_df["collapse_pattern"] = keys.map(pattern_map).fillna("")
-
-    if resilience_scores:
-        summary_df["resilience_score"] = summary_df["model_name"].map(resilience_scores)
-
-        print("=== Collapse Resilience Score ===\n")
-        for model, score in sorted(resilience_scores.items(), key=lambda x: -x[1]):
-            print(f"  {model:<40} {score:.3f}")
-        print()
-
-    # Step 6: Basic metrics summary
-    print("=== Metrics Summary ===\n")
-    print(f"  {'Model':<40} {'improvement_rate':>17} {'threshold_shots':>16} {'learning_curve_auc':>19}")
-    print(f"  {'-'*40} {'-'*17} {'-'*16} {'-'*19}")
-    for _, row in summary_df.iterrows():
-        print(
-            f"  {row['model_name']:<40} "
-            f"{row['improvement_rate']:>17.4f} "
-            f"{row['threshold_shots']:>16} "
-            f"{row['learning_curve_auc']:>19.4f}"
-        )
-    print()
+        # Write collapse_pattern / resilience_score back to summary_df
+        for col in ("collapse_pattern", "resilience_score"):
+            if col in enriched:
+                if multi_selection:
+                    mask = summary_df["example_selection"] == sel_method
+                    summary_df.loc[mask, col] = enriched[col]
+                else:
+                    summary_df[col] = enriched[col]
 
     # Step 7: Save CSV
     _save_raw_results(all_results, raw_path)

@@ -37,7 +37,7 @@ def run_single_evaluation(
     run_id: str,
     grader_client: ModelClient | None = None,
     trial_id: int = 1,
-    example_selection: ExampleSelectionMethod = ExampleSelectionMethod.FIXED,
+    example_selection: ExampleSelectionMethod = ExampleSelectionMethod.TFIDF,
 ) -> EvaluationResult:
     """
     Execute a single evaluation.
@@ -95,6 +95,7 @@ def run_single_evaluation(
         latency_ms=response.latency_ms,
         timestamp=datetime.now().isoformat(),
         trial_id=trial_id,
+        example_selection=example_selection.value,
     )
 
 
@@ -235,11 +236,21 @@ def aggregate_results(
 
     num_trials = df["trial_id"].nunique()
 
-    # Group by task x model
-    grouped = df.groupby(["run_id", "task_id", "category", "model_name"])
+    # Include example_selection in groupby when the column exists
+    group_keys = ["run_id", "task_id", "category", "model_name"]
+    has_selection = "example_selection" in df.columns
+    if has_selection:
+        group_keys.append("example_selection")
+
+    grouped = df.groupby(group_keys)
 
     summary_rows = []
-    for (run_id, task_id, category, model_name), group in grouped:
+    for group_key, group in grouped:
+        if has_selection:
+            run_id, task_id, category, model_name, example_selection = group_key
+        else:
+            run_id, task_id, category, model_name = group_key
+            example_selection = "fixed"
         # Calculate scores per shot count, keeping per-trial means
         scores = {}
         shot_trial_means: dict[int, list[float]] = {}
@@ -278,6 +289,7 @@ def aggregate_results(
             "task_id": task_id,
             "category": category,
             "model_name": model_name,
+            "example_selection": example_selection,
             "score_0shot": scores.get(0, 0),
             "score_1shot": scores.get(1, 0),
             "score_2shot": scores.get(2, 0),
