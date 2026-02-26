@@ -151,6 +151,7 @@ def detect_negative_learning(
                 "score_0shot": score_0,
                 "score_final": score_final,
                 "drop_pct": drop_pct,
+                "example_selection": row.get("example_selection", "fixed"),
             })
     alerts.sort(key=lambda x: x["drop_pct"], reverse=True)
     return alerts
@@ -205,6 +206,7 @@ def detect_peak_regression(
             "peak_shot": peak_shot,
             "score_final": score_final,
             "drop_pct": drop_pct,
+            "example_selection": row.get("example_selection", "fixed"),
         })
     alerts.sort(key=lambda x: x["drop_pct"], reverse=True)
     return alerts
@@ -265,6 +267,7 @@ def detect_mid_curve_dip(
                         "score_from": prev_score,
                         "score_to": curr_score,
                         "drop_pct": drop_pct,
+                        "example_selection": row.get("example_selection", "fixed"),
                     }
 
         if largest_dip is not None:
@@ -331,6 +334,7 @@ def classify_collapse_pattern(df: pd.DataFrame) -> list[dict]:
             "task_id": task_id,
             "scores": scores_dict,
             "pattern": pattern,
+            "example_selection": row.get("example_selection", "fixed"),
         })
 
     return results

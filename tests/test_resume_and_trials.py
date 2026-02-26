@@ -155,6 +155,72 @@ class TestMultiTrialAggregation:
         assert summary.iloc[0]["num_trials"] == 1
 
 
+class TestExampleSelectionAggregation:
+    """Test that aggregate_results groups by example_selection when present."""
+
+    def _make_results_with_selection(self, selection_methods=("fixed", "tfidf")):
+        results = []
+        for sel in selection_methods:
+            for shot in SHOT_SCHEDULE:
+                # Give tfidf slightly different scores so we can verify separation
+                bonus = 0.05 if sel == "tfidf" else 0.0
+                score_val = min(1.0, 0.3 + shot * 0.08 + bonus)
+                results.append(EvaluationResult(
+                    run_id="test_run", task_id="test_task", category="test",
+                    model_name="mock-model", shot_count=shot,
+                    input="test input", expected_output="expected",
+                    actual_output="actual", score=score_val,
+                    scoring_method="f1", latency_ms=50,
+                    timestamp="2024-01-01T00:00:00",
+                    example_selection=sel,
+                ))
+        return results
+
+    def test_two_selection_methods_produce_two_rows(self):
+        results = self._make_results_with_selection(["fixed", "tfidf"])
+        summary = aggregate_results(results)
+
+        assert len(summary) == 2
+        assert set(summary["example_selection"]) == {"fixed", "tfidf"}
+
+    def test_single_selection_produces_one_row(self):
+        results = self._make_results_with_selection(["fixed"])
+        summary = aggregate_results(results)
+
+        assert len(summary) == 1
+        assert summary.iloc[0]["example_selection"] == "fixed"
+
+    def test_scores_differ_between_selection_methods(self):
+        results = self._make_results_with_selection(["fixed", "tfidf"])
+        summary = aggregate_results(results)
+
+        fixed_row = summary[summary["example_selection"] == "fixed"].iloc[0]
+        tfidf_row = summary[summary["example_selection"] == "tfidf"].iloc[0]
+
+        # tfidf has +0.05 bonus, so its 0-shot score should be higher
+        assert tfidf_row["score_0shot"] > fixed_row["score_0shot"]
+
+    def test_default_example_selection_is_fixed(self):
+        """Results without explicit example_selection should default to 'fixed'."""
+        results = []
+        for shot in SHOT_SCHEDULE:
+            results.append(EvaluationResult(
+                run_id="test_run", task_id="test_task", category="test",
+                model_name="mock-model", shot_count=shot,
+                input="test", expected_output="exp", actual_output="act",
+                score=0.5, scoring_method="f1", latency_ms=50,
+                timestamp="ts",
+            ))
+        summary = aggregate_results(results)
+        assert len(summary) == 1
+        assert summary.iloc[0]["example_selection"] == "fixed"
+
+    def test_example_selection_column_always_present(self):
+        results = self._make_results_with_selection(["fixed"])
+        summary = aggregate_results(results)
+        assert "example_selection" in summary.columns
+
+
 class TestResumeCapability:
     """Test resume via _build_skip_set"""
 
