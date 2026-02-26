@@ -91,7 +91,7 @@ def build_examples_section(
     shot_count: int,
     shuffle: bool = True,
     seed: int | None = None,
-    example_selection: ExampleSelectionMethod = ExampleSelectionMethod.FIXED,
+    example_selection: ExampleSelectionMethod = ExampleSelectionMethod.TFIDF,
     test_input: str = "",
 ) -> str:
     """
@@ -151,7 +151,7 @@ def build_prompt(
     shot_count: int,
     shuffle: bool = True,
     seed: int | None = None,
-    example_selection: ExampleSelectionMethod = ExampleSelectionMethod.FIXED,
+    example_selection: ExampleSelectionMethod = ExampleSelectionMethod.TFIDF,
 ) -> str:
     """
     Build a prompt based on the shot count

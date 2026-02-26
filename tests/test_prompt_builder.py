@@ -4,6 +4,7 @@ Unit tests for prompt_builder.py
 
 import pytest
 
+from adapt_gauge_core.example_selector import ExampleSelectionMethod
 from adapt_gauge_core.prompt_builder import (
     SHOT_CONFIG,
     SelectedExample,
@@ -208,7 +209,10 @@ class TestBuildPrompt:
 
     def test_1_shot_prompt(self, sample_task):
         """1-shot prompt structure"""
-        prompt = build_prompt(sample_task, "test input data", 1, shuffle=False)
+        prompt = build_prompt(
+            sample_task, "test input data", 1, shuffle=False,
+            example_selection=ExampleSelectionMethod.FIXED,
+        )
 
         assert "example input 1" in prompt
 
