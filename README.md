@@ -6,14 +6,14 @@
 
 **Measure how fast LLMs learn from few-shot examples — and detect when they break.**
 
-adapt-gauge-core is an open-source evaluation harness that measures **Adaptation Efficiency** — how quickly a language model improves with few-shot examples (0, 1, 2, 4, 8 shots) and whether it suffers from **negative learning** (performance degradation with more examples).
+adapt-gauge-core is an open-source evaluation harness that measures **Adaptation Efficiency** — how quickly a language model improves with few-shot examples (0, 1, 2, 4, 8 shots) and whether it suffers from **few-shot collapse** (performance degradation with more examples).
 
 ## Why Adaptation Efficiency?
 
 Standard LLM benchmarks measure accuracy at a single point. But in production, teams often use few-shot prompting to adapt models to specific tasks. Two critical questions arise:
 
 1. **How many examples does this model need?** Some models reach peak performance at 2 shots; others need 8.
-2. **Does adding examples ever hurt?** For some model-task combinations, performance *drops* with more examples — a phenomenon we call **negative learning** or **collapse**.
+2. **Does adding examples ever hurt?** For some model-task combinations, performance *drops* with more examples — a phenomenon known as **few-shot collapse** (also called **over-prompting** in the literature).
 
 adapt-gauge-core answers both questions automatically.
 
@@ -129,7 +129,7 @@ The evaluation pipeline runs three independent collapse checks:
 
 | Check | Triggers when |
 |-------|---------------|
-| **Negative Learning** | Final-shot score drops >10% below 0-shot |
+| **Few-Shot Collapse** | Final-shot score drops >10% below 0-shot |
 | **Peak Regression** | Peak score drops >20% by final shot |
 | **Mid-curve Dip** | >30% drop between consecutive shots |
 

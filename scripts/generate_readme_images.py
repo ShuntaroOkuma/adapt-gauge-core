@@ -16,7 +16,7 @@ MODEL_COLORS = {
     "gemini-3-flash-preview": "#ea4335",
     "gemini-3-pro-preview": "#9334e6",
 }
-NEGATIVE_LEARNING_THRESHOLD = 0.02
+COLLAPSE_HIGHLIGHT_THRESHOLD = 0.02
 
 OUTPUT_DIR = Path("docs/images")
 SUMMARY_CSV = Path("results/demo/summary_demo.csv")
@@ -56,9 +56,9 @@ def generate_learning_curve(df: pd.DataFrame, task_id: str, output_path: Path) -
             marker=dict(color=color, size=9),
         ))
 
-        # Highlight negative learning intervals
+        # Highlight few-shot collapse intervals
         for j in range(1, len(scores)):
-            if scores[j] < scores[j - 1] - NEGATIVE_LEARNING_THRESHOLD:
+            if scores[j] < scores[j - 1] - COLLAPSE_HIGHLIGHT_THRESHOLD:
                 fig.add_trace(go.Scatter(
                     x=[shots[j - 1], shots[j]],
                     y=[scores[j - 1], scores[j]],

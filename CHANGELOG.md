@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Core evaluation pipeline with runner, prompt builder, and task loader
 - AEI (Adaptation Efficiency Index) calculation for measuring few-shot learning efficiency
-- Negative learning detection supporting three types: negative learning, peak regression, and mid-curve dip
+- Few-shot collapse detection supporting three types: few-shot collapse (formerly "negative learning"), peak regression, and mid-curve dip
 - Basic scoring system with text scorers and LLM judge
 - Model client support for Anthropic, Google GenAI, Vertex AI, LM Studio, and OpenAI-compatible APIs
 - Streamlit viewer for learning curves and collapse detection visualization
