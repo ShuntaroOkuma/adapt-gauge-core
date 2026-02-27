@@ -160,7 +160,7 @@ python -m adapt_gauge_core.runner \
 2. **採点モデルのヘルスチェック** - LLM Judgeの採点モデルをテスト（llm_judgeタスクが存在する場合）
 3. **評価実行** - 選択方式 > 試行 > モデル > タスク > ショット数 > テストケースの順に反復
 4. **結果集約** - モデル・タスクごとのサマリー指標を算出
-5. **崩壊検出** - 負の学習、ピーク回帰、中間曲線の落ち込みを識別
+5. **崩壊検出** - Few-Shot Collapse、ピーク回帰、中間曲線の落ち込みを識別
 6. **パターン分類** - 各モデル・タスクペアを崩壊パターンタイプに分類
 7. **結果保存** - 生データとサマリーのCSVを出力
 
@@ -192,7 +192,7 @@ python -m adapt_gauge_core.runner \
 
 ### 比較モード
 
-同一設定で`fixed`と`tfidf`の両方を順番に実行し、生データCSVに`example_selection`を記録します。例文選択方式が負の学習の発生に影響するかを調査できます。
+同一設定で`fixed`と`tfidf`の両方を順番に実行し、生データCSVに`example_selection`を記録します。例文選択方式がFew-Shot Collapseの発生に影響するかを調査できます。
 
 ```bash
 python -m adapt_gauge_core.runner \
@@ -344,9 +344,9 @@ streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results
 
 ### ビューアーのセクション
 
-1. **学習曲線** - ショット数ごとのスコア推移を表示するインタラクティブなPlotlyチャート。負の学習区間は赤色でハイライト表示されます。
+1. **学習曲線** - ショット数ごとのスコア推移を表示するインタラクティブなPlotlyチャート。Few-Shot Collapse区間は赤色でハイライト表示されます。
 2. **崩壊検出** - 3種類のパフォーマンス劣化に対する警告:
-   - **負の学習（Negative Learning）**: 最終スコアが0-shotベースラインを下回る
+   - **Few-Shot Collapse**: 最終スコアが0-shotベースラインを下回る
    - **ピーク回帰（Peak Regression）**: 中間ショットでスコアがピークに達した後に低下
    - **中間曲線の落ち込み（Mid-curve Dip）**: 隣接するショット数間での急激なスコア低下
 3. **崩壊パターン分類** - 各モデル・タスクペアをstable、immediate_collapse、gradual_decline、peak_regressionに分類したテーブル。
@@ -361,7 +361,7 @@ streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results
 
 | タイプ | 条件 | 深刻度 |
 |-------|------|--------|
-| **負の学習** | 最終スコア < 0-shotスコアの90% | degradation（10-50%低下）/ collapse（50%以上低下） |
+| **Few-Shot Collapse** | 最終スコア < 0-shotスコアの90% | degradation（10-50%低下）/ collapse（50%以上低下） |
 | **ピーク回帰** | ピーク > 0-shotの110% かつ 最終 < ピークの80% | - |
 | **中間曲線の落ち込み** | 隣接ショット数間のスコア低下 > 30% | - |
 

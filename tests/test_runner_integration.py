@@ -5,7 +5,7 @@ Verifies the full evaluation pipeline works end-to-end:
 1. Load task pack
 2. Run evaluations (mocked model clients)
 3. Aggregate results
-4. Detect negative learning
+4. Detect few-shot collapse
 """
 
 import pytest
@@ -16,7 +16,7 @@ from adapt_gauge_core.domain.constants import SHOT_SCHEDULE
 from adapt_gauge_core.domain.value_objects import ModelResponse, ScoringResult
 from adapt_gauge_core.task_loader import load_task_pack, Task, TestCase, Example
 from adapt_gauge_core.use_cases.evaluation import run_single_evaluation, aggregate_results
-from adapt_gauge_core.use_cases.aei import detect_negative_learning
+from adapt_gauge_core.use_cases.aei import detect_few_shot_collapse
 from adapt_gauge_core.use_cases.health_check import get_llm_judge_tasks
 
 
@@ -131,8 +131,8 @@ class TestAggregation:
         assert axis_cols == []
 
 
-class TestNegativeLearningDetection:
-    """Test collapse/negative learning detection"""
+class TestFewShotCollapseDetection:
+    """Test collapse/few-shot collapse detection"""
 
     def test_detects_degradation(self):
         import pandas as pd
@@ -145,7 +145,7 @@ class TestNegativeLearningDetection:
             "score_8shot": 0.3,
         }]
         df = pd.DataFrame(data)
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 1
         assert alerts[0]["model"] == "bad-model"
         assert alerts[0]["drop_pct"] > 50
@@ -161,5 +161,5 @@ class TestNegativeLearningDetection:
             "score_8shot": 0.9,
         }]
         df = pd.DataFrame(data)
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 0

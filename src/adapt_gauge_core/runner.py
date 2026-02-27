@@ -41,7 +41,7 @@ from adapt_gauge_core.use_cases.evaluation import (
     aggregate_results,
 )
 from adapt_gauge_core.use_cases.aei import (
-    detect_negative_learning,
+    detect_few_shot_collapse,
     detect_peak_regression,
     detect_mid_curve_dip,
     classify_collapse_pattern,
@@ -87,14 +87,14 @@ def _print_selection_report(
         print()
 
     # Collapse detection (3 types)
-    neg_alerts = detect_negative_learning(sel_df)
+    neg_alerts = detect_few_shot_collapse(sel_df)
     peak_alerts = detect_peak_regression(sel_df)
     dip_alerts = detect_mid_curve_dip(sel_df)
 
     if neg_alerts or peak_alerts or dip_alerts:
         print(f"=== Collapse Detection{sel_label} (WARNING) ===\n")
         if neg_alerts:
-            print("  --- Negative Learning ---")
+            print("  --- Few-Shot Collapse ---")
             for alert in neg_alerts:
                 print(
                     f"  WARNING [{alert['severity']}]: {alert['model']} | {alert['task_id']} "

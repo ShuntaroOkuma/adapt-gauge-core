@@ -160,7 +160,7 @@ python -m adapt_gauge_core.runner \
 2. **Grader Health Check** - Tests the LLM judge grader (if llm_judge tasks exist)
 3. **Run Evaluations** - Iterates over: selection method > trial > model > task > shot count > test case
 4. **Aggregate Results** - Computes per-model, per-task summary metrics
-5. **Collapse Detection** - Identifies negative learning, peak regression, and mid-curve dips
+5. **Collapse Detection** - Identifies few-shot collapse, peak regression, and mid-curve dips
 6. **Pattern Classification** - Classifies each model-task pair into a collapse pattern type
 7. **Save Results** - Writes raw results and summary CSVs
 
@@ -192,7 +192,7 @@ python -m adapt_gauge_core.runner \
 
 ### Compare Mode
 
-Runs both `fixed` and `tfidf` methods sequentially for the same configuration, recording `example_selection` in the raw results CSV. This allows you to investigate whether the selection method affects negative learning occurrence.
+Runs both `fixed` and `tfidf` methods sequentially for the same configuration, recording `example_selection` in the raw results CSV. This allows you to investigate whether the selection method affects few-shot collapse occurrence.
 
 ```bash
 python -m adapt_gauge_core.runner \
@@ -344,9 +344,9 @@ streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results
 
 ### Viewer Sections
 
-1. **Learning Curves** - Interactive Plotly charts showing score progression across shot counts. Negative learning intervals are highlighted in red.
+1. **Learning Curves** - Interactive Plotly charts showing score progression across shot counts. Few-shot collapse intervals are highlighted in red.
 2. **Collapse Detection** - Warnings for three types of performance degradation:
-   - **Negative Learning**: Final score drops below 0-shot baseline
+   - **Few-Shot Collapse**: Final score drops below 0-shot baseline
    - **Peak Regression**: Score peaks at intermediate shot then regresses
    - **Mid-curve Dip**: Sharp drop between adjacent shot counts
 3. **Collapse Pattern Classification** - Table showing each model-task pair classified as stable, immediate_collapse, gradual_decline, or peak_regression.
@@ -361,7 +361,7 @@ streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results
 
 | Type | Condition | Severity |
 |------|-----------|----------|
-| **Negative Learning** | Final score < 90% of 0-shot score | degradation (10-50% drop) / collapse (50%+ drop) |
+| **Few-Shot Collapse** | Final score < 90% of 0-shot score | degradation (10-50% drop) / collapse (50%+ drop) |
 | **Peak Regression** | Peak > 110% of 0-shot AND final < 80% of peak | - |
 | **Mid-curve Dip** | Adjacent shot score drops > 30% | - |
 

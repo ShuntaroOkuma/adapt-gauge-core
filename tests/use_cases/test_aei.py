@@ -7,7 +7,7 @@ import pytest
 
 from adapt_gauge_core.use_cases.aei import (
     compute_aei,
-    detect_negative_learning,
+    detect_few_shot_collapse,
     detect_peak_regression,
     detect_mid_curve_dip,
 )
@@ -102,8 +102,8 @@ class TestComputeAEI:
         assert list(result["model_name"]) == ["high", "mid", "low"]
 
 
-class TestDetectNegativeLearning:
-    """Tests for detect_negative_learning function"""
+class TestDetectFewShotCollapse:
+    """Tests for detect_few_shot_collapse function"""
 
     def test_detects_degradation(self):
         """Should detect >= 10% performance degradation"""
@@ -117,12 +117,12 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 1
         assert alerts[0]["model"] == "model-a"
         assert alerts[0]["task_id"] == "task1"
         assert alerts[0]["drop_pct"] == pytest.approx(37.5)
-        assert alerts[0]["type"] == "negative_learning"
+        assert alerts[0]["type"] == "few_shot_collapse"
 
     def test_detects_small_degradation(self):
         """Should detect 10-20% degradation (previously missed)"""
@@ -136,7 +136,7 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 1
         assert alerts[0]["drop_pct"] == pytest.approx(12.5)
 
@@ -152,7 +152,7 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 1
         assert alerts[0]["severity"] == "collapse"
 
@@ -168,7 +168,7 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 1
         assert alerts[0]["severity"] == "degradation"
 
@@ -184,7 +184,7 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 0
 
     def test_no_detection_small_drop(self):
@@ -199,7 +199,7 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 0
 
     def test_skip_low_baseline(self):
@@ -214,7 +214,7 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 0
 
     def test_custom_label_fn(self):
@@ -230,7 +230,7 @@ class TestDetectNegativeLearning:
         ])
 
         label_fn = lambda tid, cat: f"[{cat}] {tid}"
-        alerts = detect_negative_learning(df, label_fn=label_fn)
+        alerts = detect_few_shot_collapse(df, label_fn=label_fn)
         assert len(alerts) == 1
         assert alerts[0]["task_label"] == "[cat1] task1"
 
@@ -246,7 +246,7 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 1
         assert alerts[0]["task_label"] == "task1"
 
@@ -262,7 +262,7 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 1
 
     def test_sorted_by_drop_pct(self):
@@ -284,7 +284,7 @@ class TestDetectNegativeLearning:
             },
         ])
 
-        alerts = detect_negative_learning(df)
+        alerts = detect_few_shot_collapse(df)
         assert len(alerts) == 2
         assert alerts[0]["model"] == "model-b"
         assert alerts[1]["model"] == "model-a"

@@ -2,7 +2,7 @@
 adapt-gauge-core Result Viewer
 
 Minimal Streamlit dashboard for viewing evaluation results.
-Displays learning curves and collapse (negative learning) detection.
+Displays learning curves and collapse (few-shot collapse) detection.
 
 Usage:
     pip install -e ".[viewer]"
@@ -23,7 +23,7 @@ import streamlit as st
 
 from adapt_gauge_core.domain.constants import SHOT_SCHEDULE
 from adapt_gauge_core.use_cases.aei import (
-    detect_negative_learning,
+    detect_few_shot_collapse,
     detect_peak_regression,
     detect_mid_curve_dip,
     classify_collapse_pattern,
@@ -37,7 +37,7 @@ MODEL_COLORS = [
 ]
 
 SHOT_LABELS = {s: f"{s}-shot" for s in SHOT_SCHEDULE}
-NEGATIVE_LEARNING_THRESHOLD = 0.02
+COLLAPSE_HIGHLIGHT_THRESHOLD = 0.02
 
 
 def _short_model_name(name: str) -> str:
@@ -117,9 +117,9 @@ def _render_learning_curve(summary_df: pd.DataFrame) -> None:
             marker=dict(color=color, size=8),
         ))
 
-        # Highlight negative learning intervals
+        # Highlight few-shot collapse intervals
         for j in range(1, len(scores)):
-            if scores[j] < scores[j - 1] - NEGATIVE_LEARNING_THRESHOLD:
+            if scores[j] < scores[j - 1] - COLLAPSE_HIGHLIGHT_THRESHOLD:
                 fig.add_trace(go.Scatter(
                     x=[shots[j - 1], shots[j]],
                     y=[scores[j - 1], scores[j]],
@@ -165,7 +165,7 @@ def _alert_model_label(alert: dict, multi_sel: bool) -> str:
 
 
 def _render_collapse_detection(summary_df: pd.DataFrame) -> None:
-    """Render collapse / negative learning warnings for all 3 detection types."""
+    """Render collapse / few-shot collapse warnings for all 3 detection types."""
     st.header("Collapse Detection")
 
     multi_sel = (
@@ -173,18 +173,18 @@ def _render_collapse_detection(summary_df: pd.DataFrame) -> None:
         and summary_df["example_selection"].nunique() > 1
     )
 
-    neg_alerts = detect_negative_learning(summary_df)
+    neg_alerts = detect_few_shot_collapse(summary_df)
     peak_alerts = detect_peak_regression(summary_df)
     dip_alerts = detect_mid_curve_dip(summary_df)
 
     has_any = neg_alerts or peak_alerts or dip_alerts
 
     if not has_any:
-        st.success("No negative learning detected.")
+        st.success("No few-shot collapse detected.")
         return
 
     if neg_alerts:
-        st.subheader("Negative Learning")
+        st.subheader("Few-Shot Collapse")
         st.caption("Final score is worse than 0-shot baseline.")
         for alert in neg_alerts:
             label = _alert_model_label(alert, multi_sel)

@@ -17,7 +17,7 @@ keywords = [
     "evaluation",
     "few-shot",
     "adaptation-efficiency",
-    "negative-learning",
+    "few-shot-collapse",
     "benchmarking",
 ]
 classifiers = [

@@ -1,7 +1,7 @@
 """
 AEI (Adaptation Efficiency Index) Calculation
 
-Integrates 6-axis evaluation scores into a single metric and detects negative learning.
+Integrates 6-axis evaluation scores into a single metric and detects few-shot collapse.
 """
 
 import pandas as pd
@@ -104,11 +104,11 @@ def _is_peak_regression(
     return False, peak_shot, score_peak
 
 
-def detect_negative_learning(
+def detect_few_shot_collapse(
     df: pd.DataFrame,
     label_fn: Callable[[str, str], str] | None = None,
 ) -> list[dict]:
-    """Detect negative learning (performance degradation when examples are added).
+    """Detect few-shot collapse (performance degradation when examples are added).
 
     Returns cases where the final shot score has degraded by 10% or more
     compared to the 0-shot score.
@@ -143,7 +143,7 @@ def detect_negative_learning(
                 row.get("task_id", ""), row.get("category", "")
             )
             alerts.append({
-                "type": "negative_learning",
+                "type": "few_shot_collapse",
                 "severity": severity,
                 "model": row["model_name"],
                 "task_id": row.get("task_id", ""),
@@ -155,6 +155,10 @@ def detect_negative_learning(
             })
     alerts.sort(key=lambda x: x["drop_pct"], reverse=True)
     return alerts
+
+
+# Backward compatibility alias
+detect_negative_learning = detect_few_shot_collapse
 
 
 def detect_peak_regression(

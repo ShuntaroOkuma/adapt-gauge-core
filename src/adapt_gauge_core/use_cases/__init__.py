@@ -6,7 +6,8 @@ Aggregates business logic and provides use cases called from the runner.
 
 from adapt_gauge_core.use_cases.aei import (
     compute_aei,
-    detect_negative_learning,
+    detect_few_shot_collapse,
+    detect_negative_learning,  # backward compatibility alias
     detect_peak_regression,
     detect_mid_curve_dip,
 )
@@ -28,7 +29,8 @@ from adapt_gauge_core.use_cases.health_check import (
 __all__ = [
     # aei
     "compute_aei",
-    "detect_negative_learning",
+    "detect_few_shot_collapse",
+    "detect_negative_learning",  # backward compatibility alias
     "detect_peak_regression",
     "detect_mid_curve_dip",
     # evaluation
