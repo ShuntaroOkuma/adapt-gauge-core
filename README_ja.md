@@ -129,7 +129,7 @@ streamlit run src/adapt_gauge_core/viewer.py
 
 | チェック | 検出条件 |
 |---------|---------|
-| **Few-Shot Collapse** | 最終 shot のスコアが 0-shot から 10% 以上低下 |
+| **Few-Shot Collapse (崩壊現象)** | 最終 shot のスコアが 0-shot から 10% 以上低下 |
 | **ピーク回帰** | ピーク時のスコアが最終 shot で 20% 以上低下 |
 | **途中の急落** | 連続する shot 間で 30% 以上の急落 |
 
