@@ -17,7 +17,9 @@ import argparse
 import hashlib
 import os
 import sys
+import threading
 import traceback
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import asdict
 from datetime import datetime
 from functools import partial
@@ -206,6 +208,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Run both fixed and tfidf selection methods for comparison",
     )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=1,
+        help="Number of parallel inferences per model (default: 1, sequential)",
+    )
     return parser.parse_args()
 
 
@@ -252,6 +260,65 @@ def _save_raw_results(all_results: list[dict], raw_path: Path) -> None:
     raw_df.to_csv(raw_path, index=False)
 
 
+def _make_error_result(
+    run_id: str,
+    task,
+    model_name: str,
+    shot: int,
+    test_case,
+    trial_id: int,
+    selection_method: ExampleSelectionMethod,
+    error: Exception,
+) -> dict:
+    """Build an error result dict for a failed evaluation."""
+    return {
+        "run_id": run_id,
+        "task_id": task.task_id,
+        "category": task.category,
+        "model_name": model_name,
+        "shot_count": shot,
+        "input": test_case.input,
+        "expected_output": test_case.expected_output,
+        "actual_output": f"ERROR: {error}",
+        "score": 0.0,
+        "scoring_method": test_case.scoring_method,
+        "latency_ms": 0,
+        "timestamp": datetime.now().isoformat(),
+        "trial_id": trial_id,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "example_selection": selection_method.value,
+    }
+
+
+def _record_eval_outcome(
+    *,
+    all_results: list[dict],
+    raw_path: Path,
+    last_saved_count: int,
+    prefix: str,
+    result: EvaluationResult | None = None,
+    error_result: dict | None = None,
+    error_msg: str = "",
+) -> int:
+    """Append result to all_results, print progress, and save if interval reached.
+
+    Returns updated last_saved_count.
+    """
+    if result is not None:
+        all_results.append(asdict(result))
+        print(f"{prefix}  Score: {result.score:.2f} | Latency: {result.latency_ms}ms")
+    else:
+        all_results.append(error_result)
+        print(f"{prefix}  ERROR: {error_msg}")
+        traceback.print_exc()
+
+    if len(all_results) - last_saved_count >= SAVE_INTERVAL:
+        _save_raw_results(all_results, raw_path)
+        return len(all_results)
+    return last_saved_count
+
+
 def _run_evaluations(
     *,
     selection_methods: list[ExampleSelectionMethod],
@@ -266,14 +333,17 @@ def _run_evaluations(
     all_results: list[dict],
     skip_set: set[tuple],
     raw_path: Path,
+    batch_size: int = 1,
 ) -> None:
     """Run the evaluation loop across selection methods, trials, models, tasks, shots, and test cases."""
     num_evals_per_trial = sum(len(t.test_cases) for t in tasks) * len(available_models) * len(shots)
     total = num_evals_per_trial * num_trials * len(selection_methods)
-    print(f"=== Running Evaluations ({total} total) ===\n")
+    batch_label = f", batch_size={batch_size}" if batch_size > 1 else ""
+    print(f"=== Running Evaluations ({total} total{batch_label}) ===\n")
 
     current = 0
     last_saved_count = len(all_results)
+    lock = threading.Lock()
 
     for selection_method in selection_methods:
         if len(selection_methods) > 1:
@@ -285,9 +355,10 @@ def _run_evaluations(
                     client = make_client(model_name)
                 for task in tasks:
                     for shot in shots:
+                        # Collect pending (non-skipped) test cases
+                        pending = []
                         for test_case in task.test_cases:
                             current += 1
-
                             eval_key = (
                                 task.task_id,
                                 model_name,
@@ -296,53 +367,83 @@ def _run_evaluations(
                                 hashlib.sha256(test_case.input.encode("utf-8")).hexdigest(),
                                 selection_method.value,
                             )
-                            if eval_key in skip_set:
-                                continue
+                            if eval_key not in skip_set:
+                                pending.append((test_case, current))
 
-                            sel_label = f"[{selection_method.value}] " if len(selection_methods) > 1 else ""
-                            print(f"[{current}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot")
+                        if not pending:
+                            continue
 
-                            try:
-                                result = run_single_evaluation(
-                                    task=task,
-                                    test_case=test_case,
-                                    model_client=client,
-                                    shot_count=shot,
-                                    run_id=run_id,
-                                    grader_client=grader_client,
-                                    trial_id=trial_id,
-                                    example_selection=selection_method,
-                                )
-                                result_dict = asdict(result)
-                                all_results.append(result_dict)
-                                print(f"  Score: {result.score:.2f} | Latency: {result.latency_ms}ms")
-                            except Exception as e:
-                                error_result = {
-                                    "run_id": run_id,
-                                    "task_id": task.task_id,
-                                    "category": task.category,
-                                    "model_name": model_name,
-                                    "shot_count": shot,
-                                    "input": test_case.input,
-                                    "expected_output": test_case.expected_output,
-                                    "actual_output": f"ERROR: {e}",
-                                    "score": 0.0,
-                                    "scoring_method": test_case.scoring_method,
-                                    "latency_ms": 0,
-                                    "timestamp": datetime.now().isoformat(),
-                                    "trial_id": trial_id,
-                                    "input_tokens": 0,
-                                    "output_tokens": 0,
-                                    "example_selection": selection_method.value,
+                        sel_label = f"[{selection_method.value}] " if len(selection_methods) > 1 else ""
+
+                        if batch_size <= 1:
+                            # Sequential execution (original behavior)
+                            for test_case, idx in pending:
+                                prefix = f"[{idx}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot"
+                                print(prefix)
+                                try:
+                                    result = run_single_evaluation(
+                                        task=task,
+                                        test_case=test_case,
+                                        model_client=client,
+                                        shot_count=shot,
+                                        run_id=run_id,
+                                        grader_client=grader_client,
+                                        trial_id=trial_id,
+                                        example_selection=selection_method,
+                                    )
+                                    last_saved_count = _record_eval_outcome(
+                                        all_results=all_results, raw_path=raw_path,
+                                        last_saved_count=last_saved_count, prefix="",
+                                        result=result,
+                                    )
+                                except Exception as e:
+                                    last_saved_count = _record_eval_outcome(
+                                        all_results=all_results, raw_path=raw_path,
+                                        last_saved_count=last_saved_count, prefix="",
+                                        error_result=_make_error_result(
+                                            run_id, task, model_name, shot, test_case,
+                                            trial_id, selection_method, e,
+                                        ),
+                                        error_msg=str(e),
+                                    )
+                        else:
+                            # Parallel execution
+                            with ThreadPoolExecutor(max_workers=batch_size) as executor:
+                                futures = {
+                                    executor.submit(
+                                        run_single_evaluation,
+                                        task=task,
+                                        test_case=tc,
+                                        model_client=client,
+                                        shot_count=shot,
+                                        run_id=run_id,
+                                        grader_client=grader_client,
+                                        trial_id=trial_id,
+                                        example_selection=selection_method,
+                                    ): (tc, idx)
+                                    for tc, idx in pending
                                 }
-                                all_results.append(error_result)
-                                print(f"  ERROR: {e}")
-                                traceback.print_exc()
-
-                            # Intermediate save
-                            if len(all_results) - last_saved_count >= SAVE_INTERVAL:
-                                _save_raw_results(all_results, raw_path)
-                                last_saved_count = len(all_results)
+                                for future in as_completed(futures):
+                                    tc, idx = futures[future]
+                                    prefix = f"[{idx}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot"
+                                    with lock:
+                                        try:
+                                            result = future.result()
+                                            last_saved_count = _record_eval_outcome(
+                                                all_results=all_results, raw_path=raw_path,
+                                                last_saved_count=last_saved_count, prefix=prefix,
+                                                result=result,
+                                            )
+                                        except Exception as e:
+                                            last_saved_count = _record_eval_outcome(
+                                                all_results=all_results, raw_path=raw_path,
+                                                last_saved_count=last_saved_count, prefix=prefix,
+                                                error_result=_make_error_result(
+                                                    run_id, task, model_name, shot, tc,
+                                                    trial_id, selection_method, e,
+                                                ),
+                                                error_msg=str(e),
+                                            )
 
 
 def main() -> None:
@@ -388,6 +489,7 @@ def main() -> None:
     print(f"  Shots: {shots}")
     print(f"  Trials: {num_trials}")
     print(f"  Example selection: {[m.value for m in selection_methods]}")
+    print(f"  Batch size: {args.batch_size}")
     print(f"  Run ID: {run_id}")
     print()
 
@@ -437,6 +539,7 @@ def main() -> None:
         all_results=all_results,
         skip_set=skip_set,
         raw_path=raw_path,
+        batch_size=args.batch_size,
     )
 
     # Step 3: Aggregate results

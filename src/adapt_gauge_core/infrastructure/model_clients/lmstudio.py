@@ -3,6 +3,7 @@ LMStudio (OpenAI-compatible API) model client
 """
 
 import os
+import re
 import time
 
 import openai
@@ -71,7 +72,12 @@ class LMStudioClient(RetryMixin, ModelClient):
             end_time = time.time()
 
             latency_ms = int((end_time - start_time) * 1000)
-            output = response.choices[0].message.content.strip()
+            raw_output = response.choices[0].message.content.strip()
+
+            # Strip <think>...</think> blocks from thinking models (e.g. Qwen 3.5)
+            output = re.sub(r"<think>[\s\S]*?</think>\s*", "", raw_output).strip()
+            if not output:
+                output = raw_output
 
             # Retrieve token usage
             input_tokens = 0
