@@ -1,0 +1,137 @@
+{
+  "pack_id": "task_pack_english_small",
+  "pack_name": "English Small Model Pack",
+  "description": "A 3-task English-only pack designed for benchmarking small local models (0.8B-9B). Uses f1, exact_match, and contains scoring. No llm_judge dependency.",
+  "version": "1.0",
+  "categories": ["summarization", "classification", "code_fix"],
+  "tasks": [
+    {
+      "task_id": "summarization_en_001",
+      "category": "summarization",
+      "version": "1.0",
+      "measures": ["Fidelity"],
+      "description": "Summarize the tech news article into key bullet points",
+      "instruction": "Read the article and extract key facts into a concise summary. Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.",
+      "difficulty": "medium",
+      "examples": [
+        {
+          "input": "OpenAI announced GPT-5 at its annual developer conference on March 12. The new model shows a 40% improvement in reasoning benchmarks compared to GPT-4. CEO Sam Altman described it as 'a significant leap in AI capability.' The model will be available through the API starting April 1, with pricing set at $15 per million input tokens. Enterprise customers will receive a 20% discount.",
+          "output": "GPT-5, March 12, 40% reasoning improvement, Sam Altman, API April 1, $15 per million tokens, 20% enterprise discount"
+        },
+        {
+          "input": "Tesla reported Q4 2024 earnings that exceeded Wall Street expectations. Revenue reached $28.4 billion, up 12% year-over-year. The company delivered 512,000 vehicles in the quarter, a new record. CEO Elon Musk announced plans to begin production of the next-generation affordable EV at the Austin Gigafactory in mid-2025. Tesla stock rose 8% in after-hours trading.",
+          "output": "Tesla Q4, $28.4B revenue, 12% growth, 512,000 deliveries, affordable EV Austin mid-2025, stock up 8%"
+        },
+        {
+          "input": "Google DeepMind published a paper showing their new AlphaCode 2 system can solve 87% of competitive programming problems at the silver medal level. The system uses a combination of large language models and specialized search algorithms. Lead researcher David Silver said it represents 'a fundamental shift in AI-assisted coding.' The technology will be integrated into Google Cloud's developer tools by Q3 2025.",
+          "output": "AlphaCode 2, 87% silver medal problems, LLM plus search, David Silver, Google Cloud Q3 2025"
+        },
+        {
+          "input": "Microsoft announced a $10 billion investment in renewable energy infrastructure to power its growing AI data centers. The company plans to build 5 new solar farms across Texas and Arizona by 2027. Chief Sustainability Officer Melanie Nakagawa stated that 'AI growth must be paired with environmental responsibility.' Microsoft aims to be carbon negative by 2030.",
+          "output": "Microsoft $10B renewable energy, AI data centers, 5 solar farms Texas Arizona 2027, carbon negative 2030"
+        },
+        {
+          "input": "Meta released Llama 4 as an open-source model with 405 billion parameters. Benchmarks show it matches GPT-4 on most tasks while running 30% faster on consumer hardware. The model was trained on 15 trillion tokens and supports 24 languages. Mark Zuckerberg emphasized that 'open source AI benefits the entire ecosystem.' Downloads exceeded 1 million within the first 48 hours.",
+          "output": "Llama 4, 405B parameters, matches GPT-4, 30% faster, 15 trillion tokens, 24 languages, 1M downloads in 48h"
+        },
+        {
+          "input": "NVIDIA reported record quarterly revenue of $35.1 billion, driven by surging demand for its H200 and B100 AI chips. The company announced the next-generation Rubin architecture, expected to ship in late 2026. CEO Jensen Huang predicted that AI inference workloads will grow 10x over the next three years. NVIDIA's market cap briefly surpassed $4 trillion.",
+          "output": "NVIDIA $35.1B revenue, H200 B100 demand, Rubin architecture 2026, inference 10x growth, $4T market cap"
+        },
+        {
+          "input": "Apple introduced a new M4 Ultra chip at its WWDC keynote. The chip features 80 CPU cores and 160 GPU cores, delivering 3x the performance of M2 Ultra. It is designed specifically for AI training workloads on Mac Pro. The new Mac Pro starts at $8,999 and ships in September. Apple also announced that on-device AI features will require M2 or later.",
+          "output": "M4 Ultra, 80 CPU 160 GPU cores, 3x M2 Ultra, AI training Mac Pro, $8,999 September, M2 minimum for AI"
+        },
+        {
+          "input": "Amazon Web Services launched a new AI-optimized region in Singapore, its 35th globally. The region features custom Trainium2 chips and offers 50% lower latency for Southeast Asian customers. AWS CEO Matt Garman said the expansion reflects 'explosive growth in AI adoption across Asia.' The region will also serve as a hub for healthcare and fintech AI applications.",
+          "output": "AWS Singapore, 35th region, Trainium2 chips, 50% lower latency Southeast Asia, healthcare fintech AI"
+        }
+      ],
+      "test_cases": [
+        {
+          "input": "Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.",
+          "expected_output": "Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock",
+          "scoring_method": "f1"
+        },
+        {
+          "input": "Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.",
+          "expected_output": "Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units",
+          "scoring_method": "f1"
+        },
+        {
+          "input": "GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.",
+          "expected_output": "GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025",
+          "scoring_method": "f1"
+        }
+      ],
+      "distractors": [
+        {
+          "input": "It was a beautiful sunny day. The children played in the park while their parents watched from the benches.",
+          "output": "Sunny day, children, park, parents, benches"
+        },
+        {
+          "input": "The recipe calls for two cups of flour, one cup of sugar, and three eggs. Mix well and bake at 350 degrees for 30 minutes.",
+          "output": "Recipe, flour, sugar, eggs, 350 degrees, 30 minutes"
+        }
+      ]
+    },
+    {
+      "task_id": "classification_en_001",
+      "category": "classification",
+      "version": "1.0",
+      "measures": [],
+      "description": "Classify the customer inquiry into one of 6 categories",
+      "instruction": "Read the customer message and classify it into exactly one category. Reply with ONLY the category name, nothing else. Categories: Bug Report, Feature Request, Billing, Account, Documentation, General.",
+      "difficulty": "medium",
+      "examples": [
+        {"input": "The search function returns no results even when I type exact titles that I know exist in the database.", "output": "Bug Report"},
+        {"input": "It would be great if the dashboard had a dark mode option. My eyes get strained during late-night sessions.", "output": "Feature Request"},
+        {"input": "I was charged twice for my subscription this month. Can you check my payment history?", "output": "Billing"},
+        {"input": "I need to update the email address linked to my account. The current one is no longer active.", "output": "Account"},
+        {"input": "Where can I find the API documentation for the webhook integration? The link in the help center is broken.", "output": "Documentation"},
+        {"input": "What programming languages does your platform support?", "output": "General"},
+        {"input": "The export to CSV feature is generating files with corrupted characters in non-English text.", "output": "Bug Report"},
+        {"input": "Could you add support for two-factor authentication using hardware security keys?", "output": "Feature Request"}
+      ],
+      "test_cases": [
+        {"input": "Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.", "expected_output": "Bug Report", "scoring_method": "exact_match"},
+        {"input": "Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?", "expected_output": "Feature Request", "scoring_method": "exact_match"},
+        {"input": "My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?", "expected_output": "Billing", "scoring_method": "exact_match"},
+        {"input": "I left the company last month. How do I transfer ownership of the team workspace to my colleague?", "expected_output": "Account", "scoring_method": "exact_match"},
+        {"input": "The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?", "expected_output": "Documentation", "scoring_method": "exact_match"}
+      ],
+      "distractors": [
+        {"input": "Your product is amazing, I love it!", "output": "General"},
+        {"input": "Happy holidays to the entire team!", "output": "General"}
+      ]
+    },
+    {
+      "task_id": "code_fix_en_001",
+      "category": "code_fix",
+      "version": "1.0",
+      "measures": [],
+      "description": "Fix the bug in the Python code",
+      "instruction": "The following Python code has a bug. Output ONLY the corrected code. Do not include explanations, markdown formatting, or code blocks.",
+      "difficulty": "medium",
+      "examples": [
+        {"input": "# Bug: off-by-one error in list sum\ndef sum_list(numbers):\n    total = 0\n    for i in range(len(numbers)):\n        total += numbers[i + 1]\n    return total", "output": "def sum_list(numbers):\n    total = 0\n    for i in range(len(numbers)):\n        total += numbers[i]\n    return total"},
+        {"input": "# Bug: wrong return in else branch\ndef get_value(data, key):\n    if key in data:\n        return data[key]\n    else:\n        return data[key]", "output": "def get_value(data, key):\n    if key in data:\n        return data[key]\n    else:\n        return None"},
+        {"input": "# Bug: factorial base case returns 0\ndef factorial(n):\n    if n == 0:\n        return 0\n    return n * factorial(n - 1)", "output": "def factorial(n):\n    if n == 0:\n        return 1\n    return n * factorial(n - 1)"},
+        {"input": "# Bug: wrong comparison operator in sort\ndef bubble_sort(arr):\n    for i in range(len(arr)):\n        for j in range(len(arr) - 1):\n            if arr[j] < arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n    return arr", "output": "def bubble_sort(arr):\n    for i in range(len(arr)):\n        for j in range(len(arr) - 1):\n            if arr[j] > arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n    return arr"},
+        {"input": "# Bug: string index out of range\ndef reverse_string(s):\n    result = \"\"\n    for i in range(len(s), 0, -1):\n        result += s[i]\n    return result", "output": "def reverse_string(s):\n    result = \"\"\n    for i in range(len(s) - 1, -1, -1):\n        result += s[i]\n    return result"},
+        {"input": "# Bug: wrong fibonacci recurrence\ndef fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 3)", "output": "def fibonacci(n):\n    if n <= 1:\n        return n\n    return fibonacci(n - 1) + fibonacci(n - 2)"},
+        {"input": "# Bug: returns True when divisible (should be False)\ndef is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, n):\n        if n % i == 0:\n            return True\n    return False", "output": "def is_prime(n):\n    if n < 2:\n        return False\n    for i in range(2, n):\n        if n % i == 0:\n            return False\n    return True"},
+        {"input": "# Bug: missing zero division check\ndef calculate_average(numbers):\n    total = sum(numbers)\n    return total / len(numbers)", "output": "def calculate_average(numbers):\n    if len(numbers) == 0:\n        return 0\n    total = sum(numbers)\n    return total / len(numbers)"}
+      ],
+      "test_cases": [
+        {"input": "# Bug: max initialized to 0, fails for negative lists\ndef find_max(numbers):\n    if len(numbers) == 0:\n        return None\n    max_val = 0\n    for num in numbers:\n        if num > max_val:\n            max_val = num\n    return max_val", "expected_output": "max_val = numbers[0]", "scoring_method": "contains"},
+        {"input": "# Bug: filters odd numbers instead of even\ndef filter_even(numbers):\n    result = []\n    for num in numbers:\n        if num % 2 == 1:\n            result.append(num)\n    return result", "expected_output": "num % 2 == 0", "scoring_method": "contains"},
+        {"input": "# Bug: off-by-one in word count\ndef count_words(text):\n    words = text.split()\n    return len(words) - 1", "expected_output": "return len(words)", "scoring_method": "contains"}
+      ],
+      "distractors": [
+        {"input": "# Working code: no bug\nprint(\"Hello, World!\")", "output": "print(\"Hello, World!\")"},
+        {"input": "# Design issue, not a bug\ncounter = 0\ndef increment():\n    global counter\n    counter += 1", "output": "def increment(counter):\n    return counter + 1"}
+      ]
+    }
+  ]
+}

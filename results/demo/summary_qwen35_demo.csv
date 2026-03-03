@@ -1,0 +1,13 @@
+run_id,task_id,category,model_name,example_selection,score_0shot,score_1shot,score_2shot,score_4shot,score_8shot,improvement_rate,threshold_shots,learning_curve_auc,num_trials,total_input_tokens,total_output_tokens,total_latency_ms,score_variance,collapse_pattern,resilience_score
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-0.8b,tfidf,0.6,0.8,0.8,0.8,1.0,0.05,1,0.8375,1,0,0,6254,0.0,stable,0.8333333333333334
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-2b,tfidf,1.0,1.0,1.0,1.0,1.0,0.0,0,1.0,1,0,0,10599,0.0,stable,0.9333333333333332
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-4b,tfidf,1.0,1.0,1.0,1.0,1.0,0.0,0,1.0,1,0,0,22946,0.0,stable,1.0
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,tfidf,1.0,1.0,1.0,1.0,1.0,0.0,0,1.0,1,0,0,1434883,0.0,stable,1.0
+qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-0.8b,tfidf,0.6666666666666666,0.3333333333333333,0.3333333333333333,0.3333333333333333,0.3333333333333333,-0.041666666666666664,-1,0.35416666666666663,1,0,0,11671,0.0,immediate_collapse,0.8333333333333334
+qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-2b,tfidf,0.6666666666666666,1.0,1.0,0.6666666666666666,0.6666666666666666,0.0,1,0.7708333333333333,1,0,0,18043,0.0,peak_regression,0.9333333333333332
+qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-4b,tfidf,1.0,1.0,1.0,1.0,1.0,0.0,0,1.0,1,0,0,40464,0.0,stable,1.0
+qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,tfidf,1.0,1.0,1.0,1.0,1.0,0.0,0,1.0,1,0,0,1294144,0.0,stable,1.0
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-0.8b,tfidf,0.38344988344988346,0.4509379509379509,0.3604525241353886,0.34087378914965116,0.4414141414141414,0.007245532245532246,-1,0.3860989161429015,1,0,0,16536,0.0,stable,0.8333333333333334
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-2b,tfidf,0.45421544319953133,0.4123998606757227,0.47813458278574555,0.5041600675747017,0.5845981081375297,0.01629783311724979,-1,0.5047982344316588,1,0,0,25840,0.0,stable,0.9333333333333332
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-4b,tfidf,0.5409331409331409,0.6192937123169681,0.6054320705483496,0.6029179284993238,0.6548357327427095,0.014237823976196065,-1,0.6145417049486817,1,0,0,61927,0.0,stable,1.0
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,tfidf,0.10422729720312945,0.1213679296994455,0.11023811803032581,0.1072980962764173,0.1221893546690707,0.002245257183242656,-1,0.11313896918923654,1,0,0,1807970,0.0,stable,1.0
