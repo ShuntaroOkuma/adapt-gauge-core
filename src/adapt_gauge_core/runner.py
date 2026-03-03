@@ -291,6 +291,34 @@ def _make_error_result(
     }
 
 
+def _record_eval_outcome(
+    *,
+    all_results: list[dict],
+    raw_path: Path,
+    last_saved_count: int,
+    prefix: str,
+    result: EvaluationResult | None = None,
+    error_result: dict | None = None,
+    error_msg: str = "",
+) -> int:
+    """Append result to all_results, print progress, and save if interval reached.
+
+    Returns updated last_saved_count.
+    """
+    if result is not None:
+        all_results.append(asdict(result))
+        print(f"{prefix}  Score: {result.score:.2f} | Latency: {result.latency_ms}ms")
+    else:
+        all_results.append(error_result)
+        print(f"{prefix}  ERROR: {error_msg}")
+        traceback.print_exc()
+
+    if len(all_results) - last_saved_count >= SAVE_INTERVAL:
+        _save_raw_results(all_results, raw_path)
+        return len(all_results)
+    return last_saved_count
+
+
 def _run_evaluations(
     *,
     selection_methods: list[ExampleSelectionMethod],
@@ -350,7 +378,8 @@ def _run_evaluations(
                         if batch_size <= 1:
                             # Sequential execution (original behavior)
                             for test_case, idx in pending:
-                                print(f"[{idx}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot")
+                                prefix = f"[{idx}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot"
+                                print(prefix)
                                 try:
                                     result = run_single_evaluation(
                                         task=task,
@@ -362,19 +391,21 @@ def _run_evaluations(
                                         trial_id=trial_id,
                                         example_selection=selection_method,
                                     )
-                                    all_results.append(asdict(result))
-                                    print(f"  Score: {result.score:.2f} | Latency: {result.latency_ms}ms")
+                                    last_saved_count = _record_eval_outcome(
+                                        all_results=all_results, raw_path=raw_path,
+                                        last_saved_count=last_saved_count, prefix="",
+                                        result=result,
+                                    )
                                 except Exception as e:
-                                    all_results.append(_make_error_result(
-                                        run_id, task, model_name, shot, test_case,
-                                        trial_id, selection_method, e,
-                                    ))
-                                    print(f"  ERROR: {e}")
-                                    traceback.print_exc()
-
-                                if len(all_results) - last_saved_count >= SAVE_INTERVAL:
-                                    _save_raw_results(all_results, raw_path)
-                                    last_saved_count = len(all_results)
+                                    last_saved_count = _record_eval_outcome(
+                                        all_results=all_results, raw_path=raw_path,
+                                        last_saved_count=last_saved_count, prefix="",
+                                        error_result=_make_error_result(
+                                            run_id, task, model_name, shot, test_case,
+                                            trial_id, selection_method, e,
+                                        ),
+                                        error_msg=str(e),
+                                    )
                         else:
                             # Parallel execution
                             with ThreadPoolExecutor(max_workers=batch_size) as executor:
@@ -394,26 +425,25 @@ def _run_evaluations(
                                 }
                                 for future in as_completed(futures):
                                     tc, idx = futures[future]
+                                    prefix = f"[{idx}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot"
                                     with lock:
                                         try:
                                             result = future.result()
-                                            all_results.append(asdict(result))
-                                            print(
-                                                f"[{idx}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot"
-                                                f"  Score: {result.score:.2f} | Latency: {result.latency_ms}ms"
+                                            last_saved_count = _record_eval_outcome(
+                                                all_results=all_results, raw_path=raw_path,
+                                                last_saved_count=last_saved_count, prefix=prefix,
+                                                result=result,
                                             )
                                         except Exception as e:
-                                            all_results.append(_make_error_result(
-                                                run_id, task, model_name, shot, tc,
-                                                trial_id, selection_method, e,
-                                            ))
-                                            print(f"[{idx}/{total}] {sel_label}{trial_label} {task.task_id} | {model_name} | {shot}-shot  ERROR: {e}")
-                                            traceback.print_exc()
-
-                            # Intermediate save after batch
-                            if len(all_results) - last_saved_count >= SAVE_INTERVAL:
-                                _save_raw_results(all_results, raw_path)
-                                last_saved_count = len(all_results)
+                                            last_saved_count = _record_eval_outcome(
+                                                all_results=all_results, raw_path=raw_path,
+                                                last_saved_count=last_saved_count, prefix=prefix,
+                                                error_result=_make_error_result(
+                                                    run_id, task, model_name, shot, tc,
+                                                    trial_id, selection_method, e,
+                                                ),
+                                                error_msg=str(e),
+                                            )
 
 
 def main() -> None:
