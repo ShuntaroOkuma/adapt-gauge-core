@@ -346,7 +346,7 @@ streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results
 
 1. **学習曲線** - ショット数ごとのスコア推移を表示するインタラクティブなPlotlyチャート。Few-Shot Collapse区間は赤色でハイライト表示されます。
 2. **崩壊検出** - 3種類のパフォーマンス劣化に対する警告:
-   - **Few-Shot Collapse**: 最終スコアが0-shotベースラインを下回る
+   - **Few-Shot Collapse (崩壊現象)**: 最終スコアが0-shotベースラインを下回る
    - **ピーク回帰（Peak Regression）**: 中間ショットでスコアがピークに達した後に低下
    - **中間曲線の落ち込み（Mid-curve Dip）**: 隣接するショット数間での急激なスコア低下
 3. **崩壊パターン分類** - 各モデル・タスクペアをstable、immediate_collapse、gradual_decline、peak_regressionに分類したテーブル。
@@ -361,7 +361,7 @@ streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results
 
 | タイプ | 条件 | 深刻度 |
 |-------|------|--------|
-| **Few-Shot Collapse** | 最終スコア < 0-shotスコアの90% | degradation（10-50%低下）/ collapse（50%以上低下） |
+| **Few-Shot Collapse (崩壊現象)** | 最終スコア < 0-shotスコアの90% | degradation（10-50%低下）/ collapse（50%以上低下） |
 | **ピーク回帰** | ピーク > 0-shotの110% かつ 最終 < ピークの80% | - |
 | **中間曲線の落ち込み** | 隣接ショット数間のスコア低下 > 30% | - |
 
