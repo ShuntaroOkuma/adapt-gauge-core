@@ -195,6 +195,8 @@ class TestLoadConfig:
         assert config.llm_judge.fallback_method == "f1"
         assert config.lmstudio.base_url == "http://localhost:1234/v1"
         assert config.lmstudio.api_key == "lm-studio"
+        assert config.lmstudio.max_tokens == 1024
+        assert config.lmstudio.temperature == 0.0
 
     def test_custom_env_values(self, monkeypatch):
         """Should load values from environment variables"""
@@ -214,6 +216,8 @@ class TestLoadConfig:
         monkeypatch.setenv("LLM_JUDGE_FALLBACK_METHOD", "exact_match")
         monkeypatch.setenv("LMSTUDIO_BASE_URL", "http://custom:5678/v1")
         monkeypatch.setenv("LMSTUDIO_API_KEY", "custom-key")
+        monkeypatch.setenv("LMSTUDIO_MAX_TOKENS", "4096")
+        monkeypatch.setenv("LMSTUDIO_TEMPERATURE", "0.6")
 
         config = load_config()
         assert config.trials.num_trials == 5
@@ -232,6 +236,8 @@ class TestLoadConfig:
         assert config.llm_judge.fallback_method == "exact_match"
         assert config.lmstudio.base_url == "http://custom:5678/v1"
         assert config.lmstudio.api_key == "custom-key"
+        assert config.lmstudio.max_tokens == 4096
+        assert config.lmstudio.temperature == 0.6
 
     def test_partial_env_values(self, monkeypatch):
         """Should use defaults for unset env vars when only some are set"""

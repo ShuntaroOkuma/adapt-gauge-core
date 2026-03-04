@@ -12,7 +12,7 @@ from adapt_gauge_core.infrastructure.model_clients.base import RetryMixin
 from adapt_gauge_core.infrastructure.model_clients.factory import create_client
 from adapt_gauge_core.infrastructure.model_clients.vertex_ai import VertexAIClient
 from adapt_gauge_core.infrastructure.model_clients.claude import ClaudeClient
-from adapt_gauge_core.infrastructure.model_clients.lmstudio import LMStudioClient
+from adapt_gauge_core.infrastructure.model_clients.lmstudio import LMStudioClient, _strip_thinking
 
 
 class TestRetryMixin:
@@ -105,3 +105,62 @@ class TestCreateClient:
         """Should return LMStudioClient for lmstudio/ prefixed model names"""
         client = create_client("lmstudio/qwen2.5-7b")
         assert isinstance(client, LMStudioClient)
+
+
+class TestStripThinking:
+    """Tests for _strip_thinking() helper"""
+
+    def test_xml_think_tags_removed(self):
+        """Should strip <think>...</think> blocks"""
+        raw = "<think>Let me reason...</think>\nThe answer is 42."
+        assert _strip_thinking(raw) == "The answer is 42."
+
+    def test_xml_think_tags_multiline(self):
+        """Should strip multiline <think> blocks"""
+        raw = "<think>\nStep 1: ...\nStep 2: ...\n</think>\n\nResult: yes"
+        assert _strip_thinking(raw) == "Result: yes"
+
+    def test_xml_think_returns_raw_if_empty_after_strip(self):
+        """Should return original when stripping <think> leaves nothing"""
+        raw = "<think>All content is thinking</think>"
+        assert _strip_thinking(raw) == "<think>All content is thinking</think>"
+
+    def test_plain_text_thinking_process(self):
+        """Should strip 'Thinking Process: ... Final Output:' blocks"""
+        raw = (
+            "Thinking Process:\n"
+            "1. **Analyze:** ...\n"
+            "2. **Evaluate:** ...\n\n"
+            "Final Output:\n"
+            "The answer is 42."
+        )
+        assert _strip_thinking(raw) == "The answer is 42."
+
+    def test_plain_text_thinking_process_final_answer(self):
+        """Should strip 'Thinking Process: ... Final Answer:' blocks"""
+        raw = (
+            "Thinking Process:\n"
+            "Some reasoning here.\n\n"
+            "Final Answer:\n"
+            "Category: spam"
+        )
+        assert _strip_thinking(raw) == "Category: spam"
+
+    def test_no_thinking_markers_returns_as_is(self):
+        """Should return output unchanged when no thinking markers present"""
+        raw = "Just a normal response."
+        assert _strip_thinking(raw) == "Just a normal response."
+
+    def test_truncated_thinking_returns_as_is(self):
+        """Should return output as-is when thinking is truncated (no Final Output marker)"""
+        raw = (
+            "Thinking Process:\n"
+            "1. Step one...\n"
+            "2. Step two that got cut off mid-sente"
+        )
+        assert _strip_thinking(raw) == raw.strip()
+
+    def test_clean_output_unchanged(self):
+        """Should leave clean classification output unchanged"""
+        raw = "Category: spam"
+        assert _strip_thinking(raw) == "Category: spam"

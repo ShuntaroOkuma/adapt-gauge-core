@@ -32,7 +32,13 @@ def create_client(model_name: str, config: HarnessConfig | None = None) -> Model
     retry_delay = config.isolation.retry_delay_seconds
 
     if model_name.startswith("lmstudio/"):
-        return LMStudioClient(model_name, max_retries=retries, retry_delay_seconds=retry_delay)
+        return LMStudioClient(
+            model_name,
+            max_retries=retries,
+            retry_delay_seconds=retry_delay,
+            max_tokens=config.lmstudio.max_tokens,
+            temperature=config.lmstudio.temperature,
+        )
     elif model_name.startswith("claude"):
         return ClaudeClient(model_name, max_retries=retries, retry_delay_seconds=retry_delay)
     else:

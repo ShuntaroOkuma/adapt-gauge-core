@@ -93,6 +93,8 @@ class LMStudioConfig:
     """LMStudio (OpenAI-compatible local LLM) configuration"""
     base_url: str = "http://localhost:1234/v1"
     api_key: str = "lm-studio"
+    max_tokens: int = 1024
+    temperature: float = 0.0
 
 
 @dataclass
@@ -160,6 +162,8 @@ def load_config() -> HarnessConfig:
     lmstudio = LMStudioConfig(
         base_url=_env_str("LMSTUDIO_BASE_URL", "http://localhost:1234/v1"),
         api_key=_env_str("LMSTUDIO_API_KEY", "lm-studio"),
+        max_tokens=_env_int("LMSTUDIO_MAX_TOKENS", 1024),
+        temperature=_env_float("LMSTUDIO_TEMPERATURE", 0.0),
     )
     return HarnessConfig(
         trials=trials,

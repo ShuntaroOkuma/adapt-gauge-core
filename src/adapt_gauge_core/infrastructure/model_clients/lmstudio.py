@@ -12,6 +12,35 @@ from openai import OpenAI
 from adapt_gauge_core.domain.value_objects import ModelResponse
 from adapt_gauge_core.infrastructure.model_clients.base import ModelClient, RetryMixin
 
+# Pattern: plain-text thinking markers followed by a final output marker
+_PLAIN_THINKING_RE = re.compile(
+    r"^(?:Thinking Process|思考プロセス)\s*:?\s*\n[\s\S]*?"
+    r"(?:Final (?:Output|Answer)|最終(?:出力|回答))\s*:?\s*\n",
+    re.IGNORECASE,
+)
+
+
+def _strip_thinking(raw_output: str) -> str:
+    """Strip thinking blocks from model output.
+
+    Handles two formats:
+    1. XML ``<think>...</think>`` tags (Qwen 3.5 with temperature > 0)
+    2. Plain-text ``Thinking Process: ... Final Output:`` blocks (fallback)
+
+    Returns the original output if stripping would produce an empty string.
+    """
+    # 1. XML <think> tags
+    stripped = re.sub(r"<think>[\s\S]*?</think>\s*", "", raw_output).strip()
+    if stripped and stripped != raw_output.strip():
+        return stripped
+
+    # 2. Plain-text thinking markers
+    stripped = _PLAIN_THINKING_RE.sub("", raw_output).strip()
+    if stripped:
+        return stripped
+
+    return raw_output.strip()
+
 
 class LMStudioClient(RetryMixin, ModelClient):
     """Client using LMStudio (OpenAI-compatible API)"""
@@ -24,6 +53,7 @@ class LMStudioClient(RetryMixin, ModelClient):
         max_retries: int = 3,
         retry_delay_seconds: float = 5.0,
         max_tokens: int = 1024,
+        temperature: float = 0.0,
     ):
         """
         Args:
@@ -33,6 +63,7 @@ class LMStudioClient(RetryMixin, ModelClient):
             max_retries: Maximum number of retries (default: 3)
             retry_delay_seconds: Base delay between retries in seconds (default: 5.0)
             max_tokens: Maximum number of tokens (default: 1024)
+            temperature: Sampling temperature (default: 0.0; >= 0.6 recommended for thinking models)
         """
         self.model_name = model_name
         # Strip the lmstudio/ prefix to get the model name for the API
@@ -40,6 +71,7 @@ class LMStudioClient(RetryMixin, ModelClient):
         self.max_retries = max_retries
         self.retry_delay_seconds = retry_delay_seconds
         self.max_tokens = max_tokens
+        self.temperature = temperature
 
         # Configuration priority: argument > environment variable > default value
         base_url = base_url or os.environ.get("LMSTUDIO_BASE_URL", "http://localhost:1234/v1")
@@ -66,7 +98,7 @@ class LMStudioClient(RetryMixin, ModelClient):
             response = self.client.chat.completions.create(
                 model=self.api_model_name,
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.0,
+                temperature=self.temperature,
                 max_tokens=self.max_tokens,
             )
             end_time = time.time()
@@ -74,10 +106,7 @@ class LMStudioClient(RetryMixin, ModelClient):
             latency_ms = int((end_time - start_time) * 1000)
             raw_output = response.choices[0].message.content.strip()
 
-            # Strip <think>...</think> blocks from thinking models (e.g. Qwen 3.5)
-            output = re.sub(r"<think>[\s\S]*?</think>\s*", "", raw_output).strip()
-            if not output:
-                output = raw_output
+            output = _strip_thinking(raw_output)
 
             # Retrieve token usage
             input_tokens = 0
