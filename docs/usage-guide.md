@@ -76,6 +76,8 @@ cp .env.example .env
 | `ANTHROPIC_API_KEY` | Anthropic API key (for Claude models) |
 | `LMSTUDIO_BASE_URL` | LMStudio server URL (default: `http://localhost:1234/v1`) |
 | `LMSTUDIO_API_KEY` | LMStudio API key (default: `lm-studio`) |
+| `LMSTUDIO_MAX_TOKENS` | Max response tokens (default: `1024`; increase for thinking models) |
+| `LMSTUDIO_TEMPERATURE` | Sampling temperature (default: `0.0`; `>= 0.6` recommended for thinking models) |
 
 ### Evaluation Settings
 
@@ -123,8 +125,9 @@ python -m adapt_gauge_core.runner [OPTIONS]
 | `--num-trials N` | No | from .env | Number of trials |
 | `--run-id ID` | No | auto-generated | Run ID (also used for resuming) |
 | `--output-dir DIR` | No | `results` | Output directory for CSV files |
-| `--example-selection METHOD` | No | `fixed` | Example selection: `fixed` or `tfidf` |
+| `--example-selection METHOD` | No | `tfidf` | Example selection: `tfidf` (TF-IDF similarity) or `fixed` (ordered) |
 | `--compare-selection` | No | false | Run both fixed and tfidf for comparison |
+| `--batch-size N` | No | `1` | Parallel inferences per model (1 = sequential) |
 
 ### Examples
 
@@ -152,6 +155,12 @@ python -m adapt_gauge_core.runner \
   --task-pack tasks/task_pack_core_demo.json \
   --num-trials 5 \
   --output-dir results/experiment1
+
+# Parallel inference for local models (e.g. LMStudio)
+python -m adapt_gauge_core.runner \
+  --task-pack tasks/task_pack_english_small.json \
+  --models lmstudio/qwen3.5-4b \
+  --batch-size 4
 ```
 
 ### Evaluation Flow
@@ -421,6 +430,15 @@ claude-haiku-4-5-20251001
 | **Vertex AI** | gemini-2.5-flash, gemini-2.5-pro, gemini-3-flash-preview, gemini-3-pro-preview | `GCP_PROJECT_ID` |
 | **Anthropic** | claude-haiku-4-5-20251001, claude-sonnet-4-5-20250929, claude-opus-4-5-20251101 | `ANTHROPIC_API_KEY` |
 | **LMStudio** | Any local model (prefix with `lmstudio/`) | `LMSTUDIO_BASE_URL` |
+
+> **Thinking models**: LMStudio supports thinking models like Qwen 3.5. Both `<think>...</think>` tags and plain-text thinking blocks (e.g. `Thinking Process: ... Final Output:`) are automatically stripped from responses before scoring. For thinking models, configure the following in `.env`:
+>
+> ```bash
+> LMSTUDIO_MAX_TOKENS=4096     # Thinking tokens consume the budget; increase to reach the answer
+> LMSTUDIO_TEMPERATURE=0.6     # Enables proper <think> tag mode in Qwen 3.5
+> ```
+>
+> Also increase the context length in LMStudio (16384+ recommended) since thinking tokens consume context silently.
 
 ### Specifying Models
 

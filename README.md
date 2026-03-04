@@ -79,6 +79,12 @@ python -m adapt_gauge_core.runner \
 python -m adapt_gauge_core.runner \
   --task-pack tasks/task_pack_core_demo.json \
   --run-id 20260101_120000
+
+# Parallel inference for local models (e.g. LMStudio)
+python -m adapt_gauge_core.runner \
+  --task-pack tasks/task_pack_english_small.json \
+  --models lmstudio/qwen3.5-4b \
+  --batch-size 4
 ```
 
 #### CLI Options
@@ -92,6 +98,7 @@ python -m adapt_gauge_core.runner \
 | `--output-dir` | Directory for output CSV files (default: `results`) |
 | `--example-selection` | `tfidf` (default) or `fixed` ordering |
 | `--compare-selection` | Run both selection methods for comparison |
+| `--batch-size` | Parallel inferences per model (default: `1`, sequential) |
 
 ### View Results
 
@@ -145,6 +152,8 @@ The included `task_pack_core_demo.json` contains 4 tasks covering different scor
 | Code Fix | contains | Bug fixing |
 | Summarization | f1 | Text summarization |
 | Delivery Route | llm_judge | Route optimization |
+
+A lightweight `task_pack_english_small.json` is also included for quick benchmarking with small/local models — 3 tasks (classification, code fix, summarization) with no `llm_judge` dependency.
 
 ## Project Structure
 

@@ -76,6 +76,8 @@ cp .env.example .env
 | `ANTHROPIC_API_KEY` | Anthropic APIキー（Claudeモデル用） |
 | `LMSTUDIO_BASE_URL` | LMStudioサーバーURL（デフォルト: `http://localhost:1234/v1`） |
 | `LMSTUDIO_API_KEY` | LMStudio APIキー（デフォルト: `lm-studio`） |
+| `LMSTUDIO_MAX_TOKENS` | 最大応答トークン数（デフォルト: `1024`、thinkingモデルでは増加推奨） |
+| `LMSTUDIO_TEMPERATURE` | サンプリング温度（デフォルト: `0.0`、thinkingモデルでは `0.6` 以上推奨） |
 
 ### 評価設定
 
@@ -123,8 +125,9 @@ python -m adapt_gauge_core.runner [OPTIONS]
 | `--num-trials N` | No | .envから取得 | 試行回数 |
 | `--run-id ID` | No | 自動生成 | 実行ID（再開時にも使用） |
 | `--output-dir DIR` | No | `results` | CSV出力ディレクトリ |
-| `--example-selection METHOD` | No | `fixed` | 例文選択方式: `fixed` または `tfidf` |
+| `--example-selection METHOD` | No | `tfidf` | 例文選択方式: `tfidf`（TF-IDF類似度）または `fixed`（固定順） |
 | `--compare-selection` | No | false | fixedとtfidfの両方を比較実行 |
+| `--batch-size N` | No | `1` | モデルあたりの並列推論数（1 = 逐次実行） |
 
 ### 実行例
 
@@ -152,6 +155,12 @@ python -m adapt_gauge_core.runner \
   --task-pack tasks/task_pack_core_demo.json \
   --num-trials 5 \
   --output-dir results/experiment1
+
+# ローカルモデルで並列推論（例: LMStudio）
+python -m adapt_gauge_core.runner \
+  --task-pack tasks/task_pack_english_small.json \
+  --models lmstudio/qwen3.5-4b \
+  --batch-size 4
 ```
 
 ### 評価フロー
@@ -421,6 +430,15 @@ claude-haiku-4-5-20251001
 | **Vertex AI** | gemini-2.5-flash, gemini-2.5-pro, gemini-3-flash-preview, gemini-3-pro-preview | `GCP_PROJECT_ID` |
 | **Anthropic** | claude-haiku-4-5-20251001, claude-sonnet-4-5-20250929, claude-opus-4-5-20251101 | `ANTHROPIC_API_KEY` |
 | **LMStudio** | 任意のローカルモデル（`lmstudio/`プレフィックスを付与） | `LMSTUDIO_BASE_URL` |
+
+> **Thinking モデル**: LMStudio では Qwen 3.5 等の thinking モデルにも対応しています。`<think>...</think>` タグおよびプレーンテキストの思考ブロック（例: `Thinking Process: ... Final Output:`）はスコアリング前に自動で除去されます。thinking モデルを使用する場合、`.env` で以下を設定してください。
+>
+> ```bash
+> LMSTUDIO_MAX_TOKENS=4096     # 思考トークンがトークン上限を消費するため増加推奨
+> LMSTUDIO_TEMPERATURE=0.6     # Qwen 3.5 で適切な <think> タグモードを有効化
+> ```
+>
+> また、LMStudio のコンテキスト長も大きめ（16384 以上推奨）に設定してください。
 
 ### モデルの指定方法
 

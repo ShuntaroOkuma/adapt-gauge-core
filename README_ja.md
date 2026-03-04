@@ -79,6 +79,12 @@ python -m adapt_gauge_core.runner \
 python -m adapt_gauge_core.runner \
   --task-pack tasks/task_pack_core_demo.json \
   --run-id 20260101_120000
+
+# ローカルモデルで並列推論（例: LMStudio）
+python -m adapt_gauge_core.runner \
+  --task-pack tasks/task_pack_english_small.json \
+  --models lmstudio/qwen3.5-4b \
+  --batch-size 4
 ```
 
 #### CLI オプション一覧
@@ -92,6 +98,7 @@ python -m adapt_gauge_core.runner \
 | `--output-dir` | 出力先ディレクトリ（デフォルト: `results`） |
 | `--example-selection` | 例題の選択方式: `tfidf`（デフォルト）または `fixed`（固定順） |
 | `--compare-selection` | 両方の選択方式を同時に実行して比較 |
+| `--batch-size` | モデルあたりの並列推論数（デフォルト: `1`、逐次実行） |
 
 ### 結果の閲覧
 
@@ -145,6 +152,8 @@ streamlit run src/adapt_gauge_core/viewer.py
 | コード修正 | contains | バグ修正 |
 | 要約 | f1 | テキスト要約 |
 | 配送ルート | llm_judge | ルート最適化 |
+
+小型・ローカルモデル向けの軽量パック `task_pack_english_small.json` も同梱しています。3 タスク（分類・コード修正・要約）で構成され、`llm_judge` 依存がないためすぐに実行できます。
 
 ## プロジェクト構成
 

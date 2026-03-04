@@ -617,903 +617,70 @@ def find_max(numbers):
         if num > max_val:
             max_val = num
     return max_val",0.0,contains,1414,2026-03-03T00:07:12.789287,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,0,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the article, extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.""
-    *   Output Format: Only summary keywords separated by commas (no extra text, no sentences).
-
-2.  **Extract Key Facts:**
-    *   Company: Anthropic
-    *   Funding Amount: $4 billion
-    *   Lead Investor: Google
-    *   Valuation: $60 billion
-    *   Product/Goal: Claude 5 (PhD-level research capability)
-    *   CEO Name: Dario Amodei
-    *   Hiring Plan: 500 additional researchers
-    *   Safety Team Expansion: 40%
-    *   Partnership: AWS / Amazon Bedrock
-
-3.  **Draft Keywords:**
-    *   Anthropic, $4 billion, Google, $60 billion, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS, Amazon Bedrock
-
-4.  **Refine for Conciseness and Accuracy (following ""Output only the summary keywords separated by commas""):**
-    *   Need to ensure numbers and names are accurate.
-    *   List: Anthropic, $4 billion, Google, $60 billion, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS, Amazon Bedrock
-
-5.  **Final Review:**
-    *   Does it meet the ""Output only"" constraint? Yes.
-    *   Are numbers/names accurate? Yes ($4 billion, $60 billion, Claude 5, Dario Amodei, 500, 40%, AWS).
-    *   Is it concise keywords separated by commas? Yes.
-
-6.  **Construct Final Output:**
-    Anthropic, $4 billion, Google, $60 billion, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS, Amazon Bedrock
-
-    *Self-Correction on ""PhD-level research capability"":* This is a quote/description. Maybe just ""Claude 5"" and ""PhD-level"". But the prompt asks for key facts. Let's keep it descriptive but concise.
-    *Self-Correction on Dates:* The input text does not contain specific dates (like ""January 2024""). So I don't need to invent any or look for implied ones. Just extract what's there.
-
-    *Refining the list for flow and strict keyword format:*
-    Anthropic, $4 billion, Google, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS partnership, Amazon Bedrock
-
-    Let's make it tighter.
-    Anthropic, $4 billion, Google, $60 billion, Claude 5, Dario Amodei, 500 researchers, safety team 40%, AWS, Amazon Bedrock
-
-    Wait, ""PhD-level research capability"" is a key description of the product goal. I should include it or summarize it as ""Claude 5 development"". The prompt says ""Include numbers, names, and dates accurately."" It doesn't explicitly forbid descriptive phrases if they are key facts. However, ""keywords"" usually implies nouns/noun phrases.
-    Let's stick to the core entities and metrics.
-
-    Final Selection:
-    Anthropic, $4 billion, Google, $60 billion, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS, Amazon Bedrock
-
-    Actually, looking at the instruction ""Output only the summary keywords separated by commas"", I should avoid full sentences.
-    Let's finalize the list.
-
-    Anthropic, $4 billion, Google, $60 billion, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS, Amazon Bedrock
-
-    Wait, I should check if there are dates. No specific dates in the text provided.",0.0916030534351145,f1,101394,2026-03-03T09:40:58.617450,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,0,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the article and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.""
-    *   Output Format: Only summary keywords separated by commas (no extra text, no explanations).
-
-2.  **Extract Key Facts:**
-    *   Company/Brand: Samsung
-    *   Product Name: Galaxy S25 Ultra
-    *   Event Location: San Jose
-    *   Event Name: Unpacked event
-    *   Chip: Snapdragon 8 Elite
-    *   RAM: 16GB
-    *   Camera: 200MP
-    *   AI Features: real-time translation (16 languages), AI photo editing
-    *   Price: $1,299
-    *   Pre-order Date: January 22
-    *   Sales Forecast: 30 million units in the first quarter
-
-3.  **Draft Keywords:**
-    Samsung, Galaxy S25 Ultra, Unpacked event, San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, AI features, real-time translation, 16 languages, photo editing, $1,299, January 22, pre-order, 30 million units, first quarter
-
-4.  **Refine for Conciseness and Accuracy:**
-    *   Need to ensure numbers, names, dates are accurate.
-    *   ""Samsung"" is a name.
-    *   ""Galaxy S25 Ultra"" is the product name.
-    *   ""San Jose"" is location.
-    *   ""Snapdragon 8 Elite"" is chip name.
-    *   ""16GB"", ""200MP"", ""$1,299"", ""January 22"", ""30 million units"", ""first quarter"", ""16 languages"".
-
-5.  **Final Selection (Keywords separated by commas):**
-    Samsung, Galaxy S25 Ultra, Unpacked event, San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, AI features, real-time translation, 16 languages, photo editing, $1,299, January 22, pre-order, 30 million units, first quarter
-
-    *Self-Correction on ""Output only the summary keywords"":* The prompt asks for ""summary keywords separated by commas"". It implies a list of key terms/phrases representing the facts.
-    Let's make it tighter but keep all required info (numbers, names, dates).
-
-    Revised List: Samsung, Galaxy S25 Ultra, Unpacked event, San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, AI features, real-time translation, 16 languages, photo editing, $1,299, January 22, pre-order, 30 million units, first quarter
-
-    Wait, checking the instruction again: ""Output only the summary keywords separated by commas.""
-    I should avoid full sentences. Just the key terms.
-
-    Let's check specific constraints: ""Include numbers, names, and dates accurately.""
-    So: Samsung, Galaxy S25 Ultra, San Jose, Unpacked event, Snapdragon 8 Elite, 16GB RAM, 200MP camera, AI features, real-time translation, 16 languages, photo editing, $1,299, January 22, pre-order, 30 million units, first quarter.
-
-    Is ""first quarter"" specific enough? Yes, it's in the text.
-    Is ""January 22"" accurate? Yes.
-    Is ""$1,299"" accurate? Yes.
-
-    Let's finalize the string.
-
-6.  **Final Polish:**
-    Samsung, Galaxy S25 Ultra, Unpacked event, San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, AI features, real-time translation, 16 languages, photo editing, $1,299, January 22, pre-order, 30 million units, first quarter
-
-    Wait, I can make it slightly more concise while",0.14107883817427386,f1,101471,2026-03-03T09:40:58.694283,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,0,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the article and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.""
-    *   Output Format: Only summary keywords separated by commas (e.g., Keyword1, Keyword2, ...).
-
-2.  **Analyze the Input Text for Key Facts:**
-    *   Fact 1: Company -> GitHub
-    *   Fact 2: Product -> Copilot
-    *   Fact 3: Subscribers -> over 2 million paying subscribers
-    *   Fact 4: Revenue -> $400 million in annual recurring revenue
-    *   Fact 5: New Feature -> Copilot Workspace (turns GitHub Issues into pull requests)
-    *   Fact 6: CEO Name -> Thomas Dohmke (Note: Wait, is this accurate? Usually, GitHub's CEO is Nestor. Let me check the input text provided. The input says ""CEO Thomas Dohmke"". I must follow the input text even if it might be factually incorrect in real life, as the task is to extract from *this* article.)
-    *   Fact 7: Quote/Statement -> AI pair programming has become the default workflow
-    *   Fact 8: Efficiency -> 55% faster (tasks completion)
-    *   Fact 9: Future Plan -> integrate Copilot into all GitHub features by end of 2025
-
-3.  **Draft Keywords:**
-    *   GitHub, Copilot, 2 million subscribers, $400 million revenue, Copilot Workspace, Thomas Dohmke, AI pair programming, 55% faster, end of 2025.
-
-4.  **Refine for Conciseness and Accuracy (per instructions):**
-    *   ""over 2 million paying subscribers"" -> 2 million subscribers
-    *   ""$400 million in annual recurring revenue"" -> $400 million ARR
-    *   ""Copilot Workspace"" -> Copilot Workspace
-    *   ""Thomas Dohmke"" -> Thomas Dohmke (Keep as per input)
-    *   ""55% faster"" -> 55% faster
-    *   ""end of 2025"" -> end of 2025
-
-5.  **Final Selection:**
-    GitHub, Copilot, 2 million subscribers, $400 million revenue, Copilot Workspace, Thomas Dohmke, AI pair programming, 55% faster, end of 2025
-
-6.  **Formatting Check:**
-    *   Output only the summary keywords separated by commas.
-    *   No extra text like ""Summary:"" or explanations.
-
-7.  **Final Polish:**
-    GitHub, Copilot, 2 million subscribers, $400 million revenue, Copilot Workspace, Thomas Dohmke, AI pair programming, 55% faster, end of 2025
-
-    Wait, I should check if ""Thomas Dohmke"" is a real name for GitHub CEO. Actually, GitHub's CEO is Nestor. The input text says ""CEO Thomas Dohmke"". This looks like a hallucinated fact in the prompt or a specific scenario. As an AI following instructions to extract from the *input*, I must use the information provided in the input text.
-    Input: ""CEO Thomas Dohmke stated...""
-    Extraction: Thomas Dohmke
-
-    Let's refine the keywords to be punchy.
-    GitHub, Copilot, 2 million subscribers, $400 million revenue, Copilot Workspace, Thomas Dohmke, AI pair programming, 55% faster, end of 2025
-
-    Looks good.
-
-8.  **Final Output Generation:**
-    GitHub, Copilot, 2 million subscribers, $400 million revenue, Copilot Workspace, Thomas Dohmke, AI pair programming, 55% faster, end of 2025
-
-    Wait, looking closely at the instruction: ""Output only the summary keywords separated by commas.""
-    I will ensure no markdown blocks or extra text.
-
-    One more check on numbers/names/dates:
-    - Numbers:",0.08000000000000002,f1,101477,2026-03-03T09:40:58.701125,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,1,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the provided article text and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.""
-    *   Output Format: Keywords separated by commas (no extra text, no explanations).
-
-2.  **Extract Key Facts:**
-    *   Company: Anthropic
-    *   Funding Amount: $4 billion
-    *   Lead Investor: Google
-    *   Valuation: $60 billion
-    *   Product/Model: Claude 5
-    *   CEO Name: Dario Amodei
-    *   Capability Description: PhD-level research capability (maybe too descriptive, but ""Claude 5"" is key)
-    *   Hiring Plan: 500 additional researchers
-    *   Safety Team Expansion: 40%
-    *   Partnership: AWS / Amazon Bedrock
-
-3.  **Draft Keywords:**
-    *   Anthropic
-    *   $4 billion funding
-    *   Google led
-    *   $60 billion valuation
-    *   Claude 5
-    *   Dario Amodei
-    *   PhD-level research capability
-    *   500 additional researchers
-    *   safety team expand 40%
-    *   AWS partnership
-    *   Amazon Bedrock
-
-4.  **Refine for Conciseness and Accuracy (matching the example style):**
-    *   The example output was: ""GPT-5, March 12, 40% reasoning improvement, Sam Altman, API April 1, $15 per million tokens, 20% enterprise discount""
-    *   It focuses on nouns, numbers, names, and specific metrics.
-    *   Let's select the most impactful ones.
-
-    *   Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS partnership, Amazon Bedrock
-
-    *   Wait, the instruction says ""Output only the summary keywords separated by commas.""
-    *   Let's make it tight.
-
-    *   Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS partnership, Amazon Bedrock
-
-    *   Check constraints: ""Include numbers, names, and dates accurately."" There are no specific dates in the text (like ""March 12""), so I won't invent any.
-    *   Refine phrasing to match keyword style.
-
-    *   Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS partnership, Amazon Bedrock
-
-    *   Maybe shorten ""PhD-level research capability"" to just the core fact if needed, but it's a specific description given by the CEO. Let's keep it concise.
-    *   ""AWS partnership"" and ""Amazon Bedrock"" can be combined or kept separate. The example had ""API April 1"". So ""AWS Amazon Bedrock"" works.
-
-    *   Revised List:
-        Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS partnership, Amazon Bedrock
-
-    *   Let's check the example again. ""GPT-5, March 12, 40% reasoning improvement...""
-    *   My draft: Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS partnership, Amazon Bedrock
-
-    *   Is ""PhD-level research capability"" too long? Maybe just ""Claude 5"". But the text highlights it. Let's keep it as a key fact.
-    *   Actually, looking at the example, they extracted specific metrics (""40% reasoning improvement"", ""$",0.10687022900763359,f1,113865,2026-03-03T09:42:52.585736,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,1,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the provided article text and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.""
-    *   Output Format: Keywords separated by commas (no extra text, no explanations).
-
-2.  **Extract Key Facts:**
-    *   Entity: GitHub, Copilot.
-    *   Numbers/Stats: over 2 million paying subscribers, $400 million annual recurring revenue, 55% faster tasks.
-    *   Product/Feature: Copilot Workspace (turns Issues into pull requests).
-    *   Person: CEO Thomas Dohmke.
-    *   Quote/Sentiment: AI pair programming default workflow.
-    *   Future Plan/Date: integrate Copilot into all GitHub features by end of 2025.
-
-3.  **Draft Summary Keywords:**
-    *   GitHub, Copilot, 2 million subscribers, $400M revenue, Copilot Workspace, Thomas Dohmke, AI pair programming default, 55% faster tasks, integrate all features end of 2025.
-
-4.  **Refine for Conciseness and Accuracy (matching the example style):**
-    *   Example style: ""NVIDIA $35.1B revenue, H200 B100 demand...""
-    *   My draft: GitHub Copilot 2M subscribers, $400M ARR, Copilot Workspace, Thomas Dohmke AI pair programming default, 55% faster tasks, integrate all features end of 2025.
-
-5.  **Final Polish:**
-    *   Ensure numbers and dates are accurate.
-    *   Ensure comma separation.
-    *   Remove unnecessary words like ""over"" if possible to keep it keyword-like, but accuracy is key. The example kept ""$35.1B"". So ""2M subscribers"" or ""2 million subscribers"" is fine. Let's stick close to the text for numbers.
-    *   Selected keywords: GitHub Copilot 2 million subscribers, $400M revenue, Copilot Workspace, Thomas Dohmke AI pair programming default workflow, 55% faster tasks, integrate all features end of 2025
-
-6.  **Final Check against Constraints:**
-    *   Output only the summary keywords separated by commas.
-    *   No markdown blocks (unless requested, but usually plain text is safer for ""Output only""). The prompt says ""Output only the summary keywords"". I will provide just the text string.
-
-    Let's refine slightly to match the example's density.
-    Example: NVIDIA $35.1B revenue, H200 B100 demand, Rubin architecture 2026, inference 10x growth, $4T market cap
-    My version: GitHub Copilot 2M subscribers, $400M ARR, Copilot Workspace Issues to PRs, Thomas Dohmke AI pair programming default, 55% faster tasks, integrate all features end of 2025
-
-    Let's make it cleaner.
-    GitHub Copilot 2 million subscribers, $400M revenue, Copilot Workspace, Thomas Dohmke AI pair programming default, 55% faster tasks, integrate all features end of 2025
-
-    Wait, ""end of 2025"" is a date.
-    Let's finalize the string.
-
-    GitHub Copilot 2 million subscribers, $400M revenue, Copilot Workspace, Thomas Dohmke AI pair programming default, 55% faster tasks, integrate all features end of 2025
-
-    Actually, looking at the example: ""NVIDIA $35.1B revenue"".
-    So: GitHub Copilot 2 million subscribers, $400M annual recurring revenue, Copilot Workspace, Thomas Dohmke AI pair programming default workflow, 55% faster tasks, integrate all features end of 2025
-
-    Let's condense slightly for keyword style.
-    GitHub Copilot 2M subscribers, $400M ARR, Copilot Workspace, Thomas Dohmke AI pair programming default, 5",0.10612244897959185,f1,113907,2026-03-03T09:42:52.631983,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,1,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the article (input text) and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.""
-    *   Output Format: Keywords separated by commas (no extra text, no explanations).
-
-2.  **Extract Key Facts:**
-    *   Company/Brand: Samsung
-    *   Product Name: Galaxy S25 Ultra
-    *   Event/Location: Unpacked event, San Jose
-    *   Chip: Snapdragon 8 Elite
-    *   RAM: 16GB
-    *   Camera: 200MP
-    *   Features: on-device AI, real-time translation (16 languages), AI photo editing
-    *   Price: $1,299
-    *   Pre-order Date: January 22
-    *   Sales Forecast: 30 million units, first quarter
-
-3.  **Draft Keywords:**
-    Samsung, Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages translation, AI photo editing, $1,299, January 22 pre-order, 30 million units Q1
-
-4.  **Refine for Conciseness and Accuracy (matching the example style):**
-    *   Example style: ""M4 Ultra, 80 CPU 160 GPU cores, 3x M2 Ultra, AI training Mac Pro, $8,999 September, M2 minimum for AI""
-    *   My draft needs to be comma-separated keywords.
-    *   Selection: Samsung, Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22 pre-order, 30 million units Q1
-
-    Let's tighten it up to match the example's density.
-    *   Samsung Galaxy S25 Ultra
-    *   Unpacked San Jose
-    *   Snapdragon 8 Elite
-    *   16GB RAM
-    *   200MP camera
-    *   on-device AI, 16 languages
-    *   $1,299
-    *   January 22 pre-order
-    *   30 million units Q1
-
-5.  **Final Polish:**
-    Samsung, Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22 pre-order, 30 million units Q1
-
-    Wait, checking the example output format again: ""M4 Ultra, 80 CPU 160 GPU cores, 3x M2 Ultra, AI training Mac Pro, $8,999 September, M2 minimum for AI"". It uses commas to separate phrases.
-    Let's ensure numbers and dates are accurate.
-
-    Revised List:
-    Samsung, Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22 pre-order, 30 million units Q1
-
-    Looks good. I will output just this string.
-
-6.  **Final Check:**
-    *   Input: Samsung unveiled...
-    *   Output: Keywords separated by commas.
-    *   No extra text.
-
-    Let's combine slightly for flow similar to example.
-    Samsung, Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22 pre-order, 30 million units Q1
-
-    Actually, looking at the example: ""M4 Ultra, 80 CPU 160 GPU cores...""
-    My extraction: ""Samsung, Galaxy S25 Ultra, Unpacked San",0.1511111111111111,f1,113932,2026-03-03T09:42:52.655556,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,2,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the article and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.""
-    *   Output Format: Keywords separated by commas (no extra text).
-
-2.  **Analyze the Input Text:**
-    *   Subject: Samsung Galaxy S25 Ultra smartphone.
-    *   Event/Location: Unpacked event, San Jose.
-    *   Specs: Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor.
-    *   Features: on-device AI features, real-time translation (16 languages), AI photo editing.
-    *   Price: $1,299.
-    *   Availability/Date: Pre-order starting January 22.
-    *   Sales Forecast: 30 million units in the first quarter.
-
-3.  **Draft Keywords:**
-    *   Samsung Galaxy S25 Ultra
-    *   Unpacked event San Jose
-    *   Snapdragon 8 Elite chip
-    *   16GB RAM
-    *   200MP camera sensor
-    *   on-device AI features
-    *   real-time translation 16 languages
-    *   AI photo editing
-    *   $1,299
-    *   pre-order January 22
-    *   30 million units first quarter
-
-4.  **Refine for Conciseness and Accuracy (matching the example style):**
-    *   The example output format is: `Keyword1, Keyword2, Keyword3...`
-    *   Need to ensure numbers, names, dates are accurate.
-    *   Draft: Samsung Galaxy S25 Ultra, Unpacked event San Jose, Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor, on-device AI features, real-time translation 16 languages, AI photo editing, $1,299, pre-order January 22, 30 million units first quarter
-
-5.  **Final Review:**
-    *   Does it match the instruction ""Output only the summary keywords separated by commas""? Yes.
-    *   Are numbers/names/dates accurate? Yes (S25 Ultra, Snapdragon 8 Elite, 16GB, 200MP, $1,299, January 22, 30 million).
-    *   Is it concise? Yes.
-
-6.  **Construct Final Output:**
-    Samsung Galaxy S25 Ultra, Unpacked event San Jose, Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor, on-device AI features, real-time translation 16 languages, AI photo editing, $1,299, pre-order January 22, 30 million units first quarter
-
-    *Self-Correction on Formatting:* The example output uses commas to separate phrases. I should ensure the spacing is consistent (comma + space).
-    Example: `M4 Ultra, 80 CPU 160 GPU cores, ...`
-    My draft looks good.
-
-    Let's check if ""first quarter"" needs a specific year? The text says ""in the first quarter"". I'll keep it as is based on the text provided.
-    Let's check ""January 22"". Text says ""starting January 22"".
-    Let's check ""$1,299"".
-
-    Final string: Samsung Galaxy S25 Ultra, Unpacked event San Jose, Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor, on-device AI features, real-time translation 16 languages, AI photo editing, $1,299, pre-order January 22, 30 million units first quarter
-
-    Wait, looking at the example output again: `M4 Ultra, 80 CPU 160 GPU cores, 3x M2 Ultra, AI training Mac Pro, $8,999 September, M2 minimum for AI`
-    It seems to group related info. I will follow that density.
-
-    Revised Draft: Samsung Galaxy S25 Ultra, Unpacked event San Jose,",0.13061224489795917,f1,114621,2026-03-03T09:44:47.303407,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,2,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the article and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.""
-    *   Output Format: Keywords separated by commas (no extra text, no explanations).
-
-2.  **Analyze the Input Text for Key Facts:**
-    *   Entity: GitHub, Copilot.
-    *   Metric 1: over 2 million paying subscribers.
-    *   Metric 2: $400 million in annual recurring revenue (ARR).
-    *   Product Launch: Copilot Workspace.
-    *   Feature: turn GitHub Issues into complete pull requests.
-    *   Quote/Statement: CEO Thomas Dohmke, 'AI pair programming has become the default workflow'.
-    *   Metric 3: Users complete tasks 55% faster.
-    *   Future Plan: integrate Copilot into all GitHub features by end of 2025.
-
-3.  **Draft Keywords (following the example style):**
-    *   Example 1: NVIDIA $35.1B revenue, H200 B100 demand, Rubin architecture 2026, inference 10x growth, $4T market cap
-    *   Example 2: Sunny day, children, park, parents, benches (This example is less factual/numeric but shows the ""keyword"" style).
-
-    *   Drafting based on Input:
-        GitHub Copilot 2M subscribers, $400M ARR, Copilot Workspace launch, Thomas Dohmke CEO, AI pair programming default workflow, tasks 55% faster, integrate by end of 2025.
-
-4.  **Refine for Conciseness and Accuracy:**
-    *   ""GitHub reported that Copilot now has over 2 million paying subscribers"" -> GitHub Copilot 2M subscribers
-    *   ""generating $400 million in annual recurring revenue"" -> $400M ARR
-    *   ""The company launched Copilot Workspace"" -> Copilot Workspace launch
-    *   ""CEO Thomas Dohmke stated"" -> CEO Thomas Dohmke
-    *   ""'AI pair programming has become the default workflow'"" -> AI pair programming default workflow
-    *   ""Studies show Copilot users complete tasks 55% faster"" -> tasks 55% faster
-    *   ""GitHub plans to integrate Copilot into all GitHub features by end of 2025"" -> integrate by end of 2025
-
-5.  **Final Selection (matching the comma-separated keyword style):**
-    GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace launch, CEO Thomas Dohmke, AI pair programming default workflow, tasks 55% faster, integrate by end of 2025
-
-6.  **Review against Constraints:**
-    *   Output only the summary keywords separated by commas? Yes.
-    *   Include numbers, names, and dates accurately? Yes (2M, $400M, Thomas Dohmke, 2025).
-    *   Concise? Yes.
-
-7.  **Final Polish:**
-    GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace launch, CEO Thomas Dohmke, AI pair programming default workflow, tasks 55% faster, integrate by end of 2025
-
-    Let's make it slightly tighter to match the example style (NVIDIA $35.1B revenue...).
-    GitHub Copilot 2M subscribers, $400M ARR, Copilot Workspace launch, CEO Thomas Dohmke, AI pair programming default workflow, tasks 55% faster, integrate by end of 2025
-
-    Wait, checking the example again: ""NVIDIA reported record quarterly revenue..."" -> Output: ""NVIDIA $35.1B revenue"".
-    So I should keep the entity name clear.
-
-    Revised Draft:
-    GitHub Copilot 2M subscribers, $400M ARR, Copilot Workspace launch, CEO Thomas Dohmke, AI pair programming default workflow, tasks 55% faster, integrate by",0.10743801652892561,f1,114677,2026-03-03T09:44:47.360081,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,2,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the article (input text) and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.""
-    *   Output Format: Keywords separated by commas (no extra text, no explanations).
-
-2.  **Analyze the Input Text for Key Facts:**
-    *   Company: Anthropic
-    *   Funding Amount: $4 billion
-    *   Lead Investor: Google
-    *   Valuation: $60 billion
-    *   Product/Model: Claude 5
-    *   CEO Name: Dario Amodei
-    *   Capability Description: PhD-level research capability (maybe too descriptive, but ""Claude 5"" is key)
-    *   Hiring Plan: 500 additional researchers
-    *   Safety Team Expansion: 40%
-    *   Partnership: AWS / Amazon Bedrock
-
-3.  **Draft Keywords:**
-    *   Anthropic
-    *   $4 billion funding
-    *   Google led
-    *   $60 billion valuation
-    *   Claude 5
-    *   Dario Amodei
-    *   PhD-level research capability (or just PhD-level)
-    *   500 researchers hire
-    *   40% safety team expansion
-    *   AWS partnership
-    *   Amazon Bedrock
-
-4.  **Refine for Conciseness and Accuracy (matching the example style):**
-    *   The example output format is: `Keyword1, Keyword2, Keyword3...`
-    *   Need to ensure numbers and names are accurate.
-    *   Draft: Anthropic, $4 billion funding, Google, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers hire, 40% safety team expansion, AWS partnership, Amazon Bedrock
-
-    Let's tighten it up to match the ""concise summary keywords"" style of the example.
-    Example: `GPT-5, March 12, 40% reasoning improvement, Sam Altman, API April 1, $15 per million tokens, 20% enterprise discount`
-
-    My Draft: `Anthropic, $4 billion funding, Google, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers hire, 40% safety team expansion, AWS partnership, Amazon Bedrock`
-
-    Can I make it more compact?
-    `Anthropic, $4 billion funding, Google, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, 40% safety team, AWS partnership, Amazon Bedrock`
-
-    Let's check the constraints again: ""Output only the summary keywords separated by commas.""
-    No introductory text.
-
-    Selection of key facts:
-    1. Anthropic (Company)
-    2. $4 billion funding (Amount)
-    3. Google (Lead investor)
-    4. $60 billion valuation (Valuation)
-    5. Claude 5 (Product)
-    6. Dario Amodei (CEO)
-    7. PhD-level research capability (Description/Goal)
-    8. 500 researchers hire (Hiring plan)
-    9. 40% safety team expansion (Safety plan)
-    10. AWS partnership / Amazon Bedrock (Partnership)
-
-    Let's combine slightly for flow similar to the example.
-    Example had: `GPT-5, March 12, 40% reasoning improvement...`
-    So I should keep specific numbers and names distinct.
-
-    Refined List:
-    Anthropic, $4 billion funding, Google, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers hire, 40% safety team expansion, AWS partnership, Amazon Bedrock
-
-    Wait, ""PhD-level research capability"" is a quote description. In the example, `40% reasoning improvement` was extracted from `'a significant leap in AI capability'",0.09266409266409265,f1,114710,2026-03-03T09:44:47.393110,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,4,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the article and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.""
-    *   Output Format: Keywords separated by commas (no extra text, no explanations).
-
-2.  **Analyze the Input Text:**
-    *   Fact 1: GitHub reported Copilot subscribers -> over 2 million paying subscribers.
-    *   Fact 2: Revenue -> $400 million in annual recurring revenue.
-    *   Fact 3: New Product -> Copilot Workspace (turns Issues into pull requests).
-    *   Fact 4: Quote/Statement -> CEO Thomas Dohmke, 'AI pair programming has become the default workflow'.
-    *   Fact 5: Efficiency metric -> Studies show users complete tasks 55% faster.
-    *   Fact 6: Future Plan -> Integrate Copilot into all GitHub features by end of 2025.
-
-3.  **Draft Keywords (following the examples):**
-    *   Example 1 style: AlphaCode 2, 87% silver medal problems...
-    *   Example 3 style: NVIDIA $35.1B revenue, H200 B100 demand...
-    *   Goal: Concise, include numbers, names, dates.
-
-    *   Draft 1: GitHub Copilot, 2 million subscribers, $400M ARR, Copilot Workspace, Thomas Dohmke, AI pair programming default, 55% faster tasks, end of 2025 integration
-    *   Refining for conciseness and keyword style (like Example 3):
-        *   GitHub Copilot 2 million subscribers
-        *   $400M ARR
-        *   Copilot Workspace Issues to PRs
-        *   Thomas Dohmke AI pair programming default
-        *   55% faster tasks
-        *   end of 2025 integration
-
-    *   Let's look at the examples again to match the tone.
-        *   Example 3: ""NVIDIA $35.1B revenue, H200 B100 demand, Rubin architecture 2026..."" -> [Subject] + [Metric/Detail].
-        *   So I should combine subject and metric where possible.
-
-    *   Refined Draft:
-        GitHub Copilot 2 million subscribers, $400M ARR, Copilot Workspace Issues to PRs, Thomas Dohmke AI pair programming default, 55% faster tasks, end of 2025 integration
-
-    *   Check constraints: ""Output only the summary keywords separated by commas.""
-    *   Check accuracy: Numbers (2 million, $400 million, 55%, 2025), Names (GitHub, Thomas Dohmke), Dates (end of 2025).
-
-    *   Final Polish:
-        GitHub Copilot 2 million subscribers, $400M ARR, Copilot Workspace Issues to PRs, Thomas Dohmke AI pair programming default, 55% faster tasks, end of 2025 integration
-
-    *   Wait, let's make it slightly more compact like the examples.
-        Example: ""NVIDIA $35.1B revenue"" -> ""GitHub Copilot 2 million subscribers""
-        Example: ""Rubin architecture 2026"" -> ""end of 2025 integration""
-
-    *   Let's try to match the density of Example 3.
-        GitHub Copilot 2M subscribers, $400M ARR revenue, Copilot Workspace Issues to PRs, Thomas Dohmke AI pair programming default, 55% faster tasks, end of 2025 integration
-
-    *   Actually, ""ARR"" might be too technical abbreviation if not in text, but ""$400 million annual recurring revenue"" is long. Example 3 used ""$35.1B revenue"". So ""$400M ARR"" or ""$400M annual revenue"" is okay. Let's stick closer to the text: ""$400 million annual revenue"".
-    *   ""Issues into",0.109375,f1,137412,2026-03-03T09:47:04.828624,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,4,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the article (input text) and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.""
-    *   Output Format: Keywords separated by commas (no extra text, no explanations).
-
-2.  **Analyze the Input Text:**
-    *   Fact 1: Company = Anthropic
-    *   Fact 2: Funding amount = $4 billion
-    *   Fact 3: Lead investor = Google
-    *   Fact 4: Valuation = $60 billion
-    *   Fact 5: Product/Project = Claude 5
-    *   Fact 6: CEO Name = Dario Amodei
-    *   Fact 7: Capability description = PhD-level research capability (maybe too detailed, but ""PhD-level"" is a key descriptor)
-    *   Fact 8: Hiring plan = 500 additional researchers
-    *   Fact 9: Safety team expansion = 40%
-    *   Fact 10: Partnership = AWS / Amazon Bedrock
-
-3.  **Draft Keywords (following the examples):**
-    *   Example 2 style: ""AlphaCode 2, 87% silver medal problems, LLM plus search, David Silver, Google Cloud Q3 2025""
-    *   My draft: Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research, 500 researchers, safety team +40%, AWS partnership, Amazon Bedrock
-
-4.  **Refine for Conciseness and Accuracy (matching the style of examples):**
-    *   ""Anthropic"" is essential.
-    *   ""$4 billion funding"" or ""raised $4 billion"". Let's use ""$4 billion funding"".
-    *   ""Google led"" or ""led by Google"".
-    *   ""$60 billion valuation"".
-    *   ""Claude 5"".
-    *   ""Dario Amodei"".
-    *   ""PhD-level research capability"" (or just PhD-level). Let's keep it descriptive like the examples.
-    *   ""500 researchers"".
-    *   ""safety team +40%"".
-    *   ""AWS partnership"", ""Amazon Bedrock"".
-
-    *   Refining based on Example 2 (""AlphaCode 2, 87% silver medal problems...""):
-        *   Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research, 500 researchers, safety team +40%, AWS partnership, Amazon Bedrock
-
-    *   Let's check the constraint: ""Output only the summary keywords separated by commas.""
-    *   Need to ensure numbers and names are accurate.
-
-    *   Selection:
-        1.  Anthropic
-        2.  $4 billion funding
-        3.  Google led
-        4.  $60 billion valuation
-        5.  Claude 5
-        6.  Dario Amodei
-        7.  PhD-level research capability
-        8.  500 researchers
-        9.  safety team +40%
-        10. AWS partnership
-        11. Amazon Bedrock
-
-    *   Wait, looking at Example 2: ""AlphaCode 2, 87% silver medal problems, LLM plus search, David Silver, Google Cloud Q3 2025"". It combines some info.
-    *   Let's try to condense slightly while keeping key facts.
-    *   ""Anthropic"", ""$4 billion funding"", ""Google led"", ""$60 billion valuation"", ""Claude 5"", ""Dario Amodei"", ""PhD-level research"", ""500 researchers"", ""safety team +40%"", ""AWS partnership"", ""Amazon Bedrock""
-
-    *   Is there a date? No specific date mentioned in the text provided (unlike Example 2 or 4). So no dates to extract.
-    *   Check names: Anthropic, Google, Claude 5",0.10181818181818182,f1,137519,2026-03-03T09:47:04.936956,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,4,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read an article (input text) and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.""
-    *   Output Format: Keywords separated by commas (no extra text).
-
-2.  **Analyze the Input Text:**
-    *   Subject: Samsung Galaxy S25 Ultra smartphone.
-    *   Event/Location: Unpacked event, San Jose.
-    *   Specs: Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor.
-    *   Features: on-device AI features, real-time translation (16 languages), AI photo editing.
-    *   Price: $1,299.
-    *   Availability/Date: Pre-order starting January 22.
-    *   Sales Forecast: 30 million units in the first quarter.
-
-3.  **Extract Key Facts (following the examples):**
-    *   Example 1 extracted: M4 Ultra, 80 CPU 160 GPU cores, 3x M2 Ultra, AI training Mac Pro, $8,999 September, M2 minimum for AI
-    *   Example 2 extracted: GPT-5, March 12, 40% reasoning improvement, Sam Altman, API April 1, $15 per million tokens, 20% enterprise discount
-    *   Pattern: Product name, Date/Event, Key Specs (numbers), Price, Availability dates, Sales figures.
-
-    *   Draft Keywords:
-        *   Galaxy S25 Ultra
-        *   Unpacked event San Jose
-        *   Snapdragon 8 Elite chip
-        *   16GB RAM
-        *   200MP camera sensor
-        *   on-device AI features
-        *   real-time translation 16 languages
-        *   AI photo editing
-        *   $1,299
-        *   pre-order January 22
-        *   30 million units first quarter
-
-4.  **Refine for Conciseness and Accuracy (matching the style of examples):**
-    *   ""Galaxy S25 Ultra"" is essential.
-    *   ""Unpacked event San Jose"" -> ""San Jose Unpacked"" or just keep it simple like ""Unpacked event"". Let's look at Example 1: ""WWDC keynote"", Example 2: ""annual developer conference"". So ""Unpacked event"" is good. Location ""San Jose"" might be optional but often included in news summaries. Let's include ""San Jose"".
-    *   Specs: ""Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor"".
-    *   AI features: ""on-device AI"", ""16 languages translation"", ""AI photo editing"".
-    *   Price/Date: ""$1,299"", ""pre-order January 22"".
-    *   Forecast: ""30 million units first quarter"".
-
-    *   Let's condense slightly to match the keyword style (comma-separated phrases).
-    *   Galaxy S25 Ultra, Unpacked event San Jose, Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor, on-device AI features, real-time translation 16 languages, AI photo editing, $1,299, pre-order January 22, 30 million units first quarter
-
-    *   Review against constraints: ""Output only the summary keywords separated by commas.""
-    *   Check numbers/names/dates accuracy.
-        *   Galaxy S25 Ultra (Name)
-        *   Unpacked event San Jose (Event/Location)
-        *   Snapdragon 8 Elite chip (Spec)
-        *   16GB RAM (Number/Spec)
-        *   200MP camera sensor (Number/Spec)
-        *   on-device AI features (Feature)
-        *   real-time translation 16 languages (Feature/Number)
-        *   AI photo editing (Feature)
-        *   $1,299 (Price)
-        *   pre-order January 22 (",0.1107011070110701,f1,137701,2026-03-03T09:47:05.120303,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,8,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the input article and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.""
-    *   Output Format: Keywords separated by commas (based on the provided examples).
-
-2.  **Analyze the Input Text:**
-    *   Fact 1: Company = Anthropic
-    *   Fact 2: Funding amount = $4 billion
-    *   Fact 3: Lead investor = Google
-    *   Fact 4: Valuation = $60 billion
-    *   Fact 5: Product/Model = Claude 5
-    *   Fact 6: CEO Name = Dario Amodei
-    *   Fact 7: Capability description = PhD-level research capability (quote)
-    *   Fact 8: Hiring plan = 500 additional researchers
-    *   Fact 9: Safety team expansion = 40%
-    *   Fact 10: Partnership = AWS / Amazon Bedrock
-
-3.  **Draft Keywords (following the style of examples):**
-    *   Example style: ""Company Name Amount, Product, Person, Date/Time, Percentage, etc.""
-    *   Draft 1: Anthropic $4B funding, Google led, $60B valuation, Claude 5, Dario Amodei, PhD-level research, 500 researchers, safety team 40%, AWS Amazon Bedrock
-
-4.  **Refine Keywords (matching the concise keyword style):**
-    *   ""Anthropic $4B funding"" -> Good.
-    *   ""Google led"" -> Maybe combine with valuation or keep separate. Example: ""Microsoft $10B renewable energy"". So ""Anthropic $4B Google lead, $60B valuation"".
-    *   ""Claude 5"" -> Product name.
-    *   ""Dario Amodei"" -> CEO Name.
-    *   ""PhD-level research capability"" -> Description (maybe shorten to PhD-level capability).
-    *   ""500 researchers"" -> Hiring number.
-    *   ""safety team 40%"" -> Expansion percentage.
-    *   ""AWS Amazon Bedrock partnership"" -> Partnership detail.
-
-    Let's look at the examples again for density and flow.
-    Example: ""Microsoft $10B renewable energy, AI data centers, 5 solar farms Texas Arizona 2027, carbon negative 2030""
-    Example: ""AWS Singapore, 35th region, Trainium2 chips, 50% lower latency Southeast Asia, healthcare fintech AI""
-
-    So I should group related facts.
-    Group 1: Funding & Valuation -> Anthropic $4B funding Google lead, $60B valuation
-    Group 2: Product & CEO -> Claude 5, Dario Amodei PhD-level research capability
-    Group 3: Hiring -> 500 researchers safety team 40%
-    Group 4: Partnership -> AWS Amazon Bedrock
-
-    Let's try to make it a single line of comma-separated phrases.
-    ""Anthropic $4B funding Google lead, $60B valuation, Claude 5, Dario Amodei PhD-level research, 500 researchers safety team 40%, AWS Amazon Bedrock partnership""
-
-    Check constraints: ""Output only the summary keywords separated by commas.""
-    No extra text.
-
-    Refining for brevity and accuracy based on examples:
-    - ""Anthropic $4B funding Google lead"" (Captures company, amount, investor)
-    - ""$60B valuation"" (Captures value)
-    - ""Claude 5"" (Product)
-    - ""Dario Amodei PhD-level research capability"" (CEO + description)
-    - ""500 researchers safety team 40%"" (Hiring stats)
-    - ""AWS Amazon Bedrock partnership"" (Partnership)
-
-    Let's check the examples again. They often combine numbers with context.
-    Example: ""NVIDIA $35.1B revenue, H200 B100 demand...""
-    So: ""Anthropic $4B funding Google lead, $60B",0.11805555555555555,f1,134758,2026-03-03T09:49:19.948750,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,8,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the input article and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.""
-    *   Output Format: Keywords separated by commas (no extra text).
-
-2.  **Analyze the Input Text:**
-    *   Subject: Samsung Galaxy S25 Ultra smartphone.
-    *   Event/Location: Unpacked event, San Jose.
-    *   Specs: Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor.
-    *   Features: on-device AI features, real-time translation (16 languages), AI photo editing.
-    *   Price/Pricing: $1,299.
-    *   Availability/Date: Pre-order starting January 22.
-    *   Sales Forecast: 30 million units in the first quarter.
-
-3.  **Draft Keywords:**
-    *   Samsung Galaxy S25 Ultra
-    *   Unpacked event San Jose
-    *   Snapdragon 8 Elite chip
-    *   16GB RAM
-    *   200MP camera sensor
-    *   on-device AI features
-    *   real-time translation 16 languages
-    *   AI photo editing
-    *   $1,299 price
-    *   pre-order January 22
-    *   30 million units first quarter
-
-4.  **Refine Keywords (matching the style of examples):**
-    *   The examples tend to be concise phrases capturing the core facts.
-    *   Example: ""Llama 4, 405B parameters..."" -> ""Samsung Galaxy S25 Ultra""
-    *   Example: ""...San Jose."" -> ""Unpacked San Jose"" or just location context if needed. Let's look at example 3: ""NVIDIA $35.1B revenue..."".
-    *   Let's condense slightly for flow while keeping accuracy.
-
-    *   Draft 1: Samsung Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, translation 16 languages, $1,299 price, pre-order January 22, 30 million units Q1
-    *   Refining based on examples (e.g., ""GPT-5, March 12..."", ""M4 Ultra, 80 CPU...""):
-        *   Samsung Galaxy S25 Ultra
-        *   Unpacked San Jose
-        *   Snapdragon 8 Elite chip
-        *   16GB RAM
-        *   200MP camera sensor
-        *   on-device AI features
-        *   translation 16 languages
-        *   $1,299 price
-        *   pre-order January 22
-        *   30 million units Q1
-
-    *   Let's check the constraint: ""Output only the summary keywords separated by commas.""
-    *   Ensure numbers and dates are accurate.
-
-    *   Selection:
-        Samsung Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor, on-device AI features, translation 16 languages, $1,299 price, pre-order January 22, 30 million units Q1
-
-    *   Wait, looking at example 5: ""M4 Ultra, 80 CPU 160 GPU cores..."". It combines specs.
-    *   Looking at example 7: ""Tesla Q4, $28.4B revenue..."".
-    *   Let's make it tight.
-
-    *   Revised Draft: Samsung Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor, on-device AI features, translation 16 languages, $1,299 price, pre-order January 22, 30 million units Q1
-
-    *   Can I make it more like the examples?
-    *   Example: ""GPT-5, March 12",0.14655172413793105,f1,135196,2026-03-03T09:49:20.389507,1,0,0,tfidf
-qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,8,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Read the input article and extract key facts into a concise summary.
-    *   Requirements: Include numbers, names, and dates accurately. Output only the summary keywords separated by commas.
-    *   Input Text: ""GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.""
-    *   Output Format: Keywords separated by commas (no extra text, no explanations).
-
-2.  **Analyze the Input Text:**
-    *   Subject: GitHub, Copilot.
-    *   Fact 1: Over 2 million paying subscribers.
-    *   Fact 2: $400 million in annual recurring revenue.
-    *   Fact 3: Launched Copilot Workspace (turns Issues into PRs).
-    *   Fact 4: CEO Thomas Dohmke statement ('AI pair programming default workflow').
-    *   Fact 5: Studies show users complete tasks 55% faster.
-    *   Fact 6: Plan to integrate Copilot into all features by end of 2025.
-
-3.  **Draft Keywords (following the style of previous examples):**
-    *   GitHub, Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, Thomas Dohmke, AI pair programming default, 55% faster tasks, integrate all features end 2025.
-
-4.  **Refine Keywords (matching the concise style of examples):**
-    *   Example 1: M4 Ultra, 80 CPU 160 GPU cores...
-    *   Example 2: Tesla Q4, $28.4B revenue...
-    *   Target Style: [Entity], [Number/Stat], [Name], [Date/Time], [Key Feature].
-
-    *   Draft 1: GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, Thomas Dohmke, AI pair programming default, 55% faster tasks, integrate all features end 2025
-    *   Refinement for conciseness and accuracy:
-        *   GitHub Copilot (or just Copilot)
-        *   2M subscribers
-        *   $400M ARR
-        *   Copilot Workspace Issues to PRs
-        *   Thomas Dohmke AI pair programming default
-        *   55% faster tasks
-        *   integrate all features end 2025
-
-    Let's look at the previous examples again to ensure alignment.
-    Example: ""AlphaCode 2, 87% silver medal problems, LLM plus search, David Silver, Google Cloud Q3 2025""
-    Example: ""NVIDIA $35.1B revenue, H200 B100 demand, Rubin architecture 2026...""
-
-    So I should combine entity + stats where possible or list them sequentially.
-
-    Proposed Output: GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace Issues to PRs, Thomas Dohmke AI pair programming default, 55% faster tasks, integrate all features end 2025
-
-    Let's check if ""end of 2025"" needs to be specific. The text says ""by end of 2025"".
-    Let's check names: Thomas Dohmke.
-    Let's check numbers: 2 million, $400 million, 55%.
-
-    Revised Draft: GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace Issues to PRs, Thomas Dohmke AI pair programming default, 55% faster tasks, integrate all features end 2025
-
-    Wait, looking at Example 1 output: ""M4 Ultra, 80 CPU 160 GPU cores...""
-    Looking at Example 3 output: ""AlphaCode 2, 87% silver medal problems...""
-    Looking at Example 8 (NVIDIA) output: ""NVIDIA $35.1B revenue, H200 B100 demand...""
-
-    I will structure it similarly.
-
-    Key points to extract:
-    1. GitHub Copilot
-    2. 2M subscribers
-    3",0.10196078431372549,f1,135330,2026-03-03T09:49:20.522756,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,50169,2026-03-03T09:50:10.695186,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,55978,2026-03-03T09:50:16.503325,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,56716,2026-03-03T09:50:17.239763,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,65697,2026-03-03T09:50:26.223150,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,29469,2026-03-03T09:50:40.164940,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,49346,2026-03-03T09:51:29.522944,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,55565,2026-03-03T09:51:35.741593,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,60333,2026-03-03T09:51:40.507508,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,45273,2026-03-03T09:52:14.802745,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,97462,2026-03-03T09:52:17.639021,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,56137,2026-03-03T09:53:13.792546,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,58075,2026-03-03T09:53:15.730194,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,66642,2026-03-03T09:53:24.298747,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,68429,2026-03-03T09:53:26.085294,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,27905,2026-03-03T09:53:41.701358,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,57185,2026-03-03T09:54:38.903957,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,59749,2026-03-03T09:54:41.466324,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,65055,2026-03-03T09:54:46.773777,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,93430,2026-03-03T09:55:15.147961,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,37457,2026-03-03T09:55:16.366302,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,60815,2026-03-03T09:56:17.197622,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,61911,2026-03-03T09:56:18.294324,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,63734,2026-03-03T09:56:20.116273,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,65346,2026-03-03T09:56:21.729199,1,0,0,tfidf
-qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,27005,2026-03-03T09:56:44.207124,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,0,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Samsung, Galaxy S25 Ultra, Unpacked event, San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, pre-order, 30 million units, first quarter",0.7234042553191489,f1,117127,2026-03-03T14:57:58.359384,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,0,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Anthropic, $4 billion, Google, $60 billion, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers, safety team 40%, AWS partnership, Amazon Bedrock",0.4615384615384615,f1,146849,2026-03-03T14:58:28.080774,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,0,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","GitHub, Copilot, 200 万契約者, 4 億ドル収益, Copilot Workspace, Thomas Dohmke, AI ペアプログラミング, 55% 高速化, 2025 年末統合",0.3125,f1,221268,2026-03-03T14:59:42.501432,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,1,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, hire 500 researchers, safety team +40%, AWS partnership, Amazon Bedrock",0.5581395348837209,f1,123487,2026-03-03T15:01:46.011739,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,1,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","GitHub Copilot 2M subscribers, $400M recurring revenue, Copilot Workspace launch, Thomas Dohmke CEO, AI pair programming default workflow, 55% faster tasks, integrate end of 2025",0.35000000000000003,f1,3046017,2026-03-03T15:50:28.542960,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,1,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Samsung Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor, on-device AI features, real-time translation 16 languages, AI photo editing, $1,299 January 22 pre-order, 30 million units first quarter",0.49056603773584906,f1,3071857,2026-03-03T15:50:54.380786,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,2,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 additional researchers, safety team 40% expansion, AWS partnership, Amazon Bedrock",0.5454545454545455,f1,103862,2026-03-03T15:52:38.261874,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,2,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","GitHub Copilot 2M subscribers, $400M ARR, Copilot Workspace launch, Thomas Dohmke CEO, AI pair programming default workflow, tasks 55% faster, integrate all features end of 2025",0.43902439024390244,f1,110497,2026-03-03T15:52:44.895258,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,2,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, On-device AI, 16 languages translation, AI photo editing, $1,299, Pre-order January 22, 30 million units first quarter",0.6938775510204083,f1,177801,2026-03-03T15:53:52.200185,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,4,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Galaxy S25 Ultra, Unpacked event San Jose, Snapdragon 8 Elite chip, 16GB RAM, 200MP camera sensor, on-device AI features, real-time translation 16 languages, AI photo editing, $1,299 pre-order January 22, 30 million units first quarter",0.5283018867924528,f1,376834,2026-03-03T16:00:09.077286,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,4,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","GitHub Copilot, 2 million subscribers, $400M ARR, Copilot Workspace, Thomas Dohmke, 55% faster tasks, integrate end of 2025",0.5294117647058824,f1,455430,2026-03-03T16:01:27.668329,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,4,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Anthropic, $4 billion funding, Google led, $60 billion valuation, Claude 5, Dario Amodei, PhD-level research capability, 500 researchers hire, safety team +40%, AWS partnership, Amazon Bedrock",0.5581395348837209,f1,456240,2026-03-03T16:01:28.481692,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,8,"GitHub reported that Copilot now has over 2 million paying subscribers, generating $400 million in annual recurring revenue. The company launched Copilot Workspace, which can turn GitHub Issues into complete pull requests. CEO Thomas Dohmke stated that 'AI pair programming has become the default workflow.' Studies show Copilot users complete tasks 55% faster. GitHub plans to integrate Copilot into all GitHub features by end of 2025.","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, 55% faster, full integration 2025","GitHub Copilot, 2M subscribers, $400M ARR, Copilot Workspace, Issues to PRs, Thomas Dohmke, AI pair programming default, 55% faster tasks, all features end of 2025",0.6341463414634146,f1,266129,2026-03-03T16:05:54.661191,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,8,"Anthropic raised $4 billion in its latest funding round led by Google, valuing the company at $60 billion. The funds will be used to develop Claude 5, which CEO Dario Amodei described as targeting 'PhD-level research capability.' The company plans to hire 500 additional researchers and expand its safety team by 40%. Anthropic also announced a partnership with AWS to offer Claude through Amazon Bedrock.","Anthropic $4B funding, Google led, $60B valuation, Claude 5, PhD-level research, 500 hires, safety team 40%, AWS Bedrock","Anthropic $4B funding Google led, $60B valuation, Claude 5 PhD-level research, Dario Amodei, 500 researchers hire, safety team 40%, AWS partnership Amazon Bedrock",0.7317073170731708,f1,295510,2026-03-03T16:06:24.042326,1,0,0,tfidf
+qwen35_en,summarization_en_001,summarization,lmstudio/qwen3.5-9b,8,"Samsung unveiled its latest Galaxy S25 Ultra smartphone at the Unpacked event in San Jose. The device features a Snapdragon 8 Elite chip, 16GB RAM, and a 200MP camera sensor. Samsung highlighted on-device AI features including real-time translation in 16 languages and AI photo editing. The phone is priced at $1,299 and available for pre-order starting January 22. Samsung expects to sell 30 million units in the first quarter.","Galaxy S25 Ultra, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, 16 languages, $1,299, January 22, 30M units","Galaxy S25 Ultra, Unpacked San Jose, Snapdragon 8 Elite, 16GB RAM, 200MP camera, on-device AI, translation 16 languages, $1,299, pre-order January 22, 30 million units Q1",0.7999999999999999,f1,356212,2026-03-03T16:07:24.741834,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,57648,2026-03-03T16:08:22.393035,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,60385,2026-03-03T16:08:25.135555,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,71987,2026-03-03T16:08:36.742137,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,79280,2026-03-03T16:08:44.037774,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,0,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,35937,2026-03-03T16:08:58.330627,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,65580,2026-03-03T16:10:03.936932,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,66492,2026-03-03T16:10:04.838225,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,72419,2026-03-03T16:10:10.778806,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,95598,2026-03-03T16:10:33.952113,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,1,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,33102,2026-03-03T16:10:37.044198,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,53051,2026-03-03T16:11:30.106519,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,65928,2026-03-03T16:11:42.992962,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,74626,2026-03-03T16:11:51.801236,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,87813,2026-03-03T16:12:04.942553,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,2,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,44090,2026-03-03T16:12:14.200785,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,62780,2026-03-03T16:13:16.998870,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,74527,2026-03-03T16:13:28.772883,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,89928,2026-03-03T16:13:44.161350,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,109966,2026-03-03T16:14:04.225304,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,4,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,48215,2026-03-03T16:14:05.256877,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,"Every time I upload a file larger than 10MB, the progress bar freezes at 90% and the upload fails silently.",Bug Report,Bug Report,1.0,exact_match,57629,2026-03-03T16:15:02.892183,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,Can you add the ability to schedule reports to be automatically emailed to my team every Monday morning?,Feature Request,Feature Request,1.0,exact_match,70867,2026-03-03T16:15:16.134959,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,My annual subscription just renewed but I wanted to switch to the monthly plan first. Can I get a prorated refund?,Billing,Billing,1.0,exact_match,83697,2026-03-03T16:15:28.975989,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,I left the company last month. How do I transfer ownership of the team workspace to my colleague?,Account,Account,1.0,exact_match,91308,2026-03-03T16:15:36.593609,1,0,0,tfidf
+qwen35_en,classification_en_001,classification,lmstudio/qwen3.5-9b,8,The getting started guide mentions a config.yaml file but doesn't explain what each field does. Can you update it?,Documentation,Documentation,1.0,exact_match,46787,2026-03-03T16:15:49.697840,1,0,0,tfidf
+qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,0,"# Bug: max initialized to 0, fails for negative lists
+def find_max(numbers):
+    if len(numbers) == 0:
+        return None
+    max_val = 0
+    for num in numbers:
+        if num > max_val:
+            max_val = num
+    return max_val",max_val = numbers[0],"# Bug: max initialized to 0, fails for negative lists
+def find_max(numbers):
+    if len(numbers) == 0:
+        return None
+    max_val = numbers[0]
+    for num in numbers:
+        if num > max_val:
+            max_val = num
+    return max_val",1.0,contains,189968,2026-03-03T16:18:59.719300,1,0,0,tfidf
+qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,0,"# Bug: off-by-one in word count
+def count_words(text):
+    words = text.split()
+    return len(words) - 1",return len(words),"# Bug: off-by-one in word count
+def count_words(text):
+    words = text.split()
+    return len(words)",1.0,contains,243209,2026-03-03T16:19:52.986820,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,0,"# Bug: filters odd numbers instead of even
 def filter_even(numbers):
     result = []
@@ -1525,97 +692,25 @@ def filter_even(numbers):
     for num in numbers:
         if num % 2 == 0:
             result.append(num)
-    return result",1.0,contains,46148,2026-03-03T09:57:30.357666,1,0,0,tfidf
-qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,0,"# Bug: off-by-one in word count
-def count_words(text):
-    words = text.split()
-    return len(words) - 1",return len(words),"def count_words(text):
-    words = text.split()
-    return len(words)",1.0,contains,53125,2026-03-03T09:57:37.336306,1,0,0,tfidf
-qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,0,"# Bug: max initialized to 0, fails for negative lists
-def find_max(numbers):
-    if len(numbers) == 0:
-        return None
-    max_val = 0
+    return result",1.0,contains,247508,2026-03-03T16:19:57.276661,1,0,0,tfidf
+qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,1,"# Bug: filters odd numbers instead of even
+def filter_even(numbers):
+    result = []
     for num in numbers:
-        if num > max_val:
-            max_val = num
-    return max_val",max_val = numbers[0],"Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Fix a bug in the provided Python code.
-    *   Input Code: A function `find_max(numbers)` that initializes `max_val` to 0 and iterates through the list to find the maximum value.
-    *   Bug Description (in comments): ""max initialized to 0, fails for negative lists"".
-    *   Constraint: Output ONLY the corrected code. No explanations, no markdown formatting, no code blocks.
-
-2.  **Analyze the Input Code:**
-    ```python
-    # Bug: max initialized to 0, fails for negative lists
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = 0
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-    ```
-
-3.  **Identify the Bug:**
-    *   The variable `max_val` is initialized to `0`.
-    *   If all numbers in the list are negative (e.g., `[-5, -2, -10]`), none of them will be greater than `0`, so `max_val` remains `0`.
-    *   The correct maximum should be `-2`.
-
-4.  **Determine the Fix:**
-    *   Initialize `max_val` to a value that is guaranteed to be less than or equal to any possible number in the list, OR initialize it with the first element of the list (after checking for empty list).
-    *   Common approach: Initialize `max_val = numbers[0]`.
-    *   Alternative approach: Use Python's built-in `max()`, but since this is likely an exercise to fix logic, modifying the loop logic is better.
-    *   Best fix for this specific structure: Change `max_val = 0` to `max_val = numbers[0]`.
-
-5.  **Draft the Corrected Code:**
-    ```python
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-    ```
-
-6.  **Review Constraints:**
-    *   Output ONLY the corrected code.
-    *   No explanations.
-    *   No markdown formatting (like ```python).
-    *   No code blocks.
-
-7.  **Final Polish:**
-    Ensure no extra whitespace or comments that aren't part of the original logic structure are added unnecessarily, though keeping the comment explaining the bug might be okay if it's part of the ""code"", but usually, when fixing bugs, we remove the specific bug indicator comment or keep it as context. However, the prompt asks for the *corrected code*. The input had a comment `# Bug: ...`. I should probably include the function definition correctly. I will remove the bug comment to make it clean corrected code, or keep it if it's considered part of the file content. Usually, ""corrected code"" implies the functional code. Let's look at the instruction: ""Output ONLY the corrected code.""
-    The input includes a comment line `# Bug: max initialized to 0, fails for negative lists`. Should I include this? It describes the bug. In a fixed version, it might be removed or changed. To be safe and provide clean functional code, I will remove the specific bug comment but keep the function logic correct. However, sometimes users expect the exact structure minus the error. Let's just output the function definition with the fix.
-    Actually, looking at standard practices for these types of prompts: The goal is to return the working code. The comment `# Bug:` indicates a known issue. I will remove it or keep it as a header? No, better to provide clean code. But wait, if I remove the comment, is it still ""the corrected code""? Yes.
-    Let's check the constraint again: ""Output ONLY the corrected code.""
-    I will write the function with `max_val = numbers[0]`.
-
-    Wait, one edge case: If `numbers` has only one element, `numbers[0]` works fine. The empty list check handles that.
-    
-    Refined Code:
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-
-    Wait, I should check if the comment line is part of the ""code"" to be outputted. The input starts with `# Bug...`. If I omit it, it's cleaner. If I",1.0,contains,74929,2026-03-03T09:57:59.138774,1,0,0,tfidf
+        if num % 2 == 1:
+            result.append(num)
+    return result",num % 2 == 0,"def filter_even(numbers):
+    result = []
+    for num in numbers:
+        if num % 2 == 0:
+            result.append(num)
+    return result",1.0,contains,68138,2026-03-03T16:21:05.429212,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,1,"# Bug: off-by-one in word count
 def count_words(text):
     words = text.split()
     return len(words) - 1",return len(words),"def count_words(text):
     words = text.split()
-    return len(words)",1.0,contains,53527,2026-03-03T09:58:52.678909,1,0,0,tfidf
+    return len(words)",1.0,contains,79794,2026-03-03T16:21:17.084439,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,1,"# Bug: max initialized to 0, fails for negative lists
 def find_max(numbers):
     if len(numbers) == 0:
@@ -1624,189 +719,20 @@ def find_max(numbers):
     for num in numbers:
         if num > max_val:
             max_val = num
-    return max_val",max_val = numbers[0],"Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Fix a bug in the provided Python code.
-    *   Input Code: A function `find_max(numbers)` that initializes `max_val` to 0, which fails if all numbers in the list are negative.
-    *   Output Requirement: ONLY the corrected code. No explanations, no markdown formatting (like ```python), no code blocks. Just the raw text of the fixed code.
-
-2.  **Analyze the Input Code:**
-    ```python
-    # Bug: max initialized to 0, fails for negative lists
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = 0
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-    ```
-    *   Bug Identification: `max_val` is initialized to `0`. If the list contains only negative numbers (e.g., `[-5, -2, -10]`), the condition `num > max_val` will never be true because all `num` are less than 0. The function returns 0 instead of the actual maximum (-2).
-    *   Fix: Initialize `max_val` to a value that is guaranteed to be smaller than any possible number in the list, or better yet, initialize it with the first element of the list (since we already check for empty list).
-
-3.  **Determine the Correction:**
-    *   Option 1: Initialize `max_val = numbers[0]`.
-    *   Option 2: Use Python's built-in `max()` function (though usually, these exercises want logic fixed).
-    *   Option 3: Initialize with a very small number (not robust).
-    *   Best practice for this specific bug pattern: Set `max_val = numbers[0]` after checking if the list is empty.
-
-4.  **Drafting the Corrected Code:**
-    ```python
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-    ```
-
-5.  **Refining Output Format:**
-    *   The prompt says ""Output ONLY the corrected code.""
-    *   ""Do not include explanations, markdown formatting, or code blocks.""
-    *   This means I should not wrap it in triple backticks. Just plain text starting with `def`.
-
-6.  **Final Check:**
-    *   Does it fix the bug? Yes (`max_val = numbers[0]` handles negative lists correctly).
-    *   Is there any extra text? No.
-    *   Is there markdown formatting? No (no ```).
-
-7.  **Constructing Final Output:**
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-
-    Wait, I should check the example provided in the prompt.
-    Example Input starts with `# Bug: ...`. The output in the example does *not* include the comment line. It just outputs the function definition and body.
-    However, often keeping the comment is fine or removing it depends on strictness. Looking at the example output:
-    入力：`# Bug: off-by-one error...` + code
-    出力：`def sum_list(numbers): ...` (No comment line).
-    So I should remove the comment line `# Bug: max initialized to 0, fails for negative lists`.
-
-    Let's re-verify the example output format.
-    Example Output:
-    ```
-    def sum_list(numbers):
-        total = 0
-        for i in range(len(numbers)):
-            total += numbers[i]
-        return total
-    ```
-    It does not include the comment line from the input.
-
-    So my corrected code should start directly with `def`.
-
-    Corrected Code:
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-
-8.  **Final Polish:** Ensure no markdown fences. Just the text.
-
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val",1.0,contains,109552,2026-03-03T09:59:48.703729,1,0,0,tfidf
-qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,1,"# Bug: filters odd numbers instead of even
-def filter_even(numbers):
-    result = []
+    return max_val",max_val = numbers[0],"def find_max(numbers):
+    if len(numbers) == 0:
+        return None
+    max_val = numbers[0]
     for num in numbers:
-        if num % 2 == 1:
-            result.append(num)
-    return result",num % 2 == 0,"Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Fix a bug in the provided Python code.
-    *   Input Code: A function `filter_even` that is supposed to filter even numbers but currently filters odd numbers.
-    *   Constraint: Output ONLY the corrected code. No explanations, no markdown formatting (like ```python), no code blocks.
-    *   Example Provided: Shows how the output should look (just the code text).
-
-2.  **Analyze the Input Code:**
-    ```python
-    # Bug: filters odd numbers instead of even
-    def filter_even(numbers):
-        result = []
-        for num in numbers:
-            if num % 2 == 1:
-                result.append(num)
-        return result
-    ```
-    *   Intent: Filter even numbers.
-    *   Bug: The condition `if num % 2 == 1:` checks for odd numbers (remainder is 1). It should check for even numbers (remainder is 0).
-
-3.  **Determine the Fix:**
-    *   Change `num % 2 == 1` to `num % 2 == 0`.
-
-4.  **Format the Output:**
-    *   Must be raw text, no markdown fences.
-    *   Must include the comment? The example kept the comment in the input but didn't explicitly say whether to keep comments or not. However, usually, when fixing code, you preserve structure unless it's part of the bug description. Looking at the example:
-        Input: `# Bug: off-by-one error in list sum\n\ndef sum_list(numbers):...`
-        Output: `def sum_list(numbers):\n    total = 0...\n    return total`
-        The example output *removed* the comment line starting with `#`. Wait, let me check the example carefully.
-        Example Input starts with `# Bug: off-by-one error in list sum`.
-        Example Output starts with `def sum_list(numbers):`.
-        So the bug description comment should be removed or kept? The prompt says ""Output ONLY the corrected code"". Usually, comments describing bugs are metadata for the task, not part of the production code. However, sometimes they are kept. Let's look at the example output again.
-        Example Output:
-        ```
-        def sum_list(numbers):
-            total = 0
-            for i in range(len(numbers)):
-                total += numbers[i]
-            return total
-        ```
-        The comment `# Bug: off-by-one error in list sum` is NOT in the output.
-        So I should remove the bug description comment from the input code when generating the output, or just fix the logic inside the function definition provided.
-        Actually, looking at the instruction ""Output ONLY the corrected code"", it implies the functional code. The example removed the header comment. I will follow the example and provide just the function definition with the fix.
-
-    *   Wait, let's re-read the input provided in ""Your Turn"" section.
-        Input: `# Bug: filters odd numbers instead of even\ndef filter_even(numbers):...`
-        If I strictly follow the example, I should output the corrected function without the bug comment line at the top.
-
-    *   Correction logic: Change `if num % 2 == 1:` to `if num % 2 == 0:`.
-
-5.  **Drafting the Output:**
-    def filter_even(numbers):
-        result = []
-        for num in numbers:
-            if num % 2 == 0:
-                result.append(num)
-        return result
-
-6.  **Final Check:**
-    *   No markdown ticks (```).
-    *   No explanations.
-    *   Correct logic fix.
-    *   Matches the style of the example output.
-
-7.  **Constructing Final String:**
-    def filter_even(numbers):
-        result = []
-        for num in numbers:
-            if num % 2 == 0:
-                result.append(num)
-        return result
-
-    Wait, should I keep the comment `# Bug: filters odd numbers instead of even`? In the example, the input had it and the output didn't. So I will omit it to match the example's behavior (clean code). However, sometimes keeping comments is safer if not explicitly told to remove them. But the instruction says ""Output ONLY the corrected code"". A bug description comment isn't really ""code"" in the functional sense, but part of the file content. Given the example removed it, I will remove it.
-
-    Wait, looking closely at the example again:
-    Input: `# Bug: off-by-one error in list sum\ndef sum_list(numbers):...`
-    Output: `def sum_list(numbers):\n",1.0,contains,109594,2026-03-03T09:59:48.743872,1,0,0,tfidf
+        if num > max_val:
+            max_val = num
+    return max_val",1.0,contains,83117,2026-03-03T16:21:20.410748,1,0,0,tfidf
+qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,2,"# Bug: off-by-one in word count
+def count_words(text):
+    words = text.split()
+    return len(words) - 1",return len(words),"def count_words(text):
+    words = text.split()
+    return len(words)",1.0,contains,125741,2026-03-03T16:23:26.171532,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,2,"# Bug: filters odd numbers instead of even
 def filter_even(numbers):
     result = []
@@ -1818,13 +744,7 @@ def filter_even(numbers):
     for num in numbers:
         if num % 2 == 0:
             result.append(num)
-    return result",1.0,contains,93854,2026-03-03T10:01:22.611590,1,0,0,tfidf
-qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,2,"# Bug: off-by-one in word count
-def count_words(text):
-    words = text.split()
-    return len(words) - 1",return len(words),"def count_words(text):
-    words = text.split()
-    return len(words)",1.0,contains,99693,2026-03-03T10:01:28.450273,1,0,0,tfidf
+    return result",1.0,contains,128570,2026-03-03T16:23:28.999501,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,2,"# Bug: max initialized to 0, fails for negative lists
 def find_max(numbers):
     if len(numbers) == 0:
@@ -1840,13 +760,13 @@ def find_max(numbers):
     for num in numbers:
         if num > max_val:
             max_val = num
-    return max_val",1.0,contains,102009,2026-03-03T10:01:30.766215,1,0,0,tfidf
+    return max_val",1.0,contains,149511,2026-03-03T16:23:49.929017,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,4,"# Bug: off-by-one in word count
 def count_words(text):
     words = text.split()
     return len(words) - 1",return len(words),"def count_words(text):
     words = text.split()
-    return len(words)",1.0,contains,89918,2026-03-03T10:03:00.693600,1,0,0,tfidf
+    return len(words)",1.0,contains,134519,2026-03-03T16:26:04.510944,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,4,"# Bug: filters odd numbers instead of even
 def filter_even(numbers):
     result = []
@@ -1858,7 +778,7 @@ def filter_even(numbers):
     for num in numbers:
         if num % 2 == 0:
             result.append(num)
-    return result",1.0,contains,94411,2026-03-03T10:03:05.185964,1,0,0,tfidf
+    return result",1.0,contains,136649,2026-03-03T16:26:06.607189,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,4,"# Bug: max initialized to 0, fails for negative lists
 def find_max(numbers):
     if len(numbers) == 0:
@@ -1867,100 +787,14 @@ def find_max(numbers):
     for num in numbers:
         if num > max_val:
             max_val = num
-    return max_val",max_val = numbers[0],"Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Fix a bug in the provided Python code.
-    *   Constraint: Output ONLY the corrected code. No explanations, no markdown formatting (like ```python), no code blocks.
-    *   Input Code: A function `find_max` that initializes `max_val` to 0, which fails if all numbers in the list are negative.
-    *   Example Format: The examples show the input description followed by the corrected code directly.
-
-2.  **Analyze the Bug:**
-    *   Current logic:
-        ```python
-        def find_max(numbers):
-            if len(numbers) == 0:
-                return None
-            max_val = 0  # BUG: If all numbers are negative, this will never be updated correctly or will return 0 instead of the actual max (which is negative).
-            for num in numbers:
-                if num > max_val:
-                    max_val = num
-            return max_val
-        ```
-    *   Problem: Initializing `max_val` to 0 means that if the list contains only negative numbers (e.g., `[-5, -2, -10]`), the condition `num > max_val` will never be true (since all nums are < 0). The function returns 0 instead of the maximum value in the list.
-    *   Fix: Initialize `max_val` to the first element of the list (`numbers[0]`) or use a very small number, but using the first element is safer and more standard for this pattern (assuming non-empty check exists). Since there's already a check for empty list, initializing with `numbers[0]` is correct.
-
-3.  **Draft the Correction:**
-    ```python
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-    ```
-
-4.  **Verify Constraints:**
-    *   Output ONLY the corrected code.
-    *   No markdown (no ```).
-    *   No explanations.
-
-5.  **Final Polish:**
-    Ensure the indentation is correct and matches Python standards.
-
-    Corrected Code:
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-
-6.  **Final Output Generation:** (Matching the requested format exactly).
-    The prompt asks to output ONLY the corrected code without markdown blocks.
-
-    Wait, looking at the examples provided in the prompt:
-    Input: # Bug description...
-    Output: def ...
-
-    So I should just print the function definition and body.
-
-    Let's double check the logic.
-    If `numbers` is `[-5]`, `max_val` becomes `-5`. Loop runs, `-5 > -5` is false. Returns `-5`. Correct.
-    If `numbers` is `[10]`, `max_val` becomes `10`. Loop runs, `10 > 10` is false. Returns `10`. Correct.
-    If `numbers` is `[-5, -2]`, `max_val` starts at `-5`.
-    Iteration 1: `-2 > -5` -> True, `max_val = -2`.
-    Returns `-2`. Correct.
-
-    The fix is changing `max_val = 0` to `max_val = numbers[0]`.
-
-    One detail from the examples: The output should not include markdown code fences (```). Just raw text.
-
-    Let's construct the final string.
-
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-
-    Wait, I need to make sure I don't add extra newlines at the start or end that might violate ""ONLY the corrected code"". Usually, a single newline after the function definition is fine.
-
-    Let's check the examples again.
-    Example 1 Output: print(""Hello, World!"")
-    Example 2 Output: def calculate_average(numbers):\n    if len(numbers) == 0:\n        return 0\n    total = sum(numbers)\n    return total / len(numbers)
-    (Implicitly formatted as code).
-
-    Okay, I will output the text directly.
-
-    Wait, one more check on the input provided in the prompt:",1.0,contains,101634,2026-03-03T10:03:12.410046,1,0,0,tfidf
+    return max_val",max_val = numbers[0],"def find_max(numbers):
+    if len(numbers) == 0:
+        return None
+    max_val = numbers[0]
+    for num in numbers:
+        if num > max_val:
+            max_val = num
+    return max_val",1.0,contains,169075,2026-03-03T16:26:39.021013,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,8,"# Bug: filters odd numbers instead of even
 def filter_even(numbers):
     result = []
@@ -1972,13 +806,13 @@ def filter_even(numbers):
     for num in numbers:
         if num % 2 == 0:
             result.append(num)
-    return result",1.0,contains,76255,2026-03-03T10:04:28.677369,1,0,0,tfidf
+    return result",1.0,contains,101653,2026-03-03T16:28:20.687383,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,8,"# Bug: off-by-one in word count
 def count_words(text):
     words = text.split()
     return len(words) - 1",return len(words),"def count_words(text):
     words = text.split()
-    return len(words)",1.0,contains,91824,2026-03-03T10:04:44.247856,1,0,0,tfidf
+    return len(words)",1.0,contains,152958,2026-03-03T16:29:11.993992,1,0,0,tfidf
 qwen35_en,code_fix_en_001,code_fix,lmstudio/qwen3.5-9b,8,"# Bug: max initialized to 0, fails for negative lists
 def find_max(numbers):
     if len(numbers) == 0:
@@ -1987,82 +821,11 @@ def find_max(numbers):
     for num in numbers:
         if num > max_val:
             max_val = num
-    return max_val",max_val = numbers[0],"Thinking Process:
-
-1.  **Analyze the Request:**
-    *   Task: Fix a bug in the provided Python code.
-    *   Input: A comment describing the bug, followed by the buggy function `find_max`.
-    *   Output Requirement: ONLY the corrected code. No explanations, no markdown formatting (like ```python), no code blocks. Just the raw text of the fixed function.
-    *   Example Analysis: The examples show that if there's a design issue or working code, it should be preserved or adjusted accordingly, but primarily focus on fixing logical errors like initialization issues, off-by-one errors, wrong return values, etc.
-
-2.  **Analyze the Input Code:**
-    ```python
-    # Bug: max initialized to 0, fails for negative lists
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = 0
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-    ```
-    *   **Bug Description:** ""max initialized to 0, fails for negative lists"".
-    *   **Problem:** If the list contains only negative numbers (e.g., `[-5, -2, -10]`), initializing `max_val = 0` means the condition `num > max_val` will never be true (since all numbers are less than 0). The function returns 0 instead of the actual maximum value in the list.
-    *   **Fix:** Initialize `max_val` to a value that is guaranteed to be smaller than any possible number in the list, or better yet, initialize it with the first element of the list (since we already check for empty lists). Alternatively, use `float('-inf')`. Given the context of simple Python code fixes, initializing with the first element (`numbers[0]`) after checking for emptiness is a common and robust approach. Or simply set `max_val = numbers[0]` before the loop.
-    *   **Constraint:** The output must be ONLY the corrected code.
-
-3.  **Drafting the Correction:**
-    *   Option 1 (First element):
-        ```python
-        def find_max(numbers):
-            if len(numbers) == 0:
-                return None
-            max_val = numbers[0]
-            for num in numbers:
-                if num > max_val:
-                    max_val = num
-            return max_val
-        ```
-    *   Option 2 (Min value):
-        ```python
-        def find_max(numbers):
-            if len(numbers) == 0:
-                return None
-            max_val = float('-inf')
-            for num in numbers:
-                if num > max_val:
-                    max_val = num
-            return max_val
-        ```
-    *   Option 3 (Built-in function - though usually these tasks want logic fixed):
-        ```python
-        def find_max(numbers):
-            if len(numbers) == 0:
-                return None
-            return max(numbers)
-        ```
-    *   Looking at the examples provided in the prompt, they tend to fix the logic within the function structure rather than replacing it with a built-in unless necessary (e.g., `sum_list` example kept the loop but fixed index). The `factorial` example fixed the base case return value. The `is_prime` example fixed the logic inside the loop and final return.
-    *   So, I should fix the initialization line `max_val = 0` to handle negative numbers correctly. Setting it to `numbers[0]` is the most direct logical fix that preserves the algorithm's intent (iterating through the list).
-
-4.  **Refining the Output:**
-    *   Remove comments? The examples show keeping the function definition and logic, but removing the bug comment at the top usually happens in the output because it's part of the input description, not code to be executed. Wait, looking closely at the examples:
-        *   Input starts with `# Bug: ...`
-        *   Output starts directly with `def ...`.
-    *   So I should strip the comment line `# Bug: max initialized to 0, fails for negative lists`.
-    *   The output should start with `def find_max(numbers):`.
-
-5.  **Final Code Construction:**
-    ```python
-    def find_max(numbers):
-        if len(numbers) == 0:
-            return None
-        max_val = numbers[0]
-        for num in numbers:
-            if num > max_val:
-                max_val = num
-        return max_val
-    ```
-
-6.  **Double Check:**
-    *   Does it handle negative lists? Yes, `max_val` starts at the first element (e.g., -",1.0,contains,97671,2026-03-03T10:04:50.093517,1,0,0,tfidf
+    return max_val",max_val = numbers[0],"def find_max(numbers):
+    if len(numbers) == 0:
+        return None
+    max_val = numbers[0]
+    for num in numbers:
+        if num > max_val:
+            max_val = num
+    return max_val",1.0,contains,263327,2026-03-03T16:31:02.363915,1,0,0,tfidf
