@@ -55,12 +55,20 @@ class OpenAIClient(RetryMixin, ModelClient):
         """
         def _call():
             start_time = time.time()
-            response = self.client.chat.completions.create(
-                model=self.model_name,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.0,
-                max_tokens=1024,
+            # GPT-5 base models (gpt-5, gpt-5-mini, gpt-5-nano) reject
+            # the temperature parameter entirely.
+            is_gpt5_base = bool(
+                re.match(r"^gpt-5(-mini|-nano)?$", self.model_name)
             )
+            params = {
+                "model": self.model_name,
+                "messages": [{"role": "user", "content": prompt}],
+                "max_tokens": 1024,
+            }
+            if not is_gpt5_base:
+                params["temperature"] = 0.0
+
+            response = self.client.chat.completions.create(**params)
             end_time = time.time()
 
             latency_ms = int((end_time - start_time) * 1000)
@@ -68,8 +76,6 @@ class OpenAIClient(RetryMixin, ModelClient):
 
             # Strip <think>...</think> blocks from reasoning models
             output = re.sub(r"<think>[\s\S]*?</think>\s*", "", raw_output).strip()
-            if not output:
-                output = raw_output
 
             # Retrieve token usage
             input_tokens = 0

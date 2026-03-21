@@ -263,7 +263,7 @@
         },
         {
           "input": "[Delivery Plan]\nDeparture: Sendai Warehouse (Start at 7:00)\nDestinations:\n  Store S: Yamagata (Duration 45 min, 5 Packages, Receiving Hours 8:00-10:00)\n  Store T: Fukushima (Duration 35 min, 3 Packages, Receiving Hours 9:00-12:00)\n\nTravel Time:\n  Sendai -> Yamagata: 80 min\n  Sendai -> Fukushima: 90 min\n  Yamagata -> Fukushima: 120 min\n\nFuel Cost: 11 yen/min",
-          "output": "[Optimal Route]\nSendai (7:00) -> Yamagata (Arrive 8:20, Depart 9:05) -> Via Sendai -> Fukushima (Arrive 10:55, Complete 11:30)\n\n[Reasoning]\n- Store S (Yamagata) has a receiving deadline of 10:00, so it is prioritized\n- Yamagata -> Fukushima direct takes 120 min, which is less efficient than via Sendai (80+90=170 min), but both options allow enough time\n- In this case, routing via Sendai has higher fuel cost but provides more margin for Fukushima's 12:00 deadline\n\n[Total Cost]\nTravel: 80+80+90=250 min -> 2750 yen\nUnloading: 45+35=80 min\nTotal Duration: 330 min"
+          "output": "[Optimal Route]\nSendai (7:00) -> Yamagata (Arrive 8:20, Depart 9:05) -> Fukushima (Arrive 11:05, Complete 11:40)\n\n[Reasoning]\n- Store S (Yamagata) has a receiving deadline of 10:00, so it is prioritized\n- Yamagata -> Fukushima direct takes 120 min (arrive 11:05), within the 12:00 deadline\n- Via Sendai would take 80+90=170 min (arrive 11:55), leaving insufficient time for 35 min unloading before the 12:00 deadline\n\n[Total Cost]\nTravel: 80+120=200 min -> 2200 yen\nUnloading: 45+35=80 min\nTotal Duration: 280 min"
         }
       ],
       "distractors": [
