@@ -1,0 +1,80 @@
+{
+  "task_id": "sentiment_analysis_001",
+  "category": "classification",
+  "version": "1.0",
+  "measures": [],
+  "description": "Classify the sentiment of the following product review. Categories are: positive, negative, neutral, mixed. Reply with the category name only.",
+  "instruction": "Read the product review and classify its overall sentiment into one of four categories: positive, negative, neutral, mixed. A 'mixed' review contains both clearly positive and clearly negative opinions. Reply with the lowercase category name only, no additional explanation.",
+  "difficulty": "medium",
+  "examples": [
+    {
+      "input": "This laptop is fantastic! The battery lasts all day, the screen is gorgeous, and it handles multitasking without any lag. Best purchase I've made this year.",
+      "output": "positive"
+    },
+    {
+      "input": "Terrible experience. The product arrived broken, customer service was unhelpful, and the return process took over a month. Never buying from this brand again.",
+      "output": "negative"
+    },
+    {
+      "input": "The package arrived on time and the product matches the description. It does what it's supposed to do.",
+      "output": "neutral"
+    },
+    {
+      "input": "The camera quality is absolutely stunning — best photos I've ever taken with a phone. However, the battery drains incredibly fast and the phone overheats during video calls. Hard to recommend without reservations.",
+      "output": "mixed"
+    },
+    {
+      "input": "I love the design and the build quality feels premium. The software, on the other hand, is buggy and crashes at least once a day. For this price, I expected better stability.",
+      "output": "mixed"
+    },
+    {
+      "input": "Bought this as a gift and the recipient was thrilled. Great value for the price, fast shipping, and the packaging was really nice too.",
+      "output": "positive"
+    },
+    {
+      "input": "It's fine. Nothing special, nothing bad. Works as advertised. Wouldn't go out of my way to recommend it, but no complaints either.",
+      "output": "neutral"
+    },
+    {
+      "input": "Complete waste of money. The product stopped working after two weeks and the warranty claim was denied because of a scratch that was already there when it arrived.",
+      "output": "negative"
+    }
+  ],
+  "test_cases": [
+    {
+      "input": "Absolutely love this headset! The noise cancellation is incredible, the sound quality is rich and detailed, and it's so comfortable I forget I'm wearing it. Worth every penny.",
+      "expected_output": "positive",
+      "scoring_method": "exact_match"
+    },
+    {
+      "input": "The monitor looks great — colors are vivid and the 4K resolution is crisp. But the stand wobbles constantly and the built-in speakers sound worse than my phone. I'm keeping it, but I wish they'd put more effort into the hardware.",
+      "expected_output": "mixed",
+      "scoring_method": "exact_match"
+    },
+    {
+      "input": "Received the item. It's a standard USB cable. Charges my phone. Not much else to say about it.",
+      "expected_output": "neutral",
+      "scoring_method": "exact_match"
+    },
+    {
+      "input": "The keyboard broke after three days of normal use. Two keys stopped responding and the Bluetooth disconnects randomly. Returned immediately. Save your money.",
+      "expected_output": "negative",
+      "scoring_method": "exact_match"
+    },
+    {
+      "input": "The tablet is incredibly fast and the display is beautiful for watching movies. Unfortunately, the app ecosystem is very limited compared to competitors, and the stylus pen that was advertised as included was not in the box.",
+      "expected_output": "mixed",
+      "scoring_method": "exact_match"
+    }
+  ],
+  "distractors": [
+    {
+      "input": "Can anyone tell me if this product is compatible with USB-C? I'm thinking about buying it but I need to check first.",
+      "output": "neutral"
+    },
+    {
+      "input": "UPDATE: After contacting support, they sent a replacement and it works perfectly now. Changing my review from 1 star to 4 stars.",
+      "output": "mixed"
+    }
+  ]
+}
