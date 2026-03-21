@@ -12,6 +12,7 @@ from adapt_gauge_core.infrastructure.model_clients.base import RetryMixin
 from adapt_gauge_core.infrastructure.model_clients.factory import create_client
 from adapt_gauge_core.infrastructure.model_clients.vertex_ai import VertexAIClient
 from adapt_gauge_core.infrastructure.model_clients.claude import ClaudeClient
+from adapt_gauge_core.infrastructure.model_clients.openai import OpenAIClient
 from adapt_gauge_core.infrastructure.model_clients.lmstudio import LMStudioClient
 
 
@@ -101,7 +102,42 @@ class TestCreateClient:
         client = create_client("claude-sonnet-4-5-20250514")
         assert isinstance(client, ClaudeClient)
 
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"})
+    def test_gpt_model_returns_openai_client(self):
+        """Should return OpenAIClient for gpt- prefixed model names"""
+        client = create_client("gpt-4o-mini")
+        assert isinstance(client, OpenAIClient)
+
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"})
+    def test_gpt54_model_returns_openai_client(self):
+        """Should return OpenAIClient for gpt-5.4-mini"""
+        client = create_client("gpt-5.4-mini")
+        assert isinstance(client, OpenAIClient)
+
     def test_lmstudio_model_returns_lmstudio_client(self):
         """Should return LMStudioClient for lmstudio/ prefixed model names"""
         client = create_client("lmstudio/qwen2.5-7b")
         assert isinstance(client, LMStudioClient)
+
+
+class TestOpenAIClient:
+    """Tests for OpenAIClient"""
+
+    def test_raises_without_api_key(self):
+        """Should raise ValueError when OPENAI_API_KEY is not set"""
+        with patch.dict("os.environ", {}, clear=True):
+            with pytest.raises(ValueError, match="OPENAI_API_KEY is not set"):
+                OpenAIClient("gpt-4o-mini")
+
+    @patch.dict("os.environ", {"OPENAI_API_KEY": "test-key"})
+    def test_creates_with_api_key(self):
+        """Should create client when API key is provided"""
+        client = OpenAIClient("gpt-4o-mini")
+        assert client.model_name == "gpt-4o-mini"
+        assert client.api_key == "test-key"
+
+    def test_creates_with_explicit_api_key(self):
+        """Should create client when API key is passed directly"""
+        client = OpenAIClient("gpt-5.4-mini", api_key="explicit-key")
+        assert client.model_name == "gpt-5.4-mini"
+        assert client.api_key == "explicit-key"

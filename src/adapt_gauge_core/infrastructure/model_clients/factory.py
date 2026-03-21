@@ -10,6 +10,7 @@ from adapt_gauge_core.harness_config import HarnessConfig, load_config
 from adapt_gauge_core.infrastructure.model_clients.base import ModelClient
 from adapt_gauge_core.infrastructure.model_clients.vertex_ai import VertexAIClient
 from adapt_gauge_core.infrastructure.model_clients.claude import ClaudeClient
+from adapt_gauge_core.infrastructure.model_clients.openai import OpenAIClient
 from adapt_gauge_core.infrastructure.model_clients.lmstudio import LMStudioClient
 
 
@@ -35,5 +36,7 @@ def create_client(model_name: str, config: HarnessConfig | None = None) -> Model
         return LMStudioClient(model_name, max_retries=retries, retry_delay_seconds=retry_delay)
     elif model_name.startswith("claude"):
         return ClaudeClient(model_name, max_retries=retries, retry_delay_seconds=retry_delay)
+    elif model_name.startswith("gpt-"):
+        return OpenAIClient(model_name, max_retries=retries, retry_delay_seconds=retry_delay)
     else:
         return VertexAIClient(model_name, timeout_seconds=timeout, max_retries=retries, retry_delay_seconds=retry_delay)
