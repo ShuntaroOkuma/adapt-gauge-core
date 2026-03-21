@@ -370,7 +370,7 @@
         },
         {
           "input": "UPDATE: After contacting support, they sent a replacement and it works perfectly now. Changing my review from 1 star to 4 stars.",
-          "output": "mixed"
+          "output": "positive"
         }
       ]
     }
