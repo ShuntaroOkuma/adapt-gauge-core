@@ -62,9 +62,7 @@ class OpenAIClient(RetryMixin, ModelClient):
             )
             # GPT-5 family models require max_completion_tokens
             # instead of max_tokens.
-            is_gpt5_family = bool(
-                re.match(r"^gpt-5", self.model_name)
-            )
+            is_gpt5_family = self.model_name.startswith("gpt-5")
             token_limit_key = "max_completion_tokens" if is_gpt5_family else "max_tokens"
             params = {
                 "model": self.model_name,
