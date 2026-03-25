@@ -60,10 +60,16 @@ class OpenAIClient(RetryMixin, ModelClient):
             is_gpt5_base = bool(
                 re.match(r"^gpt-5(-mini|-nano)?$", self.model_name)
             )
+            # GPT-5 family models require max_completion_tokens
+            # instead of max_tokens.
+            is_gpt5_family = bool(
+                re.match(r"^gpt-5", self.model_name)
+            )
+            token_limit_key = "max_completion_tokens" if is_gpt5_family else "max_tokens"
             params = {
                 "model": self.model_name,
                 "messages": [{"role": "user", "content": prompt}],
-                "max_tokens": 1024,
+                token_limit_key: 1024,
             }
             if not is_gpt5_base:
                 params["temperature"] = 0.0
