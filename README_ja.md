@@ -37,7 +37,8 @@ adapt-gauge-core は、この両方を自動で明らかにします。
 - 以下のいずれかのモデルプロバイダーへの API アクセス:
   - **Google Cloud**（Vertex AI）— Gemini モデル
   - **Anthropic** — Claude モデル
-  - **LMStudio** — ローカルモデル
+  - **OpenAI** — GPT モデル
+  - **LMStudio / Ollama** — ローカルモデル（OpenAI 互換 API）
 
 ### インストール
 
@@ -57,13 +58,13 @@ cp .env.example .env
 ### 評価の実行
 
 ```bash
-# デフォルトモデル（Gemini 3 Flash, Claude Haiku 4.5）で実行
+# デフォルトモデルで実行
 python -m adapt_gauge_core.runner --task-pack tasks/task_pack_core_demo.json
 
 # モデルを指定して実行
 python -m adapt_gauge_core.runner \
   --task-pack tasks/task_pack_core_demo.json \
-  --models gemini-2.5-flash,claude-haiku-4-5-20251001
+  --models gemini-2.5-flash,claude-haiku-4-5-20251001,gpt-5.4-mini
 
 # TF-IDF による例題選択（デフォルト）または固定順で実行
 python -m adapt_gauge_core.runner \
@@ -95,16 +96,13 @@ python -m adapt_gauge_core.runner \
 
 ### 結果の閲覧
 
-デモ用の評価結果を同梱しているので、評価を実行しなくてもビューアを試せます。
+12モデル×5タスクの評価結果をデモデータとして同梱しています。評価を実行しなくても、学習曲線や崩壊パターンをすぐに確認できます。
 
 ```bash
 # ビューア用の依存パッケージをインストール
 pip install -e ".[viewer]"
 
-# デモ結果を閲覧（results/demo/ に同梱）
-streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results/demo
-
-# 自分の評価結果を閲覧
+# 結果を閲覧（デモデータは自動的に読み込まれます）
 streamlit run src/adapt_gauge_core/viewer.py
 ```
 
@@ -137,14 +135,15 @@ streamlit run src/adapt_gauge_core/viewer.py
 
 ## デモ用タスクパック
 
-同梱の `task_pack_core_demo.json` には、採点方式の異なる 4 つのタスクが含まれています。
+同梱の `task_pack_core_demo.json` には、採点方式の異なる 5 つのタスクが含まれています。
 
 | タスク | 採点方式 | 対象領域 |
 |--------|---------|---------|
-| 分類 | exact_match | メールのカテゴリ分類 |
-| コード修正 | contains | バグ修正 |
-| 要約 | f1 | テキスト要約 |
+| 分類 | exact_match | カスタマーサポートの問い合わせ分類 |
+| コード修正 | contains | Python のバグ修正 |
+| 要約 | f1 | ニュース記事の要約 |
 | 配送ルート | llm_judge | ルート最適化 |
+| 感情分析 | exact_match | 商品レビューの感情分類 |
 
 ## プロジェクト構成
 
@@ -160,7 +159,7 @@ adapt-gauge-core/
 │   ├── harness_config.py      # 設定の読み込みと管理
 │   ├── domain/                # エンティティ・値オブジェクト・定数
 │   ├── scoring/               # 採点: exact_match, contains, f1, llm_judge
-│   ├── infrastructure/        # モデルクライアント: Vertex AI, Claude, LMStudio
+│   ├── infrastructure/        # モデルクライアント: Vertex AI, Claude, OpenAI, LMStudio
 │   └── use_cases/             # 評価実行・崩壊分析・ヘルスチェック
 ├── tasks/                     # タスク定義とデモパック
 ├── results/                   # 評価結果の出力（CSV）
