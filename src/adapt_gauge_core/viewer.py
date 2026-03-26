@@ -47,16 +47,21 @@ def _short_model_name(name: str) -> str:
 
 
 def _find_result_pairs(results_dir: Path) -> list[dict]:
-    """Find matching raw_results / summary CSV pairs in results_dir."""
+    """Find matching raw_results / summary CSV pairs in results_dir and demo subdir."""
     pairs = []
-    for raw_path in sorted(results_dir.glob("raw_results_*.csv"), reverse=True):
-        run_id = raw_path.stem.replace("raw_results_", "")
-        summary_path = results_dir / f"summary_{run_id}.csv"
-        pairs.append({
-            "run_id": run_id,
-            "raw_path": raw_path,
-            "summary_path": summary_path if summary_path.exists() else None,
-        })
+    search_dirs = [results_dir]
+    demo_dir = results_dir / "demo"
+    if demo_dir.exists():
+        search_dirs.append(demo_dir)
+    for search_dir in search_dirs:
+        for raw_path in sorted(search_dir.glob("raw_results_*.csv"), reverse=True):
+            run_id = raw_path.stem.replace("raw_results_", "")
+            summary_path = search_dir / f"summary_{run_id}.csv"
+            pairs.append({
+                "run_id": run_id,
+                "raw_path": raw_path,
+                "summary_path": summary_path if summary_path.exists() else None,
+            })
     return pairs
 
 
