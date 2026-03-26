@@ -21,11 +21,11 @@ In our evaluations, we observed that **leaderboard rankings reverse** depending 
 
 ### See It in Action
 
-**Few-shot learning curves across 4 tasks and 5 models:**
+**Few-shot learning curves across 5 tasks and 12 models** — demo results from our Phase 1.5 experiment (6 cloud + 6 local models) are included:
 
 ![Learning Curves Overview](docs/images/learning-curves-overview.png)
 
-**Collapse detection** — gemini-3-flash-preview peaks at 4-shot then drops back to 0-shot level:
+**Collapse detection** — Gemini 3 Flash scored 93% at zero-shot, then crashed to 30% at 8-shot:
 
 ![Collapse Detection](docs/images/learning-curve-collapse.png)
 
@@ -37,7 +37,8 @@ In our evaluations, we observed that **leaderboard rankings reverse** depending 
 - API access to at least one model provider:
   - **Google Cloud** (Vertex AI) for Gemini models
   - **Anthropic** for Claude models
-  - **LMStudio** for local models
+  - **OpenAI** for GPT models
+  - **LMStudio / Ollama** for local models (any OpenAI-compatible API)
 
 ### Installation
 
@@ -57,13 +58,13 @@ cp .env.example .env
 ### Run Evaluation
 
 ```bash
-# Run with default models (Gemini 3 Flash, Claude Haiku 4.5)
+# Run with default models
 python -m adapt_gauge_core.runner --task-pack tasks/task_pack_core_demo.json
 
 # Specify models
 python -m adapt_gauge_core.runner \
   --task-pack tasks/task_pack_core_demo.json \
-  --models gemini-2.5-flash,claude-haiku-4-5-20251001
+  --models gemini-2.5-flash,claude-haiku-4-5-20251001,gpt-5.4-mini
 
 # Use TF-IDF example selection (default) or fixed ordering
 python -m adapt_gauge_core.runner \
@@ -95,16 +96,13 @@ python -m adapt_gauge_core.runner \
 
 ### View Results
 
-A demo evaluation result is included so you can explore the viewer without running an evaluation:
+Demo results from our 12-model × 5-task experiment are included, so you can explore learning curves and collapse patterns without running an evaluation:
 
 ```bash
 # Install viewer extras
 pip install -e ".[viewer]"
 
-# View demo results (included in results/demo/)
-streamlit run src/adapt_gauge_core/viewer.py -- --results-dir results/demo
-
-# View your own results after running an evaluation
+# View results (demo data is loaded automatically)
 streamlit run src/adapt_gauge_core/viewer.py
 ```
 
@@ -137,14 +135,15 @@ Results are classified into a **collapse pattern** (stable, immediate_collapse, 
 
 ## Demo Task Pack
 
-The included `task_pack_core_demo.json` contains 4 tasks covering different scoring methods:
+The included `task_pack_core_demo.json` contains 5 tasks covering different scoring methods:
 
 | Task | Scoring | Domain |
 |------|---------|--------|
-| Classification | exact_match | Email categorization |
-| Code Fix | contains | Bug fixing |
-| Summarization | f1 | Text summarization |
+| Classification | exact_match | Customer support categorization |
+| Code Fix | contains | Python bug fixing |
+| Summarization | f1 | News article summarization |
 | Delivery Route | llm_judge | Route optimization |
+| Sentiment Analysis | exact_match | Product review classification |
 
 ## Project Structure
 
@@ -160,7 +159,7 @@ adapt-gauge-core/
 │   ├── harness_config.py      # Configuration management
 │   ├── domain/                # Entities, value objects, constants
 │   ├── scoring/               # Scoring: exact_match, contains, f1, llm_judge
-│   ├── infrastructure/        # Model clients: Vertex AI, Claude, LMStudio
+│   ├── infrastructure/        # Model clients: Vertex AI, Claude, OpenAI, LMStudio
 │   └── use_cases/             # Evaluation, AEI/collapse analysis, health checks
 ├── tasks/                     # Task definitions and demo pack
 ├── results/                   # Evaluation output (CSV)
