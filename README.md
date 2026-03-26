@@ -21,11 +21,11 @@ In our evaluations, we observed that **leaderboard rankings reverse** depending 
 
 ### See It in Action
 
-**Few-shot learning curves across 5 tasks and 12 models** — demo results from our Phase 1.5 experiment (6 cloud + 6 local models) are included:
+**Few-shot learning curves across 4 tasks and 5 models:**
 
 ![Learning Curves Overview](docs/images/learning-curves-overview.png)
 
-**Collapse detection** — Gemini 3 Flash scored 93% at zero-shot, then crashed to 30% at 8-shot:
+**Collapse detection** — gemini-3-flash-preview peaks at 4-shot then drops back to 0-shot level:
 
 ![Collapse Detection](docs/images/learning-curve-collapse.png)
 
